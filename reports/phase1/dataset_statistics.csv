@@ -1,0 +1,5 @@
+subset,conditions,fault_modes,train_engines,test_engines,train_rows,test_rows,avg_train_traj_length,min_train_traj_length,max_train_traj_length,median_train_traj_length,avg_test_traj_length,min_test_traj_length,max_test_traj_length,median_test_traj_length,train_dup_rows,train_dup_unit_cycle,test_dup_rows,test_dup_unit_cycle,cycles_ordered,cycles_start_at_1,rul_engines,rul_min,rul_max,rul_mean
+FD001,1,1,100,100,20631,13096,206.31,128,362,199.0,130.96,31,303,133.5,0,0,0,0,True,True,100,7,145,75.52
+FD002,6,1,260,259,53759,33991,206.77,128,378,199.0,131.24,21,367,132.0,0,0,0,0,True,True,259,6,194,81.19
+FD003,1,2,100,100,24720,16596,247.2,145,525,220.5,165.96,38,475,148.0,0,0,0,0,True,True,100,6,145,75.32
+FD004,6,2,249,248,61249,41214,245.98,128,543,234.0,166.19,19,486,153.5,0,0,0,0,True,True,248,6,195,86.55
