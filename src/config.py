@@ -20,6 +20,8 @@ PROCESSED_DATA_DIR = PROJECT_ROOT / "data" / "processed"
 REPORTS_DIR = PROJECT_ROOT / "reports"
 PHASE1_REPORTS_DIR = REPORTS_DIR / "phase1"
 FIGURES_DIR = PHASE1_REPORTS_DIR / "figures"
+PHASE2_REPORTS_DIR = REPORTS_DIR / "phase2"
+PHASE2_FIGURES_DIR = PHASE2_REPORTS_DIR / "figures"
 NOTEBOOKS_DIR = PROJECT_ROOT / "notebooks"
 
 # ---------------------------------------------------------------------------
@@ -85,3 +87,21 @@ FIGURE_STYLE = "seaborn-v0_8-whitegrid"
 
 # Near-constant sensor threshold: if std < this fraction of mean, flag it
 NEAR_CONSTANT_STD_THRESHOLD = 0.001
+
+# ---------------------------------------------------------------------------
+# Phase 2 — RUL, Splitting, Normalization
+# ---------------------------------------------------------------------------
+
+# RUL clipping thresholds to investigate
+RUL_CLIP_VALUES = [None, 50, 75, 100, 125, 150]
+
+# Engine-level train/validation split defaults
+DEFAULT_VALIDATION_FRACTION = 0.2
+DEFAULT_RANDOM_STATE = 42
+
+# Operating-regime identification: rounding decimals for op_settings
+# Used to discretize continuous op_settings into regime clusters
+OP_SETTING_ROUNDING_DECIMALS = 0
+
+# Safety floor for standard deviation during normalization
+NORMALIZATION_STD_FLOOR = 1e-6

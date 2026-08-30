@@ -1,0 +1,5 @@
+subset,n_train_engines,n_val_engines,n_train_rows,n_val_rows,val_fraction,no_overlap,rows_preserved
+FD001,80,20,16561,4070,0.2,True,True
+FD002,208,52,43464,10295,0.2,True,True
+FD003,80,20,20012,4708,0.2,True,True
+FD004,199,50,49294,11955,0.2008,True,True

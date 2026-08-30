@@ -1,0 +1,5 @@
+subset,n_regimes,applied,note
+FD001,1,False,Single operating regime; global normalization sufficient.
+FD002,6,True,Condition-aware normalization reduces within-regime sensor variability.
+FD003,1,False,Single operating regime; global normalization sufficient.
+FD004,6,True,Condition-aware normalization reduces within-regime sensor variability.

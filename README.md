@@ -65,7 +65,42 @@ After running the pipeline, find outputs in:
 
 ### Notebook
 
-- `notebooks/01_cmapss_dataset_understanding.ipynb` — Interactive exploration notebook
+- `notebooks/01_cmapss_dataset_understanding.ipynb` -- Interactive exploration notebook
+
+---
+
+## Phase 2 -- RUL Formulation & Leakage-Safe Splitting
+
+**Status**: COMPLETE
+
+Phase 2 constructed scientifically correct RUL targets, investigated clipping, established leakage-safe engine-level splitting, and investigated condition-aware normalization.
+
+### Key Findings
+
+1. **RUL = failure_cycle - current_cycle**: All 5 validation checks pass for all subsets
+2. **RUL clipping**: Higher caps preserve information but increase variance. Optimal threshold to be selected by model performance in Phase 3
+3. **Engine-level split (80/20)**: Zero engine overlap between train and validation -- leakage-free
+4. **Operating regimes**: FD001/FD003 have ~1 regime; FD002/FD004 have 6 regimes
+5. **Condition-aware normalization**: Makes degradation trends clearer in multi-condition subsets
+
+### How to Run Phase 2 Analysis
+
+```bash
+python -m src.run_phase2_analysis
+```
+
+### Reports
+
+- `reports/phase2/phase2_summary.md` -- Human-readable Phase 2 report
+- `reports/phase2/rul_statistics.csv` -- Per-subset RUL statistics
+- `reports/phase2/clipping_comparison.csv` -- Clipping experiment results
+- `reports/phase2/split_statistics.csv` -- Train/validation split details
+- `reports/phase2/normalization_statistics.csv` -- Normalization findings
+- `reports/phase2/figures/` -- All Phase 2 visualizations
+
+### Notebook
+
+- `notebooks/02_rul_formulation_and_data_split.ipynb`
 
 ---
 
@@ -83,17 +118,28 @@ AeroRUL/
 │   ├── data_loader.py           # Reusable C-MAPSS data loader
 │   ├── data_validation.py       # Validation & statistics functions
 │   ├── visualization.py         # Publication-quality plotting
-│   └── run_phase1_analysis.py   # Phase 1 analysis pipeline
+│   ├── rul.py                   # RUL target generation & clipping
+│   ├── splitting.py             # Engine-level train/val splitting
+│   ├── normalization.py         # Condition-aware normalization
+│   ├── run_phase1_analysis.py   # Phase 1 analysis pipeline
+│   └── run_phase2_analysis.py   # Phase 2 analysis pipeline
 ├── tests/
 │   ├── test_data_loader.py
-│   └── test_data_validation.py
+│   ├── test_data_validation.py
+│   ├── test_rul.py
+│   ├── test_splitting.py
+│   └── test_normalization.py
 ├── notebooks/
-│   └── 01_cmapss_dataset_understanding.ipynb
+│   ├── 01_cmapss_dataset_understanding.ipynb
+│   └── 02_rul_formulation_and_data_split.ipynb
 ├── reports/
-│   └── phase1/
-│       ├── dataset_summary.md
-│       ├── dataset_statistics.csv
-│       ├── sensor_statistics.csv
+│   ├── phase1/
+│   └── phase2/
+│       ├── phase2_summary.md
+│       ├── rul_statistics.csv
+│       ├── clipping_comparison.csv
+│       ├── split_statistics.csv
+│       ├── normalization_statistics.csv
 │       └── figures/
 ├── requirements.txt
 └── README.md
