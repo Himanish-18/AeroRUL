@@ -104,6 +104,46 @@ python -m src.run_phase2_analysis
 
 ---
 
+## Phase 3 -- Sliding-Window Feature Engineering
+
+**Status**: COMPLETE
+
+Phase 3 transformed engine trajectories into leakage-safe, fixed-size temporal features suitable for classical supervised regression.
+
+### Key Findings
+
+1. **Causal features**: All features at cycle t use only cycles ≤ t — verified by automated leakage test
+2. **Multi-scale windows**: 10, 20, 30, 50, 75 cycles capture short/medium/long-term degradation
+3. **Feature families**: mean, std, min, max, range, slope, R², delta, relative change
+4. **Engine separation preserved**: Zero overlap between train and validation after feature generation
+5. **Phase 2 normalization consumed**: FD002/FD004 features use condition-normalized inputs
+
+### How to Run Phase 3 Analysis
+
+```bash
+python -m src.run_phase3_analysis
+```
+
+### Reports
+
+- `reports/phase3/phase3_summary.md` -- Human-readable Phase 3 report
+- `reports/phase3/feature_metadata.csv` -- Feature definitions
+- `reports/phase3/feature_quality.csv` -- Quality validation results
+- `reports/phase3/feature_summary.csv` -- Feature counts per window
+- `reports/phase3/feature_target_correlations_*.csv` -- Correlation analysis
+- `reports/phase3/figures/` -- All Phase 3 visualizations
+
+### Feature Datasets (Parquet)
+
+- `data/processed/phase3/{subset}/train_features.parquet`
+- `data/processed/phase3/{subset}/val_features.parquet`
+
+### Notebook
+
+- `notebooks/03_sliding_window_feature_engineering.ipynb`
+
+---
+
 ## Project Structure
 
 ```
@@ -112,6 +152,13 @@ AeroRUL/
 │   ├── train_FD00*.txt
 │   ├── test_FD00*.txt
 │   └── RUL_FD00*.txt
+├── data/
+│   └── processed/
+│       └── phase3/              # Feature datasets (Parquet)
+│           ├── FD001/
+│           ├── FD002/
+│           ├── FD003/
+│           └── FD004/
 ├── src/
 │   ├── __init__.py
 │   ├── config.py                # Project configuration & schema
@@ -121,25 +168,31 @@ AeroRUL/
 │   ├── rul.py                   # RUL target generation & clipping
 │   ├── splitting.py             # Engine-level train/val splitting
 │   ├── normalization.py         # Condition-aware normalization
+│   ├── features.py              # Sliding-window feature engineering
+│   ├── feature_validation.py    # Feature quality validation
 │   ├── run_phase1_analysis.py   # Phase 1 analysis pipeline
-│   └── run_phase2_analysis.py   # Phase 2 analysis pipeline
+│   ├── run_phase2_analysis.py   # Phase 2 analysis pipeline
+│   └── run_phase3_analysis.py   # Phase 3 analysis pipeline
 ├── tests/
 │   ├── test_data_loader.py
 │   ├── test_data_validation.py
 │   ├── test_rul.py
 │   ├── test_splitting.py
-│   └── test_normalization.py
+│   ├── test_normalization.py
+│   ├── test_features.py
+│   └── test_feature_validation.py
 ├── notebooks/
 │   ├── 01_cmapss_dataset_understanding.ipynb
-│   └── 02_rul_formulation_and_data_split.ipynb
+│   ├── 02_rul_formulation_and_data_split.ipynb
+│   └── 03_sliding_window_feature_engineering.ipynb
 ├── reports/
 │   ├── phase1/
-│   └── phase2/
-│       ├── phase2_summary.md
-│       ├── rul_statistics.csv
-│       ├── clipping_comparison.csv
-│       ├── split_statistics.csv
-│       ├── normalization_statistics.csv
+│   ├── phase2/
+│   └── phase3/
+│       ├── phase3_summary.md
+│       ├── feature_metadata.csv
+│       ├── feature_quality.csv
+│       ├── feature_summary.csv
 │       └── figures/
 ├── requirements.txt
 └── README.md
@@ -155,4 +208,5 @@ AeroRUL/
 - matplotlib >= 3.7
 - seaborn >= 0.12
 - scipy >= 1.10
+- pyarrow >= 14.0
 - pytest >= 7.0

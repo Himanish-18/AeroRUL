@@ -105,3 +105,28 @@ OP_SETTING_ROUNDING_DECIMALS = 0
 
 # Safety floor for standard deviation during normalization
 NORMALIZATION_STD_FLOOR = 1e-6
+
+# ---------------------------------------------------------------------------
+# Phase 3 — Sliding-Window Feature Engineering
+# ---------------------------------------------------------------------------
+
+PHASE3_REPORTS_DIR = REPORTS_DIR / "phase3"
+PHASE3_FIGURES_DIR = PHASE3_REPORTS_DIR / "figures"
+PHASE3_DATA_DIR = PROCESSED_DATA_DIR / "phase3"
+
+# Feature generation configuration
+FEATURE_CONFIG = {
+    "windows": [10, 20, 30, 50, 75],
+    "statistics": ["mean", "std", "min", "max", "range", "slope", "r2"],
+    "deltas": [1, 5, 10],
+    "relative_changes": [5, 10],
+}
+
+DEFAULT_WINDOW_SIZE = 30
+
+# Safety floor for relative change denominator
+RELATIVE_CHANGE_FLOOR = 1e-8
+
+# Metadata columns (not model features)
+METADATA_COLUMNS = ["unit_id", "cycle"]
+TARGET_COLUMN = "rul"

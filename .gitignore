@@ -67,3 +67,7 @@ venv.bak/
 # OS specific
 .DS_Store
 Thumbs.db
+
+# Project Data (Avoid pushing large generated datasets to GitHub)
+data/processed/
+*.parquet
