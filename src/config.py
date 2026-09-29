@@ -130,3 +130,13 @@ RELATIVE_CHANGE_FLOOR = 1e-8
 # Metadata columns (not model features)
 METADATA_COLUMNS = ["unit_id", "cycle"]
 TARGET_COLUMN = "rul"
+
+# ---------------------------------------------------------------------------
+# Phase 3.1 — Feature Quality Control
+# ---------------------------------------------------------------------------
+
+PHASE3_1_REPORTS_DIR = REPORTS_DIR / "phase3_1"
+PHASE3_1_FIGURES_DIR = PHASE3_1_REPORTS_DIR / "figures"
+
+# Distribution shift threshold (Cohen's d = 0.5 = medium effect)
+DISTRIBUTION_SHIFT_THRESHOLD = 0.5

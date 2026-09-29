@@ -1,0 +1,841 @@
+feature_name,sensor,feature_family,window,dtype,nan_count_train,nan_count_val,inf_count_train,inf_count_val,constant_train,constant_val,duplicate_group,usable_for_phase4,reason
+sensor_1_mean_10,sensor_1,mean,10,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_1_std_10,sensor_1,std,10,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_1_min_10,sensor_1,min,10,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_1_max_10,sensor_1,max,10,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_1_range_10,sensor_1,range,10,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_2_mean_10,sensor_2,mean,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_2_std_10,sensor_2,std,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_2_min_10,sensor_2,min,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_2_max_10,sensor_2,max,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_2_range_10,sensor_2,range,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_3_mean_10,sensor_3,mean,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_3_std_10,sensor_3,std,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_3_min_10,sensor_3,min,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_3_max_10,sensor_3,max,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_3_range_10,sensor_3,range,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_4_mean_10,sensor_4,mean,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_4_std_10,sensor_4,std,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_4_min_10,sensor_4,min,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_4_max_10,sensor_4,max,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_4_range_10,sensor_4,range,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_5_mean_10,sensor_5,mean,10,float64,0,0,0,0,False,False,True,YES,Clean feature
+sensor_5_std_10,sensor_5,std,10,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_5_min_10,sensor_5,min,10,float64,0,0,0,0,False,False,True,YES,Clean feature
+sensor_5_max_10,sensor_5,max,10,float64,0,0,0,0,False,False,True,YES,Clean feature
+sensor_5_range_10,sensor_5,range,10,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_6_mean_10,sensor_6,mean,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_6_std_10,sensor_6,std,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_6_min_10,sensor_6,min,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_6_max_10,sensor_6,max,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_6_range_10,sensor_6,range,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_7_mean_10,sensor_7,mean,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_7_std_10,sensor_7,std,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_7_min_10,sensor_7,min,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_7_max_10,sensor_7,max,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_7_range_10,sensor_7,range,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_8_mean_10,sensor_8,mean,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_8_std_10,sensor_8,std,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_8_min_10,sensor_8,min,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_8_max_10,sensor_8,max,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_8_range_10,sensor_8,range,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_9_mean_10,sensor_9,mean,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_9_std_10,sensor_9,std,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_9_min_10,sensor_9,min,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_9_max_10,sensor_9,max,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_9_range_10,sensor_9,range,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_10_mean_10,sensor_10,mean,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_10_std_10,sensor_10,std,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_10_min_10,sensor_10,min,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_10_max_10,sensor_10,max,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_10_range_10,sensor_10,range,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_11_mean_10,sensor_11,mean,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_11_std_10,sensor_11,std,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_11_min_10,sensor_11,min,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_11_max_10,sensor_11,max,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_11_range_10,sensor_11,range,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_12_mean_10,sensor_12,mean,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_12_std_10,sensor_12,std,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_12_min_10,sensor_12,min,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_12_max_10,sensor_12,max,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_12_range_10,sensor_12,range,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_13_mean_10,sensor_13,mean,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_13_std_10,sensor_13,std,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_13_min_10,sensor_13,min,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_13_max_10,sensor_13,max,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_13_range_10,sensor_13,range,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_14_mean_10,sensor_14,mean,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_14_std_10,sensor_14,std,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_14_min_10,sensor_14,min,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_14_max_10,sensor_14,max,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_14_range_10,sensor_14,range,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_15_mean_10,sensor_15,mean,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_15_std_10,sensor_15,std,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_15_min_10,sensor_15,min,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_15_max_10,sensor_15,max,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_15_range_10,sensor_15,range,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_16_mean_10,sensor_16,mean,10,float64,0,0,0,0,False,False,True,YES,Clean feature
+sensor_16_std_10,sensor_16,std,10,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_16_min_10,sensor_16,min,10,float64,0,0,0,0,False,False,True,YES,Clean feature
+sensor_16_max_10,sensor_16,max,10,float64,0,0,0,0,False,False,True,YES,Clean feature
+sensor_16_range_10,sensor_16,range,10,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_17_mean_10,sensor_17,mean,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_17_std_10,sensor_17,std,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_17_min_10,sensor_17,min,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_17_max_10,sensor_17,max,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_17_range_10,sensor_17,range,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_18_mean_10,sensor_18,mean,10,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_18_std_10,sensor_18,std,10,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_18_min_10,sensor_18,min,10,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_18_max_10,sensor_18,max,10,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_18_range_10,sensor_18,range,10,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_19_mean_10,sensor_19,mean,10,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_19_std_10,sensor_19,std,10,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_19_min_10,sensor_19,min,10,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_19_max_10,sensor_19,max,10,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_19_range_10,sensor_19,range,10,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_20_mean_10,sensor_20,mean,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_20_std_10,sensor_20,std,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_20_min_10,sensor_20,min,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_20_max_10,sensor_20,max,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_20_range_10,sensor_20,range,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_21_mean_10,sensor_21,mean,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_21_std_10,sensor_21,std,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_21_min_10,sensor_21,min,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_21_max_10,sensor_21,max,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_21_range_10,sensor_21,range,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_1_slope_10,sensor_1,slope,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_1_r2_10,sensor_1,r2,10,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_2_slope_10,sensor_2,slope,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_2_r2_10,sensor_2,r2,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_3_slope_10,sensor_3,slope,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_3_r2_10,sensor_3,r2,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_4_slope_10,sensor_4,slope,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_4_r2_10,sensor_4,r2,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_5_slope_10,sensor_5,slope,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_5_r2_10,sensor_5,r2,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_6_slope_10,sensor_6,slope,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_6_r2_10,sensor_6,r2,10,float64,1116,460,0,0,False,False,False,REQUIRES_FIX,NaN requires conversion — EXPECTED_NUMERICAL_EDGE_CASE
+sensor_7_slope_10,sensor_7,slope,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_7_r2_10,sensor_7,r2,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_8_slope_10,sensor_8,slope,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_8_r2_10,sensor_8,r2,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_9_slope_10,sensor_9,slope,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_9_r2_10,sensor_9,r2,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_10_slope_10,sensor_10,slope,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_10_r2_10,sensor_10,r2,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_11_slope_10,sensor_11,slope,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_11_r2_10,sensor_11,r2,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_12_slope_10,sensor_12,slope,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_12_r2_10,sensor_12,r2,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_13_slope_10,sensor_13,slope,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_13_r2_10,sensor_13,r2,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_14_slope_10,sensor_14,slope,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_14_r2_10,sensor_14,r2,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_15_slope_10,sensor_15,slope,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_15_r2_10,sensor_15,r2,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_16_slope_10,sensor_16,slope,10,float64,0,0,0,0,False,False,True,YES,Clean feature
+sensor_16_r2_10,sensor_16,r2,10,float64,14092,3228,0,0,False,False,False,REQUIRES_FIX,NaN requires conversion — EXPECTED_NUMERICAL_EDGE_CASE
+sensor_17_slope_10,sensor_17,slope,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_17_r2_10,sensor_17,r2,10,float64,1,1,0,0,False,False,False,REQUIRES_FIX,NaN requires conversion — EXPECTED_NUMERICAL_EDGE_CASE
+sensor_18_slope_10,sensor_18,slope,10,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_18_r2_10,sensor_18,r2,10,float64,14092,3228,0,0,False,False,False,REQUIRES_FIX,NaN requires conversion — EXPECTED_NUMERICAL_EDGE_CASE
+sensor_19_slope_10,sensor_19,slope,10,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_19_r2_10,sensor_19,r2,10,float64,14092,3228,0,0,False,False,False,REQUIRES_FIX,NaN requires conversion — EXPECTED_NUMERICAL_EDGE_CASE
+sensor_20_slope_10,sensor_20,slope,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_20_r2_10,sensor_20,r2,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_21_slope_10,sensor_21,slope,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_21_r2_10,sensor_21,r2,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_1_mean_20,sensor_1,mean,20,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_1_std_20,sensor_1,std,20,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_1_min_20,sensor_1,min,20,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_1_max_20,sensor_1,max,20,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_1_range_20,sensor_1,range,20,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_2_mean_20,sensor_2,mean,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_2_std_20,sensor_2,std,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_2_min_20,sensor_2,min,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_2_max_20,sensor_2,max,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_2_range_20,sensor_2,range,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_3_mean_20,sensor_3,mean,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_3_std_20,sensor_3,std,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_3_min_20,sensor_3,min,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_3_max_20,sensor_3,max,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_3_range_20,sensor_3,range,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_4_mean_20,sensor_4,mean,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_4_std_20,sensor_4,std,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_4_min_20,sensor_4,min,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_4_max_20,sensor_4,max,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_4_range_20,sensor_4,range,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_5_mean_20,sensor_5,mean,20,float64,0,0,0,0,False,False,True,YES,Clean feature
+sensor_5_std_20,sensor_5,std,20,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_5_min_20,sensor_5,min,20,float64,0,0,0,0,False,False,True,YES,Clean feature
+sensor_5_max_20,sensor_5,max,20,float64,0,0,0,0,False,False,True,YES,Clean feature
+sensor_5_range_20,sensor_5,range,20,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_6_mean_20,sensor_6,mean,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_6_std_20,sensor_6,std,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_6_min_20,sensor_6,min,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_6_max_20,sensor_6,max,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_6_range_20,sensor_6,range,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_7_mean_20,sensor_7,mean,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_7_std_20,sensor_7,std,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_7_min_20,sensor_7,min,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_7_max_20,sensor_7,max,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_7_range_20,sensor_7,range,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_8_mean_20,sensor_8,mean,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_8_std_20,sensor_8,std,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_8_min_20,sensor_8,min,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_8_max_20,sensor_8,max,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_8_range_20,sensor_8,range,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_9_mean_20,sensor_9,mean,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_9_std_20,sensor_9,std,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_9_min_20,sensor_9,min,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_9_max_20,sensor_9,max,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_9_range_20,sensor_9,range,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_10_mean_20,sensor_10,mean,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_10_std_20,sensor_10,std,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_10_min_20,sensor_10,min,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_10_max_20,sensor_10,max,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_10_range_20,sensor_10,range,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_11_mean_20,sensor_11,mean,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_11_std_20,sensor_11,std,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_11_min_20,sensor_11,min,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_11_max_20,sensor_11,max,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_11_range_20,sensor_11,range,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_12_mean_20,sensor_12,mean,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_12_std_20,sensor_12,std,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_12_min_20,sensor_12,min,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_12_max_20,sensor_12,max,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_12_range_20,sensor_12,range,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_13_mean_20,sensor_13,mean,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_13_std_20,sensor_13,std,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_13_min_20,sensor_13,min,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_13_max_20,sensor_13,max,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_13_range_20,sensor_13,range,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_14_mean_20,sensor_14,mean,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_14_std_20,sensor_14,std,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_14_min_20,sensor_14,min,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_14_max_20,sensor_14,max,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_14_range_20,sensor_14,range,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_15_mean_20,sensor_15,mean,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_15_std_20,sensor_15,std,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_15_min_20,sensor_15,min,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_15_max_20,sensor_15,max,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_15_range_20,sensor_15,range,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_16_mean_20,sensor_16,mean,20,float64,0,0,0,0,False,False,True,YES,Clean feature
+sensor_16_std_20,sensor_16,std,20,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_16_min_20,sensor_16,min,20,float64,0,0,0,0,False,False,True,YES,Clean feature
+sensor_16_max_20,sensor_16,max,20,float64,0,0,0,0,False,False,True,YES,Clean feature
+sensor_16_range_20,sensor_16,range,20,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_17_mean_20,sensor_17,mean,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_17_std_20,sensor_17,std,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_17_min_20,sensor_17,min,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_17_max_20,sensor_17,max,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_17_range_20,sensor_17,range,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_18_mean_20,sensor_18,mean,20,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_18_std_20,sensor_18,std,20,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_18_min_20,sensor_18,min,20,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_18_max_20,sensor_18,max,20,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_18_range_20,sensor_18,range,20,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_19_mean_20,sensor_19,mean,20,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_19_std_20,sensor_19,std,20,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_19_min_20,sensor_19,min,20,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_19_max_20,sensor_19,max,20,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_19_range_20,sensor_19,range,20,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_20_mean_20,sensor_20,mean,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_20_std_20,sensor_20,std,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_20_min_20,sensor_20,min,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_20_max_20,sensor_20,max,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_20_range_20,sensor_20,range,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_21_mean_20,sensor_21,mean,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_21_std_20,sensor_21,std,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_21_min_20,sensor_21,min,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_21_max_20,sensor_21,max,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_21_range_20,sensor_21,range,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_1_slope_20,sensor_1,slope,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_1_r2_20,sensor_1,r2,20,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_2_slope_20,sensor_2,slope,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_2_r2_20,sensor_2,r2,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_3_slope_20,sensor_3,slope,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_3_r2_20,sensor_3,r2,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_4_slope_20,sensor_4,slope,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_4_r2_20,sensor_4,r2,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_5_slope_20,sensor_5,slope,20,float64,0,0,0,0,False,False,True,YES,Clean feature
+sensor_5_r2_20,sensor_5,r2,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_6_slope_20,sensor_6,slope,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_6_r2_20,sensor_6,r2,20,float64,667,311,0,0,False,False,False,REQUIRES_FIX,NaN requires conversion — EXPECTED_NUMERICAL_EDGE_CASE
+sensor_7_slope_20,sensor_7,slope,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_7_r2_20,sensor_7,r2,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_8_slope_20,sensor_8,slope,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_8_r2_20,sensor_8,r2,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_9_slope_20,sensor_9,slope,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_9_r2_20,sensor_9,r2,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_10_slope_20,sensor_10,slope,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_10_r2_20,sensor_10,r2,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_11_slope_20,sensor_11,slope,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_11_r2_20,sensor_11,r2,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_12_slope_20,sensor_12,slope,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_12_r2_20,sensor_12,r2,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_13_slope_20,sensor_13,slope,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_13_r2_20,sensor_13,r2,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_14_slope_20,sensor_14,slope,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_14_r2_20,sensor_14,r2,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_15_slope_20,sensor_15,slope,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_15_r2_20,sensor_15,r2,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_16_slope_20,sensor_16,slope,20,float64,0,0,0,0,False,False,True,YES,Clean feature
+sensor_16_r2_20,sensor_16,r2,20,float64,14092,3228,0,0,False,False,False,REQUIRES_FIX,NaN requires conversion — EXPECTED_NUMERICAL_EDGE_CASE
+sensor_17_slope_20,sensor_17,slope,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_17_r2_20,sensor_17,r2,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_18_slope_20,sensor_18,slope,20,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_18_r2_20,sensor_18,r2,20,float64,14092,3228,0,0,False,False,False,REQUIRES_FIX,NaN requires conversion — EXPECTED_NUMERICAL_EDGE_CASE
+sensor_19_slope_20,sensor_19,slope,20,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_19_r2_20,sensor_19,r2,20,float64,14092,3228,0,0,False,False,False,REQUIRES_FIX,NaN requires conversion — EXPECTED_NUMERICAL_EDGE_CASE
+sensor_20_slope_20,sensor_20,slope,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_20_r2_20,sensor_20,r2,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_21_slope_20,sensor_21,slope,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_21_r2_20,sensor_21,r2,20,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_1_mean_30,sensor_1,mean,30,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_1_std_30,sensor_1,std,30,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_1_min_30,sensor_1,min,30,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_1_max_30,sensor_1,max,30,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_1_range_30,sensor_1,range,30,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_2_mean_30,sensor_2,mean,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_2_std_30,sensor_2,std,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_2_min_30,sensor_2,min,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_2_max_30,sensor_2,max,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_2_range_30,sensor_2,range,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_3_mean_30,sensor_3,mean,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_3_std_30,sensor_3,std,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_3_min_30,sensor_3,min,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_3_max_30,sensor_3,max,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_3_range_30,sensor_3,range,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_4_mean_30,sensor_4,mean,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_4_std_30,sensor_4,std,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_4_min_30,sensor_4,min,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_4_max_30,sensor_4,max,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_4_range_30,sensor_4,range,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_5_mean_30,sensor_5,mean,30,float64,0,0,0,0,False,False,True,YES,Clean feature
+sensor_5_std_30,sensor_5,std,30,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_5_min_30,sensor_5,min,30,float64,0,0,0,0,False,False,True,YES,Clean feature
+sensor_5_max_30,sensor_5,max,30,float64,0,0,0,0,False,False,True,YES,Clean feature
+sensor_5_range_30,sensor_5,range,30,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_6_mean_30,sensor_6,mean,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_6_std_30,sensor_6,std,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_6_min_30,sensor_6,min,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_6_max_30,sensor_6,max,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_6_range_30,sensor_6,range,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_7_mean_30,sensor_7,mean,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_7_std_30,sensor_7,std,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_7_min_30,sensor_7,min,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_7_max_30,sensor_7,max,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_7_range_30,sensor_7,range,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_8_mean_30,sensor_8,mean,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_8_std_30,sensor_8,std,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_8_min_30,sensor_8,min,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_8_max_30,sensor_8,max,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_8_range_30,sensor_8,range,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_9_mean_30,sensor_9,mean,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_9_std_30,sensor_9,std,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_9_min_30,sensor_9,min,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_9_max_30,sensor_9,max,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_9_range_30,sensor_9,range,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_10_mean_30,sensor_10,mean,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_10_std_30,sensor_10,std,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_10_min_30,sensor_10,min,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_10_max_30,sensor_10,max,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_10_range_30,sensor_10,range,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_11_mean_30,sensor_11,mean,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_11_std_30,sensor_11,std,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_11_min_30,sensor_11,min,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_11_max_30,sensor_11,max,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_11_range_30,sensor_11,range,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_12_mean_30,sensor_12,mean,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_12_std_30,sensor_12,std,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_12_min_30,sensor_12,min,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_12_max_30,sensor_12,max,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_12_range_30,sensor_12,range,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_13_mean_30,sensor_13,mean,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_13_std_30,sensor_13,std,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_13_min_30,sensor_13,min,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_13_max_30,sensor_13,max,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_13_range_30,sensor_13,range,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_14_mean_30,sensor_14,mean,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_14_std_30,sensor_14,std,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_14_min_30,sensor_14,min,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_14_max_30,sensor_14,max,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_14_range_30,sensor_14,range,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_15_mean_30,sensor_15,mean,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_15_std_30,sensor_15,std,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_15_min_30,sensor_15,min,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_15_max_30,sensor_15,max,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_15_range_30,sensor_15,range,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_16_mean_30,sensor_16,mean,30,float64,0,0,0,0,False,False,True,YES,Clean feature
+sensor_16_std_30,sensor_16,std,30,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_16_min_30,sensor_16,min,30,float64,0,0,0,0,False,False,True,YES,Clean feature
+sensor_16_max_30,sensor_16,max,30,float64,0,0,0,0,False,False,True,YES,Clean feature
+sensor_16_range_30,sensor_16,range,30,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_17_mean_30,sensor_17,mean,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_17_std_30,sensor_17,std,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_17_min_30,sensor_17,min,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_17_max_30,sensor_17,max,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_17_range_30,sensor_17,range,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_18_mean_30,sensor_18,mean,30,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_18_std_30,sensor_18,std,30,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_18_min_30,sensor_18,min,30,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_18_max_30,sensor_18,max,30,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_18_range_30,sensor_18,range,30,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_19_mean_30,sensor_19,mean,30,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_19_std_30,sensor_19,std,30,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_19_min_30,sensor_19,min,30,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_19_max_30,sensor_19,max,30,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_19_range_30,sensor_19,range,30,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_20_mean_30,sensor_20,mean,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_20_std_30,sensor_20,std,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_20_min_30,sensor_20,min,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_20_max_30,sensor_20,max,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_20_range_30,sensor_20,range,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_21_mean_30,sensor_21,mean,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_21_std_30,sensor_21,std,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_21_min_30,sensor_21,min,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_21_max_30,sensor_21,max,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_21_range_30,sensor_21,range,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_1_slope_30,sensor_1,slope,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_1_r2_30,sensor_1,r2,30,float64,14092,3228,0,0,False,False,False,REQUIRES_FIX,NaN requires conversion — EXPECTED_NUMERICAL_EDGE_CASE
+sensor_2_slope_30,sensor_2,slope,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_2_r2_30,sensor_2,r2,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_3_slope_30,sensor_3,slope,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_3_r2_30,sensor_3,r2,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_4_slope_30,sensor_4,slope,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_4_r2_30,sensor_4,r2,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_5_slope_30,sensor_5,slope,30,float64,0,0,0,0,False,False,True,YES,Clean feature
+sensor_5_r2_30,sensor_5,r2,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_6_slope_30,sensor_6,slope,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_6_r2_30,sensor_6,r2,30,float64,4786,1362,0,0,False,False,False,REQUIRES_FIX,NaN requires conversion — EXPECTED_NUMERICAL_EDGE_CASE
+sensor_7_slope_30,sensor_7,slope,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_7_r2_30,sensor_7,r2,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_8_slope_30,sensor_8,slope,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_8_r2_30,sensor_8,r2,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_9_slope_30,sensor_9,slope,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_9_r2_30,sensor_9,r2,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_10_slope_30,sensor_10,slope,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_10_r2_30,sensor_10,r2,30,float64,11707,2707,0,0,False,False,False,REQUIRES_FIX,NaN requires conversion — EXPECTED_NUMERICAL_EDGE_CASE
+sensor_11_slope_30,sensor_11,slope,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_11_r2_30,sensor_11,r2,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_12_slope_30,sensor_12,slope,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_12_r2_30,sensor_12,r2,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_13_slope_30,sensor_13,slope,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_13_r2_30,sensor_13,r2,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_14_slope_30,sensor_14,slope,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_14_r2_30,sensor_14,r2,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_15_slope_30,sensor_15,slope,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_15_r2_30,sensor_15,r2,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_16_slope_30,sensor_16,slope,30,float64,0,0,0,0,False,False,True,YES,Clean feature
+sensor_16_r2_30,sensor_16,r2,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_17_slope_30,sensor_17,slope,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_17_r2_30,sensor_17,r2,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_18_slope_30,sensor_18,slope,30,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_18_r2_30,sensor_18,r2,30,float64,14092,3228,0,0,False,False,False,REQUIRES_FIX,NaN requires conversion — EXPECTED_NUMERICAL_EDGE_CASE
+sensor_19_slope_30,sensor_19,slope,30,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_19_r2_30,sensor_19,r2,30,float64,14092,3228,0,0,False,False,False,REQUIRES_FIX,NaN requires conversion — EXPECTED_NUMERICAL_EDGE_CASE
+sensor_20_slope_30,sensor_20,slope,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_20_r2_30,sensor_20,r2,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_21_slope_30,sensor_21,slope,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_21_r2_30,sensor_21,r2,30,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_1_mean_50,sensor_1,mean,50,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_1_std_50,sensor_1,std,50,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_1_min_50,sensor_1,min,50,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_1_max_50,sensor_1,max,50,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_1_range_50,sensor_1,range,50,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_2_mean_50,sensor_2,mean,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_2_std_50,sensor_2,std,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_2_min_50,sensor_2,min,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_2_max_50,sensor_2,max,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_2_range_50,sensor_2,range,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_3_mean_50,sensor_3,mean,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_3_std_50,sensor_3,std,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_3_min_50,sensor_3,min,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_3_max_50,sensor_3,max,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_3_range_50,sensor_3,range,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_4_mean_50,sensor_4,mean,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_4_std_50,sensor_4,std,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_4_min_50,sensor_4,min,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_4_max_50,sensor_4,max,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_4_range_50,sensor_4,range,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_5_mean_50,sensor_5,mean,50,float64,0,0,0,0,False,False,True,YES,Clean feature
+sensor_5_std_50,sensor_5,std,50,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_5_min_50,sensor_5,min,50,float64,0,0,0,0,False,False,True,YES,Clean feature
+sensor_5_max_50,sensor_5,max,50,float64,0,0,0,0,False,False,True,YES,Clean feature
+sensor_5_range_50,sensor_5,range,50,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_6_mean_50,sensor_6,mean,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_6_std_50,sensor_6,std,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_6_min_50,sensor_6,min,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_6_max_50,sensor_6,max,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_6_range_50,sensor_6,range,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_7_mean_50,sensor_7,mean,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_7_std_50,sensor_7,std,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_7_min_50,sensor_7,min,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_7_max_50,sensor_7,max,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_7_range_50,sensor_7,range,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_8_mean_50,sensor_8,mean,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_8_std_50,sensor_8,std,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_8_min_50,sensor_8,min,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_8_max_50,sensor_8,max,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_8_range_50,sensor_8,range,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_9_mean_50,sensor_9,mean,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_9_std_50,sensor_9,std,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_9_min_50,sensor_9,min,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_9_max_50,sensor_9,max,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_9_range_50,sensor_9,range,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_10_mean_50,sensor_10,mean,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_10_std_50,sensor_10,std,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_10_min_50,sensor_10,min,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_10_max_50,sensor_10,max,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_10_range_50,sensor_10,range,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_11_mean_50,sensor_11,mean,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_11_std_50,sensor_11,std,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_11_min_50,sensor_11,min,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_11_max_50,sensor_11,max,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_11_range_50,sensor_11,range,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_12_mean_50,sensor_12,mean,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_12_std_50,sensor_12,std,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_12_min_50,sensor_12,min,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_12_max_50,sensor_12,max,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_12_range_50,sensor_12,range,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_13_mean_50,sensor_13,mean,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_13_std_50,sensor_13,std,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_13_min_50,sensor_13,min,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_13_max_50,sensor_13,max,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_13_range_50,sensor_13,range,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_14_mean_50,sensor_14,mean,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_14_std_50,sensor_14,std,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_14_min_50,sensor_14,min,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_14_max_50,sensor_14,max,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_14_range_50,sensor_14,range,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_15_mean_50,sensor_15,mean,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_15_std_50,sensor_15,std,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_15_min_50,sensor_15,min,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_15_max_50,sensor_15,max,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_15_range_50,sensor_15,range,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_16_mean_50,sensor_16,mean,50,float64,0,0,0,0,False,False,True,YES,Clean feature
+sensor_16_std_50,sensor_16,std,50,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_16_min_50,sensor_16,min,50,float64,0,0,0,0,False,False,True,YES,Clean feature
+sensor_16_max_50,sensor_16,max,50,float64,0,0,0,0,False,False,True,YES,Clean feature
+sensor_16_range_50,sensor_16,range,50,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_17_mean_50,sensor_17,mean,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_17_std_50,sensor_17,std,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_17_min_50,sensor_17,min,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_17_max_50,sensor_17,max,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_17_range_50,sensor_17,range,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_18_mean_50,sensor_18,mean,50,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_18_std_50,sensor_18,std,50,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_18_min_50,sensor_18,min,50,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_18_max_50,sensor_18,max,50,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_18_range_50,sensor_18,range,50,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_19_mean_50,sensor_19,mean,50,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_19_std_50,sensor_19,std,50,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_19_min_50,sensor_19,min,50,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_19_max_50,sensor_19,max,50,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_19_range_50,sensor_19,range,50,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_20_mean_50,sensor_20,mean,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_20_std_50,sensor_20,std,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_20_min_50,sensor_20,min,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_20_max_50,sensor_20,max,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_20_range_50,sensor_20,range,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_21_mean_50,sensor_21,mean,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_21_std_50,sensor_21,std,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_21_min_50,sensor_21,min,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_21_max_50,sensor_21,max,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_21_range_50,sensor_21,range,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_1_slope_50,sensor_1,slope,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_1_r2_50,sensor_1,r2,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_2_slope_50,sensor_2,slope,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_2_r2_50,sensor_2,r2,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_3_slope_50,sensor_3,slope,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_3_r2_50,sensor_3,r2,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_4_slope_50,sensor_4,slope,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_4_r2_50,sensor_4,r2,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_5_slope_50,sensor_5,slope,50,float64,0,0,0,0,False,False,True,YES,Clean feature
+sensor_5_r2_50,sensor_5,r2,50,float64,14092,3228,0,0,False,False,False,REQUIRES_FIX,NaN requires conversion — EXPECTED_NUMERICAL_EDGE_CASE
+sensor_6_slope_50,sensor_6,slope,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_6_r2_50,sensor_6,r2,50,float64,3794,1184,0,0,False,False,False,REQUIRES_FIX,NaN requires conversion — EXPECTED_NUMERICAL_EDGE_CASE
+sensor_7_slope_50,sensor_7,slope,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_7_r2_50,sensor_7,r2,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_8_slope_50,sensor_8,slope,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_8_r2_50,sensor_8,r2,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_9_slope_50,sensor_9,slope,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_9_r2_50,sensor_9,r2,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_10_slope_50,sensor_10,slope,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_10_r2_50,sensor_10,r2,50,float64,219,40,0,0,False,False,False,REQUIRES_FIX,NaN requires conversion — EXPECTED_NUMERICAL_EDGE_CASE
+sensor_11_slope_50,sensor_11,slope,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_11_r2_50,sensor_11,r2,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_12_slope_50,sensor_12,slope,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_12_r2_50,sensor_12,r2,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_13_slope_50,sensor_13,slope,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_13_r2_50,sensor_13,r2,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_14_slope_50,sensor_14,slope,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_14_r2_50,sensor_14,r2,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_15_slope_50,sensor_15,slope,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_15_r2_50,sensor_15,r2,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_16_slope_50,sensor_16,slope,50,float64,0,0,0,0,False,False,True,YES,Clean feature
+sensor_16_r2_50,sensor_16,r2,50,float64,14092,3228,0,0,False,False,False,REQUIRES_FIX,NaN requires conversion — EXPECTED_NUMERICAL_EDGE_CASE
+sensor_17_slope_50,sensor_17,slope,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_17_r2_50,sensor_17,r2,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_18_slope_50,sensor_18,slope,50,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_18_r2_50,sensor_18,r2,50,float64,14092,3228,0,0,False,False,False,REQUIRES_FIX,NaN requires conversion — EXPECTED_NUMERICAL_EDGE_CASE
+sensor_19_slope_50,sensor_19,slope,50,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_19_r2_50,sensor_19,r2,50,float64,14092,3228,0,0,False,False,False,REQUIRES_FIX,NaN requires conversion — EXPECTED_NUMERICAL_EDGE_CASE
+sensor_20_slope_50,sensor_20,slope,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_20_r2_50,sensor_20,r2,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_21_slope_50,sensor_21,slope,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_21_r2_50,sensor_21,r2,50,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_1_mean_75,sensor_1,mean,75,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_1_std_75,sensor_1,std,75,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_1_min_75,sensor_1,min,75,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_1_max_75,sensor_1,max,75,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_1_range_75,sensor_1,range,75,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_2_mean_75,sensor_2,mean,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_2_std_75,sensor_2,std,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_2_min_75,sensor_2,min,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_2_max_75,sensor_2,max,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_2_range_75,sensor_2,range,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_3_mean_75,sensor_3,mean,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_3_std_75,sensor_3,std,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_3_min_75,sensor_3,min,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_3_max_75,sensor_3,max,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_3_range_75,sensor_3,range,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_4_mean_75,sensor_4,mean,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_4_std_75,sensor_4,std,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_4_min_75,sensor_4,min,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_4_max_75,sensor_4,max,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_4_range_75,sensor_4,range,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_5_mean_75,sensor_5,mean,75,float64,0,0,0,0,False,False,True,YES,Clean feature
+sensor_5_std_75,sensor_5,std,75,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_5_min_75,sensor_5,min,75,float64,0,0,0,0,False,False,True,YES,Clean feature
+sensor_5_max_75,sensor_5,max,75,float64,0,0,0,0,False,False,True,YES,Clean feature
+sensor_5_range_75,sensor_5,range,75,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_6_mean_75,sensor_6,mean,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_6_std_75,sensor_6,std,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_6_min_75,sensor_6,min,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_6_max_75,sensor_6,max,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_6_range_75,sensor_6,range,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_7_mean_75,sensor_7,mean,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_7_std_75,sensor_7,std,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_7_min_75,sensor_7,min,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_7_max_75,sensor_7,max,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_7_range_75,sensor_7,range,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_8_mean_75,sensor_8,mean,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_8_std_75,sensor_8,std,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_8_min_75,sensor_8,min,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_8_max_75,sensor_8,max,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_8_range_75,sensor_8,range,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_9_mean_75,sensor_9,mean,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_9_std_75,sensor_9,std,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_9_min_75,sensor_9,min,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_9_max_75,sensor_9,max,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_9_range_75,sensor_9,range,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_10_mean_75,sensor_10,mean,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_10_std_75,sensor_10,std,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_10_min_75,sensor_10,min,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_10_max_75,sensor_10,max,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_10_range_75,sensor_10,range,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_11_mean_75,sensor_11,mean,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_11_std_75,sensor_11,std,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_11_min_75,sensor_11,min,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_11_max_75,sensor_11,max,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_11_range_75,sensor_11,range,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_12_mean_75,sensor_12,mean,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_12_std_75,sensor_12,std,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_12_min_75,sensor_12,min,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_12_max_75,sensor_12,max,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_12_range_75,sensor_12,range,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_13_mean_75,sensor_13,mean,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_13_std_75,sensor_13,std,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_13_min_75,sensor_13,min,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_13_max_75,sensor_13,max,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_13_range_75,sensor_13,range,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_14_mean_75,sensor_14,mean,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_14_std_75,sensor_14,std,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_14_min_75,sensor_14,min,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_14_max_75,sensor_14,max,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_14_range_75,sensor_14,range,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_15_mean_75,sensor_15,mean,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_15_std_75,sensor_15,std,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_15_min_75,sensor_15,min,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_15_max_75,sensor_15,max,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_15_range_75,sensor_15,range,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_16_mean_75,sensor_16,mean,75,float64,0,0,0,0,False,False,True,YES,Clean feature
+sensor_16_std_75,sensor_16,std,75,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_16_min_75,sensor_16,min,75,float64,0,0,0,0,False,False,True,YES,Clean feature
+sensor_16_max_75,sensor_16,max,75,float64,0,0,0,0,False,False,True,YES,Clean feature
+sensor_16_range_75,sensor_16,range,75,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_17_mean_75,sensor_17,mean,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_17_std_75,sensor_17,std,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_17_min_75,sensor_17,min,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_17_max_75,sensor_17,max,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_17_range_75,sensor_17,range,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_18_mean_75,sensor_18,mean,75,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_18_std_75,sensor_18,std,75,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_18_min_75,sensor_18,min,75,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_18_max_75,sensor_18,max,75,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_18_range_75,sensor_18,range,75,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_19_mean_75,sensor_19,mean,75,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_19_std_75,sensor_19,std,75,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_19_min_75,sensor_19,min,75,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_19_max_75,sensor_19,max,75,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_19_range_75,sensor_19,range,75,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_20_mean_75,sensor_20,mean,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_20_std_75,sensor_20,std,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_20_min_75,sensor_20,min,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_20_max_75,sensor_20,max,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_20_range_75,sensor_20,range,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_21_mean_75,sensor_21,mean,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_21_std_75,sensor_21,std,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_21_min_75,sensor_21,min,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_21_max_75,sensor_21,max,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_21_range_75,sensor_21,range,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_1_slope_75,sensor_1,slope,75,float64,0,0,0,0,False,False,True,YES,Clean feature
+sensor_1_r2_75,sensor_1,r2,75,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_2_slope_75,sensor_2,slope,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_2_r2_75,sensor_2,r2,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_3_slope_75,sensor_3,slope,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_3_r2_75,sensor_3,r2,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_4_slope_75,sensor_4,slope,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_4_r2_75,sensor_4,r2,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_5_slope_75,sensor_5,slope,75,float64,0,0,0,0,False,False,True,YES,Clean feature
+sensor_5_r2_75,sensor_5,r2,75,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_6_slope_75,sensor_6,slope,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_6_r2_75,sensor_6,r2,75,float64,2921,1108,0,0,False,False,False,REQUIRES_FIX,NaN requires conversion — EXPECTED_NUMERICAL_EDGE_CASE
+sensor_7_slope_75,sensor_7,slope,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_7_r2_75,sensor_7,r2,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_8_slope_75,sensor_8,slope,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_8_r2_75,sensor_8,r2,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_9_slope_75,sensor_9,slope,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_9_r2_75,sensor_9,r2,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_10_slope_75,sensor_10,slope,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_10_r2_75,sensor_10,r2,75,float64,20,0,0,0,False,False,False,REQUIRES_FIX,NaN requires conversion — EXPECTED_NUMERICAL_EDGE_CASE
+sensor_11_slope_75,sensor_11,slope,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_11_r2_75,sensor_11,r2,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_12_slope_75,sensor_12,slope,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_12_r2_75,sensor_12,r2,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_13_slope_75,sensor_13,slope,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_13_r2_75,sensor_13,r2,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_14_slope_75,sensor_14,slope,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_14_r2_75,sensor_14,r2,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_15_slope_75,sensor_15,slope,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_15_r2_75,sensor_15,r2,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_16_slope_75,sensor_16,slope,75,float64,0,0,0,0,False,False,True,YES,Clean feature
+sensor_16_r2_75,sensor_16,r2,75,float64,14092,3228,0,0,False,False,False,REQUIRES_FIX,NaN requires conversion — EXPECTED_NUMERICAL_EDGE_CASE
+sensor_17_slope_75,sensor_17,slope,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_17_r2_75,sensor_17,r2,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_18_slope_75,sensor_18,slope,75,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_18_r2_75,sensor_18,r2,75,float64,14092,3228,0,0,False,False,False,REQUIRES_FIX,NaN requires conversion — EXPECTED_NUMERICAL_EDGE_CASE
+sensor_19_slope_75,sensor_19,slope,75,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_19_r2_75,sensor_19,r2,75,float64,14092,3228,0,0,False,False,False,REQUIRES_FIX,NaN requires conversion — EXPECTED_NUMERICAL_EDGE_CASE
+sensor_20_slope_75,sensor_20,slope,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_20_r2_75,sensor_20,r2,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_21_slope_75,sensor_21,slope,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_21_r2_75,sensor_21,r2,75,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_1_delta_1,sensor_1,delta,1,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_1_delta_5,sensor_1,delta,5,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_1_delta_10,sensor_1,delta,10,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_2_delta_1,sensor_2,delta,1,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_2_delta_5,sensor_2,delta,5,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_2_delta_10,sensor_2,delta,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_3_delta_1,sensor_3,delta,1,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_3_delta_5,sensor_3,delta,5,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_3_delta_10,sensor_3,delta,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_4_delta_1,sensor_4,delta,1,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_4_delta_5,sensor_4,delta,5,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_4_delta_10,sensor_4,delta,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_5_delta_1,sensor_5,delta,1,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_5_delta_5,sensor_5,delta,5,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_5_delta_10,sensor_5,delta,10,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_6_delta_1,sensor_6,delta,1,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_6_delta_5,sensor_6,delta,5,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_6_delta_10,sensor_6,delta,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_7_delta_1,sensor_7,delta,1,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_7_delta_5,sensor_7,delta,5,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_7_delta_10,sensor_7,delta,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_8_delta_1,sensor_8,delta,1,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_8_delta_5,sensor_8,delta,5,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_8_delta_10,sensor_8,delta,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_9_delta_1,sensor_9,delta,1,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_9_delta_5,sensor_9,delta,5,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_9_delta_10,sensor_9,delta,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_10_delta_1,sensor_10,delta,1,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_10_delta_5,sensor_10,delta,5,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_10_delta_10,sensor_10,delta,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_11_delta_1,sensor_11,delta,1,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_11_delta_5,sensor_11,delta,5,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_11_delta_10,sensor_11,delta,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_12_delta_1,sensor_12,delta,1,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_12_delta_5,sensor_12,delta,5,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_12_delta_10,sensor_12,delta,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_13_delta_1,sensor_13,delta,1,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_13_delta_5,sensor_13,delta,5,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_13_delta_10,sensor_13,delta,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_14_delta_1,sensor_14,delta,1,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_14_delta_5,sensor_14,delta,5,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_14_delta_10,sensor_14,delta,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_15_delta_1,sensor_15,delta,1,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_15_delta_5,sensor_15,delta,5,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_15_delta_10,sensor_15,delta,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_16_delta_1,sensor_16,delta,1,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_16_delta_5,sensor_16,delta,5,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_16_delta_10,sensor_16,delta,10,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_17_delta_1,sensor_17,delta,1,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_17_delta_5,sensor_17,delta,5,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_17_delta_10,sensor_17,delta,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_18_delta_1,sensor_18,delta,1,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_18_delta_5,sensor_18,delta,5,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_18_delta_10,sensor_18,delta,10,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_19_delta_1,sensor_19,delta,1,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_19_delta_5,sensor_19,delta,5,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_19_delta_10,sensor_19,delta,10,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_20_delta_1,sensor_20,delta,1,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_20_delta_5,sensor_20,delta,5,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_20_delta_10,sensor_20,delta,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_21_delta_1,sensor_21,delta,1,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_21_delta_5,sensor_21,delta,5,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_21_delta_10,sensor_21,delta,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_1_relchange_5,sensor_1,relchange,5,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_1_relchange_10,sensor_1,relchange,10,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_2_relchange_5,sensor_2,relchange,5,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_2_relchange_10,sensor_2,relchange,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_3_relchange_5,sensor_3,relchange,5,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_3_relchange_10,sensor_3,relchange,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_4_relchange_5,sensor_4,relchange,5,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_4_relchange_10,sensor_4,relchange,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_5_relchange_5,sensor_5,relchange,5,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_5_relchange_10,sensor_5,relchange,10,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_6_relchange_5,sensor_6,relchange,5,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_6_relchange_10,sensor_6,relchange,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_7_relchange_5,sensor_7,relchange,5,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_7_relchange_10,sensor_7,relchange,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_8_relchange_5,sensor_8,relchange,5,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_8_relchange_10,sensor_8,relchange,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_9_relchange_5,sensor_9,relchange,5,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_9_relchange_10,sensor_9,relchange,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_10_relchange_5,sensor_10,relchange,5,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_10_relchange_10,sensor_10,relchange,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_11_relchange_5,sensor_11,relchange,5,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_11_relchange_10,sensor_11,relchange,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_12_relchange_5,sensor_12,relchange,5,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_12_relchange_10,sensor_12,relchange,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_13_relchange_5,sensor_13,relchange,5,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_13_relchange_10,sensor_13,relchange,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_14_relchange_5,sensor_14,relchange,5,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_14_relchange_10,sensor_14,relchange,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_15_relchange_5,sensor_15,relchange,5,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_15_relchange_10,sensor_15,relchange,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_16_relchange_5,sensor_16,relchange,5,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_16_relchange_10,sensor_16,relchange,10,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_17_relchange_5,sensor_17,relchange,5,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_17_relchange_10,sensor_17,relchange,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_18_relchange_5,sensor_18,relchange,5,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_18_relchange_10,sensor_18,relchange,10,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_19_relchange_5,sensor_19,relchange,5,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_19_relchange_10,sensor_19,relchange,10,float64,0,0,0,0,True,True,True,NO,Constant in both train and validation — zero information content
+sensor_20_relchange_5,sensor_20,relchange,5,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_20_relchange_10,sensor_20,relchange,10,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_21_relchange_5,sensor_21,relchange,5,float64,0,0,0,0,False,False,False,YES,Clean feature
+sensor_21_relchange_10,sensor_21,relchange,10,float64,0,0,0,0,False,False,False,YES,Clean feature
