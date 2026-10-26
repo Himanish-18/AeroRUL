@@ -1,0 +1,26 @@
+{
+  "dataset": "FD003",
+  "model_family": "LightGBM",
+  "hyperparameters": {
+    "n_estimators": 400,
+    "learning_rate": 0.05061465312788663,
+    "num_leaves": 29,
+    "max_depth": 4,
+    "min_child_samples": 50,
+    "subsample": 0.8810796931031994,
+    "colsample_bytree": 0.986877477258843,
+    "reg_alpha": 3.081058697314519,
+    "reg_lambda": 0.10217558699708898,
+    "subsample_freq": 1,
+    "random_state": 42,
+    "n_jobs": -1,
+    "verbose": -1
+  },
+  "feature_configuration": "ALL_WINDOWS",
+  "n_features": 681,
+  "target_cap": "None",
+  "n_training_engines": 100,
+  "n_training_rows": 24720,
+  "training_duration_seconds": 17.8,
+  "timestamp": "2026-10-27 00:38:19"
+}

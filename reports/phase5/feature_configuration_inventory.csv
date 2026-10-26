@@ -1,0 +1,25 @@
+dataset,feature_configuration,feature_count,feature_families,window_sizes,shared_deltas_included,earliest_usable_cycle_full,earliest_usable_cycle_partial
+FD001,ALL_WINDOWS,670,delta; max; mean; min; r2; range; relchange; slope; std,10; 20; 30; 50; 75,True,75,1
+FD001,W10,194,delta; max; mean; min; r2; range; relchange; slope; std,10,True,10,1
+FD001,W20,195,delta; max; mean; min; r2; range; relchange; slope; std,20,True,20,1
+FD001,W30,194,delta; max; mean; min; r2; range; relchange; slope; std,30,True,30,1
+FD001,W50,194,delta; max; mean; min; r2; range; relchange; slope; std,50,True,50,1
+FD001,W75,193,delta; max; mean; min; r2; range; relchange; slope; std,75,True,75,1
+FD002,ALL_WINDOWS,776,delta; max; mean; min; r2; range; relchange; slope; std,10; 20; 30; 50; 75,True,75,1
+FD002,W10,235,delta; max; mean; min; r2; range; relchange; slope; std,10,True,10,1
+FD002,W20,237,delta; max; mean; min; r2; range; relchange; slope; std,20,True,20,1
+FD002,W30,237,delta; max; mean; min; r2; range; relchange; slope; std,30,True,30,1
+FD002,W50,236,delta; max; mean; min; r2; range; relchange; slope; std,50,True,50,1
+FD002,W75,231,delta; max; mean; min; r2; range; relchange; slope; std,75,True,75,1
+FD003,ALL_WINDOWS,681,delta; max; mean; min; r2; range; relchange; slope; std,10; 20; 30; 50; 75,True,75,1
+FD003,W10,200,delta; max; mean; min; r2; range; relchange; slope; std,10,True,10,1
+FD003,W20,201,delta; max; mean; min; r2; range; relchange; slope; std,20,True,20,1
+FD003,W30,201,delta; max; mean; min; r2; range; relchange; slope; std,30,True,30,1
+FD003,W50,200,delta; max; mean; min; r2; range; relchange; slope; std,50,True,50,1
+FD003,W75,199,delta; max; mean; min; r2; range; relchange; slope; std,75,True,75,1
+FD004,ALL_WINDOWS,768,delta; max; mean; min; r2; range; relchange; slope; std,10; 20; 30; 50; 75,True,75,1
+FD004,W10,235,delta; max; mean; min; r2; range; relchange; slope; std,10,True,10,1
+FD004,W20,235,delta; max; mean; min; r2; range; relchange; slope; std,20,True,20,1
+FD004,W30,234,delta; max; mean; min; r2; range; relchange; slope; std,30,True,30,1
+FD004,W50,233,delta; max; mean; min; r2; range; relchange; slope; std,50,True,50,1
+FD004,W75,231,delta; max; mean; min; r2; range; relchange; slope; std,75,True,75,1

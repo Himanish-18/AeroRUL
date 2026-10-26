@@ -1,0 +1,179 @@
+{
+  "manifest_version": "1.0",
+  "frozen_timestamp": "2026-10-27 00:35:50",
+  "project": "AeroRUL",
+  "phase": "Phase 5: Hyperparameter Tuning & Final Model Selection",
+  "random_seed": 42,
+  "selected_configurations": {
+    "FD001": {
+      "dataset": "FD001",
+      "model_family": "LightGBM",
+      "hyperparameters": {
+        "n_estimators": 400,
+        "learning_rate": 0.049607432618204175,
+        "num_leaves": 30,
+        "max_depth": 4,
+        "min_child_samples": 30,
+        "subsample": 0.8084932353340201,
+        "colsample_bytree": 0.8208781805340754,
+        "reg_alpha": 3.1204176358618265,
+        "reg_lambda": 0.12017526028727755,
+        "subsample_freq": 1,
+        "random_state": 42,
+        "n_jobs": -1,
+        "verbose": -1
+      },
+      "feature_configuration": "ALL_WINDOWS",
+      "target_cap": "150",
+      "output_constraint": "nonnegative_and_cap_150",
+      "needs_scaling": false,
+      "inner_cv_scores": {
+        "engine_macro_mae": 14.255805022767953,
+        "pooled_mae": 14.958782719651104,
+        "pooled_rmse": 23.647052692694704,
+        "nasa_score_mean": 121.8121683468445
+      },
+      "development_validation_scores": {
+        "engine_macro_mae": 11.721586486681357,
+        "pooled_mae": 11.798773427377235,
+        "pooled_rmse": 18.310185478354747,
+        "nasa_score_sum": 1242.2484845851216
+      },
+      "n_features": 670,
+      "feature_generation_mode": "partial_history_causal",
+      "random_seed": 42,
+      "tuning_study_identifier": "optuna_tpe_cv3_FD001_LightGBM",
+      "selection_metric": "inner_cv_engine_macro_mae"
+    },
+    "FD002": {
+      "dataset": "FD002",
+      "model_family": "LightGBM",
+      "hyperparameters": {
+        "n_estimators": 400,
+        "learning_rate": 0.04804136265103098,
+        "num_leaves": 57,
+        "max_depth": 10,
+        "min_child_samples": 33,
+        "subsample": 0.8868629796025166,
+        "colsample_bytree": 0.6967336125376358,
+        "reg_alpha": 2.6467347330792736,
+        "reg_lambda": 2.1809232482834475,
+        "subsample_freq": 1,
+        "random_state": 42,
+        "n_jobs": -1,
+        "verbose": -1
+      },
+      "feature_configuration": "W75",
+      "target_cap": "150",
+      "output_constraint": "nonnegative_and_cap_150",
+      "needs_scaling": false,
+      "inner_cv_scores": {
+        "engine_macro_mae": 16.897016837802312,
+        "pooled_mae": 17.664128663745146,
+        "pooled_rmse": 26.850121519908033,
+        "nasa_score_mean": 228.13369723936785
+      },
+      "development_validation_scores": {
+        "engine_macro_mae": 16.646809699297286,
+        "pooled_mae": 16.71030917353974,
+        "pooled_rmse": 24.552345914741828,
+        "nasa_score_sum": 9459.568851660903
+      },
+      "n_features": 231,
+      "feature_generation_mode": "partial_history_causal",
+      "random_seed": 42,
+      "tuning_study_identifier": "optuna_tpe_cv3_FD002_LightGBM",
+      "selection_metric": "inner_cv_engine_macro_mae"
+    },
+    "FD003": {
+      "dataset": "FD003",
+      "model_family": "LightGBM",
+      "hyperparameters": {
+        "n_estimators": 400,
+        "learning_rate": 0.05061465312788663,
+        "num_leaves": 29,
+        "max_depth": 4,
+        "min_child_samples": 50,
+        "subsample": 0.8810796931031994,
+        "colsample_bytree": 0.986877477258843,
+        "reg_alpha": 3.081058697314519,
+        "reg_lambda": 0.10217558699708898,
+        "subsample_freq": 1,
+        "random_state": 42,
+        "n_jobs": -1,
+        "verbose": -1
+      },
+      "feature_configuration": "ALL_WINDOWS",
+      "target_cap": "None",
+      "output_constraint": "nonnegative_clip",
+      "needs_scaling": false,
+      "inner_cv_scores": {
+        "engine_macro_mae": 25.983284790550442,
+        "pooled_mae": 28.893736812543228,
+        "pooled_rmse": 45.54183758865756,
+        "nasa_score_mean": 1672000.2412452754
+      },
+      "development_validation_scores": {
+        "engine_macro_mae": 21.598278512201496,
+        "pooled_mae": 23.824293940550344,
+        "pooled_rmse": 40.07558296009807,
+        "nasa_score_sum": 1448705.0929232528
+      },
+      "n_features": 681,
+      "feature_generation_mode": "partial_history_causal",
+      "random_seed": 42,
+      "tuning_study_identifier": "optuna_tpe_cv3_FD003_LightGBM",
+      "selection_metric": "inner_cv_engine_macro_mae"
+    },
+    "FD004": {
+      "dataset": "FD004",
+      "model_family": "LightGBM",
+      "hyperparameters": {
+        "n_estimators": 400,
+        "learning_rate": 0.04408163974206116,
+        "num_leaves": 32,
+        "max_depth": 6,
+        "min_child_samples": 11,
+        "subsample": 0.723978303277215,
+        "colsample_bytree": 0.6939124910280509,
+        "reg_alpha": 3.0056722142271526,
+        "reg_lambda": 1.9348588155166255,
+        "subsample_freq": 1,
+        "random_state": 42,
+        "n_jobs": -1,
+        "verbose": -1
+      },
+      "feature_configuration": "ALL_WINDOWS",
+      "target_cap": "None",
+      "output_constraint": "nonnegative_clip",
+      "needs_scaling": false,
+      "inner_cv_scores": {
+        "engine_macro_mae": 25.599905875492635,
+        "pooled_mae": 26.969884682546773,
+        "pooled_rmse": 40.73310884112022,
+        "nasa_score_mean": 130681.10323082555
+      },
+      "development_validation_scores": {
+        "engine_macro_mae": 27.632406877572542,
+        "pooled_mae": 29.98435178027424,
+        "pooled_rmse": 45.140967816781625,
+        "nasa_score_sum": 15781299.597522682
+      },
+      "n_features": 768,
+      "feature_generation_mode": "partial_history_causal",
+      "random_seed": 42,
+      "tuning_study_identifier": "optuna_tpe_cv3_FD004_LightGBM",
+      "selection_metric": "inner_cv_engine_macro_mae"
+    }
+  },
+  "system_metadata": {
+    "python_version": "3.11.2",
+    "package_versions": {
+      "optuna": "4.6.0",
+      "lightgbm": "lightgbm",
+      "xgboost": "xgboost",
+      "joblib": "1.5.2"
+    },
+    "platform": "win32"
+  }
+}
