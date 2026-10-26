@@ -135,6 +135,7 @@ def extract_simulated_truncations(
                 row_dict["cutoff_cycle"] = int(c)
                 row_dict["actual_terminal_cycle"] = int(terminal_cycle)
                 row_dict["cutoff_schedule_id"] = schedule_id
+                row_dict["original_val_index"] = int(idx)
                 eligible_rows.append(row_dict)
 
     if not eligible_rows:
@@ -142,6 +143,19 @@ def extract_simulated_truncations(
 
     trunc_df = pd.DataFrame(eligible_rows)
     return trunc_df.sort_values(["unit_id", "cycle"]).reset_index(drop=True)
+
+
+def prepare_truncation_matrices(
+    trunc_df: pd.DataFrame,
+    usable_features: list[str],
+) -> tuple[np.ndarray, np.ndarray]:
+    """
+    Extract clean feature matrix and actual RUL targets directly from trunc_df.
+    Guarantees 1-to-1 row alignment between features, target, unit_id, and cutoff_cycle.
+    """
+    X_trunc = np.nan_to_num(trunc_df[usable_features].values.copy(), nan=0.0)
+    y_trunc = trunc_df["rul"].values.copy().astype(float)
+    return X_trunc, y_trunc
 
 
 # ═══════════════════════════════════════════════════════════════════════════

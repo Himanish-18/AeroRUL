@@ -55,6 +55,7 @@ from src.run_phase4_benchmark import (
 from src.truncation import (
     compute_training_cutoffs,
     extract_simulated_truncations,
+    prepare_truncation_matrices,
     compute_cutoff_coverage,
     engine_cluster_bootstrap,
     evaluate_simulated_endpoints,
@@ -178,16 +179,12 @@ def run_phase4_1_benchmark():
         usable_features = [f for f in approved if f in train_df.columns]
         cutoffs = cutoff_schedules[subset]
 
-        # Prepare full train and val matrices (leakage-safe)
-        X_train, X_val, y_train, y_val = prepare_clean_features(train_df, val_df, usable_features)
+        # Prepare clean feature matrices: train strictly on train_df, val strictly from trunc_df
+        X_train, _, y_train, _ = prepare_clean_features(train_df, train_df, usable_features)
 
-        # Pre-extract simulated truncation indices from val_df
+        # Pre-extract simulated truncation feature matrix from trunc_meta_df
         trunc_meta_df = extract_simulated_truncations(val_df, cutoffs, schedule_id=SCHEDULE_ID)
-        trunc_indices = trunc_meta_df.index.values
-
-        # Feature matrix for simulated cutoffs
-        X_val_trunc = X_val[trunc_indices]
-        y_val_trunc = y_val[trunc_indices]
+        X_val_trunc, y_val_trunc = prepare_truncation_matrices(trunc_meta_df, usable_features)
 
         for model_name, config in ALL_MODEL_CONFIGS.items():
             print(f"  Training {model_name:18s} ...", end=" ", flush=True)
@@ -314,12 +311,9 @@ def run_phase4_1_benchmark():
         usable_features = [f for f in approved if f in train_df.columns]
         cutoffs = cutoff_schedules[subset]
 
-        X_train, X_val, y_train_orig, y_val = prepare_clean_features(train_df, val_df, usable_features)
+        X_train, _, y_train_orig, _ = prepare_clean_features(train_df, train_df, usable_features)
         trunc_meta_df = extract_simulated_truncations(val_df, cutoffs, schedule_id=SCHEDULE_ID)
-        trunc_indices = trunc_meta_df.index.values
-
-        X_val_trunc = X_val[trunc_indices]
-        y_val_trunc_uncapped = y_val[trunc_indices]
+        X_val_trunc, y_val_trunc_uncapped = prepare_truncation_matrices(trunc_meta_df, usable_features)
 
         for model_name in top_models:
             config = ALL_MODEL_CONFIGS[model_name]
@@ -393,7 +387,6 @@ def run_phase4_1_benchmark():
         cutoffs = cutoff_schedules[subset]
 
         trunc_meta_df = extract_simulated_truncations(val_df, cutoffs, schedule_id=SCHEDULE_ID)
-        trunc_indices = trunc_meta_df.index.values
 
         for w in window_sizes:
             w_label = f"W={w}" if w is not None else "All"
@@ -401,9 +394,8 @@ def run_phase4_1_benchmark():
             if not w_features:
                 continue
 
-            X_tr_w, X_v_w, y_tr_w, y_v_w = prepare_clean_features(train_df, val_df, w_features)
-            X_v_trunc_w = X_v_w[trunc_indices]
-            y_v_trunc_w = y_v_w[trunc_indices]
+            X_tr_w, _, y_tr_w, _ = prepare_clean_features(train_df, train_df, w_features)
+            X_v_trunc_w, y_v_trunc_w = prepare_truncation_matrices(trunc_meta_df, w_features)
 
             fit_start = time.time()
             _, _, p_raw, _ = train_and_predict(
