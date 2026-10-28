@@ -1,0 +1,5 @@
+dataset,official_engines_expected,official_engines_predicted,unique_engines_predicted,min_observed_cycle,max_observed_cycle,engines_with_lt_75_cycles,partial_history_coverage_pct,silent_drops_count,coverage_status,audit_verdict
+FD001,100,100,100,31,303,20,100.0,0,FULL_COVERAGE_100_PCT,100% coverage achieved (100/100). Causal partial-history mode successfully represented 20 test engines that had <75 cycles (minimum cycle 31). Zero NaNs or lookaheads.
+FD002,259,259,259,21,367,59,100.0,0,FULL_COVERAGE_100_PCT,100% coverage achieved (259/259). Causal partial-history mode successfully represented 59 test engines that had <75 cycles (minimum cycle 21). Zero NaNs or lookaheads.
+FD003,100,100,100,38,475,11,100.0,0,FULL_COVERAGE_100_PCT,100% coverage achieved (100/100). Causal partial-history mode successfully represented 11 test engines that had <75 cycles (minimum cycle 38). Zero NaNs or lookaheads.
+FD004,248,248,248,19,486,41,100.0,0,FULL_COVERAGE_100_PCT,100% coverage achieved (248/248). Causal partial-history mode successfully represented 41 test engines that had <75 cycles (minimum cycle 19). Zero NaNs or lookaheads.

@@ -1,0 +1,19 @@
+artifact_path,role,exists,size_bytes,status
+reports/phase5/phase5_summary.md,Historical Phase 5 evaluation summary report,True,13417,VERIFIED
+reports/phase5/final_model_manifest.json,Frozen model selection manifest before test evaluation,True,6113,VERIFIED
+reports/phase5/final_test_predictions.csv,Unit-level official test predictions and ground truth,True,82210,VERIFIED
+reports/phase5/final_test_metrics.csv,Official test evaluation summary metrics,True,882,VERIFIED
+reports/phase5/hyperparameter_search_results.csv,Optuna hyperparameter tuning search history,True,47009,VERIFIED
+reports/phase5/cross_validation_metrics.csv,Inner 3-fold grouped cross-validation benchmark results,True,3581,VERIFIED
+reports/phase5/development_validation_metrics.csv,Stage B development validation comparison results,True,4093,VERIFIED
+reports/phase5/target_cap_sensitivity.csv,Target cap ablation metrics across candidate caps,True,5070,VERIFIED
+reports/phase5/window_ablation_metrics.csv,Window configuration ablation metrics across window sizes,True,4683,VERIFIED
+reports/phase5/feature_configuration_inventory.csv,Approved feature inventory by window configuration,True,2267,VERIFIED
+reports/phase5/test_endpoint_feature_availability.csv,Test engine history length and feature availability audit,True,272887,VERIFIED
+notebooks/05_hyperparameter_tuning_and_final_evaluation.ipynb,Phase 5 interactive reproducible walkthrough,True,1928416,VERIFIED
+models/final/FD001/model.joblib,Frozen trained model artifact for FD001,True,630077,VERIFIED
+models/final/FD002/model.joblib,Frozen trained model artifact for FD002,True,2104468,VERIFIED
+models/final/FD003/model.joblib,Frozen trained model artifact for FD003,True,545411,VERIFIED
+models/final/FD004/model.joblib,Frozen trained model artifact for FD004,True,1243159,VERIFIED
+models/final/FD002/norm_params.json,Condition-normalization parameters for FD002,True,10029,VERIFIED
+models/final/FD004/norm_params.json,Condition-normalization parameters for FD004,True,10051,VERIFIED
