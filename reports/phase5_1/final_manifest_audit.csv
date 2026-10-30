@@ -1,5 +1,5 @@
-dataset,manifest_model,saved_model,manifest_target_cap,reported_target_cap,manifest_feature_config,reported_feature_config,feature_schema_match,preprocessing_match,parameter_match,prediction_artifact_match,status,notes
-FD001,LightGBM,LGBMRegressor,150,150,ALL_WINDOWS,ALL_WINDOWS,True,True,True,True,VERIFIED,Trained on 100 engines (20631 rows) with 670 features in 13.06s.
-FD002,LightGBM,LGBMRegressor,150,150,W75,W75,True,True,True,True,VERIFIED,Trained on 260 engines (53759 rows) with 231 features in 22.34s.
-FD003,LightGBM,LGBMRegressor,None,None,ALL_WINDOWS,ALL_WINDOWS,True,True,True,True,VERIFIED,Trained on 100 engines (24720 rows) with 681 features in 17.8s.
-FD004,LightGBM,LGBMRegressor,None,None,ALL_WINDOWS,ALL_WINDOWS,True,True,True,True,VERIFIED,Trained on 249 engines (61249 rows) with 768 features in 45.44s.
+dataset,manifest_model,saved_model,manifest_target_cap,reported_target_cap,manifest_feature_config,reported_feature_config,n_features,feature_schema_match,preprocessing_match,parameter_match,prediction_artifact_match,status,notes
+FD001,LightGBM,LGBMRegressor,150,150,ALL_WINDOWS,ALL_WINDOWS,670,True,True,True,True,VERIFIED,Trained on 100 engines (20631 rows) with 670 features in 13.06s.
+FD002,LightGBM,LGBMRegressor,150,150,W75,W75,231,True,True,True,True,VERIFIED,Trained on 260 engines (53759 rows) with 231 features in 22.34s.
+FD003,LightGBM,LGBMRegressor,None,None,ALL_WINDOWS,ALL_WINDOWS,681,True,True,True,True,VERIFIED,Trained on 100 engines (24720 rows) with 681 features in 17.8s.
+FD004,LightGBM,LGBMRegressor,None,None,ALL_WINDOWS,ALL_WINDOWS,768,True,True,True,True,VERIFIED,Trained on 249 engines (61249 rows) with 768 features in 45.44s.
