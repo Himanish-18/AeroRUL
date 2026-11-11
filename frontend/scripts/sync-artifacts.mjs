@@ -77,3 +77,4 @@ for (const filename of ARTIFACT_ALLOWLIST) {
 }
 
 console.log(`[sync-artifacts] Successfully synchronized ${syncCount}/${ARTIFACT_ALLOWLIST.length} artifacts.`);
+

@@ -141,7 +141,7 @@ export const ActualVsPredictedScatter: React.FC<ActualVsPredictedScatterProps> =
       <div style={{ width: '100%', height: '380px', position: 'relative' }}>
         <ResponsiveContainer width="100%" height="100%">
           <ScatterChart
-            margin={{ top: 16, right: 24, bottom: 24, left: 16 }}
+            margin={{ top: 16, right: 32, bottom: 28, left: 16 }}
             onClick={(e) => {
               if (e && e.activePayload && e.activePayload.length > 0) {
                 const rec = e.activePayload[0].payload as PredictionRecord;
@@ -157,14 +157,13 @@ export const ActualVsPredictedScatter: React.FC<ActualVsPredictedScatterProps> =
               type="number"
               dataKey="x"
               name="Actual RUL"
-              unit=" cycles"
               domain={domain}
               tick={{ fill: 'var(--color-muted)', fontSize: 12, fontFamily: 'var(--font-outlier)' }}
               stroke="var(--color-rule-2)"
               label={{
-                value: 'Actual RUL (official ground truth cycles)',
+                value: 'Actual RUL (cycles)',
                 position: 'insideBottom',
-                offset: -12,
+                offset: -14,
                 fill: 'var(--color-muted)',
                 fontSize: 12,
               }}
@@ -174,15 +173,16 @@ export const ActualVsPredictedScatter: React.FC<ActualVsPredictedScatterProps> =
               type="number"
               dataKey="y"
               name="Predicted RUL"
-              unit=" cycles"
               domain={domain}
+              width={65}
               tick={{ fill: 'var(--color-muted)', fontSize: 12, fontFamily: 'var(--font-outlier)' }}
               stroke="var(--color-rule-2)"
               label={{
-                value: 'Predicted RUL (LightGBM cycles)',
+                value: 'Predicted RUL (cycles)',
                 angle: -90,
                 position: 'insideLeft',
-                offset: 4,
+                offset: 12,
+                style: { textAnchor: 'middle' },
                 fill: 'var(--color-muted)',
                 fontSize: 12,
               }}
@@ -229,3 +229,4 @@ export const ActualVsPredictedScatter: React.FC<ActualVsPredictedScatterProps> =
     </div>
   );
 };
+

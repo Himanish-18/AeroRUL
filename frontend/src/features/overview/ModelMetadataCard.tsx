@@ -163,3 +163,4 @@ export const ModelMetadataCard: React.FC<ModelMetadataCardProps> = ({
     </div>
   );
 };
+

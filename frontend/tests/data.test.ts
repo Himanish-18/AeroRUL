@@ -223,3 +223,4 @@ describe('AeroRUL Data Integration & Contract Verification', () => {
     expect(domain[1]).toBeGreaterThanOrEqual(140);
   });
 });
+
