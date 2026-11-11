@@ -55,14 +55,19 @@ export const EnginePredictionTable: React.FC<EnginePredictionTableProps> = ({
     return processedData.slice(start, start + pageSize);
   }, [processedData, currentPage]);
 
+  const getAriaSort = (field: SortField): 'ascending' | 'descending' | 'none' => {
+    if (sortField !== field) return 'none';
+    return sortDirection === 'asc' ? 'ascending' : 'descending';
+  };
+
   const renderSortIcon = (field: SortField) => {
     if (sortField !== field) {
-      return <ArrowUpDown size={12} color="var(--color-rule-2)" />;
+      return <ArrowUpDown size={12} color="var(--color-rule-2)" aria-hidden="true" />;
     }
     return sortDirection === 'asc' ? (
-      <ArrowUp size={12} color="var(--color-accent)" />
+      <ArrowUp size={12} color="var(--color-accent)" aria-hidden="true" />
     ) : (
-      <ArrowDown size={12} color="var(--color-accent)" />
+      <ArrowDown size={12} color="var(--color-accent)" aria-hidden="true" />
     );
   };
 
@@ -127,41 +132,76 @@ export const EnginePredictionTable: React.FC<EnginePredictionTableProps> = ({
           <table className="data-table">
             <thead>
               <tr>
-                <th onClick={() => handleSort('unit_id')} style={{ cursor: 'pointer' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <th aria-sort={getAriaSort('unit_id')}>
+                  <button
+                    type="button"
+                    className="table-sort-btn"
+                    onClick={() => handleSort('unit_id')}
+                    aria-label={`Sort by Engine ID, currently ${getAriaSort('unit_id')}`}
+                  >
                     <span>Engine ID</span>
                     {renderSortIcon('unit_id')}
-                  </div>
+                  </button>
                 </th>
-                <th onClick={() => handleSort('last_observed_cycle')} style={{ cursor: 'pointer', textAlign: 'right' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '6px' }}>
+                <th aria-sort={getAriaSort('last_observed_cycle')} style={{ textAlign: 'right' }}>
+                  <button
+                    type="button"
+                    className="table-sort-btn"
+                    onClick={() => handleSort('last_observed_cycle')}
+                    aria-label={`Sort by Last observed cycle, currently ${getAriaSort('last_observed_cycle')}`}
+                    style={{ justifyContent: 'flex-end', width: '100%' }}
+                  >
                     <span>Last observed cycle</span>
                     {renderSortIcon('last_observed_cycle')}
-                  </div>
+                  </button>
                 </th>
-                <th onClick={() => handleSort('actual_rul_official')} style={{ cursor: 'pointer', textAlign: 'right' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '6px' }}>
+                <th aria-sort={getAriaSort('actual_rul_official')} style={{ textAlign: 'right' }}>
+                  <button
+                    type="button"
+                    className="table-sort-btn"
+                    onClick={() => handleSort('actual_rul_official')}
+                    aria-label={`Sort by Actual RUL, currently ${getAriaSort('actual_rul_official')}`}
+                    style={{ justifyContent: 'flex-end', width: '100%' }}
+                  >
                     <span>Actual RUL</span>
                     {renderSortIcon('actual_rul_official')}
-                  </div>
+                  </button>
                 </th>
-                <th onClick={() => handleSort('predicted_rul_final')} style={{ cursor: 'pointer', textAlign: 'right' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '6px' }}>
+                <th aria-sort={getAriaSort('predicted_rul_final')} style={{ textAlign: 'right' }}>
+                  <button
+                    type="button"
+                    className="table-sort-btn"
+                    onClick={() => handleSort('predicted_rul_final')}
+                    aria-label={`Sort by Predicted RUL, currently ${getAriaSort('predicted_rul_final')}`}
+                    style={{ justifyContent: 'flex-end', width: '100%' }}
+                  >
                     <span>Predicted RUL</span>
                     {renderSortIcon('predicted_rul_final')}
-                  </div>
+                  </button>
                 </th>
-                <th onClick={() => handleSort('prediction_error')} style={{ cursor: 'pointer', textAlign: 'right' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '6px' }}>
+                <th aria-sort={getAriaSort('prediction_error')} style={{ textAlign: 'right' }}>
+                  <button
+                    type="button"
+                    className="table-sort-btn"
+                    onClick={() => handleSort('prediction_error')}
+                    aria-label={`Sort by Signed error, currently ${getAriaSort('prediction_error')}`}
+                    style={{ justifyContent: 'flex-end', width: '100%' }}
+                  >
                     <span>Signed error</span>
                     {renderSortIcon('prediction_error')}
-                  </div>
+                  </button>
                 </th>
-                <th onClick={() => handleSort('absolute_error')} style={{ cursor: 'pointer', textAlign: 'right' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '6px' }}>
+                <th aria-sort={getAriaSort('absolute_error')} style={{ textAlign: 'right' }}>
+                  <button
+                    type="button"
+                    className="table-sort-btn"
+                    onClick={() => handleSort('absolute_error')}
+                    aria-label={`Sort by Absolute error, currently ${getAriaSort('absolute_error')}`}
+                    style={{ justifyContent: 'flex-end', width: '100%' }}
+                  >
                     <span>Absolute error</span>
                     {renderSortIcon('absolute_error')}
-                  </div>
+                  </button>
                 </th>
                 <th style={{ textAlign: 'center', width: '100px' }}>
                   <span>Error type</span>
@@ -177,6 +217,16 @@ export const EnginePredictionTable: React.FC<EnginePredictionTableProps> = ({
                     key={row.unit_id}
                     className={isSelected ? 'selected' : ''}
                     onClick={() => onSelectEngine(row.unit_id)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        onSelectEngine(row.unit_id);
+                      }
+                    }}
+                    tabIndex={0}
+                    role="button"
+                    aria-selected={isSelected}
+                    aria-label={`Engine unit ${row.unit_id}, actual RUL ${row.actual_rul_official} cycles, predicted RUL ${row.predicted_rul_final.toFixed(2)} cycles, signed error ${row.prediction_error > 0 ? '+' : ''}${row.prediction_error.toFixed(2)} cycles`}
                     style={{ cursor: 'pointer' }}
                   >
                     <td>

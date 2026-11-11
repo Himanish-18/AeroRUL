@@ -87,7 +87,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           style={{
             position: 'fixed',
             inset: 0,
-            background: 'rgba(0, 0, 0, 0.6)',
+            background: 'var(--color-backdrop)',
             zIndex: 'calc(var(--z-modal) - 1)',
           }}
           aria-hidden="true"
@@ -180,6 +180,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
             return (
               <div
                 key={item.id}
+                role="link"
+                aria-disabled={isPlanned ? 'true' : undefined}
+                aria-current={isActive ? 'page' : undefined}
                 title={collapsed ? `${item.label}${isPlanned ? ' (Planned)' : ''}` : undefined}
                 style={{
                   display: 'flex',

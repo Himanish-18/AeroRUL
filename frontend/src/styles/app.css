@@ -130,8 +130,8 @@
 }
 
 .btn-primary:hover {
-  background: color-mix(in oklab, var(--color-accent) 90%, white);
-  border-color: color-mix(in oklab, var(--color-accent) 90%, white);
+  background: color-mix(in oklab, var(--color-accent) 90%, var(--color-ink));
+  border-color: color-mix(in oklab, var(--color-accent) 90%, var(--color-ink));
   color: var(--color-accent-ink);
 }
 
@@ -248,6 +248,29 @@
 .data-table tr.selected td {
   background: var(--color-accent-soft);
   color: var(--color-ink);
+}
+
+.data-table tr:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: -2px;
+}
+
+.table-sort-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  background: transparent;
+  border: none;
+  color: inherit;
+  font: inherit;
+  padding: 0;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+}
+
+.table-sort-btn:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
 }
 
 /* Responsive adjustments */

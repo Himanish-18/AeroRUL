@@ -39,7 +39,7 @@ const CustomTooltip: React.FC<CustomTooltipProps> = ({ active, payload }) => {
         border: 'var(--rule-hair) solid var(--color-rule-2)',
         borderRadius: 'var(--radius-pill)',
         padding: 'var(--space-sm) var(--space-md)',
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
+        boxShadow: 'var(--shadow-tooltip)',
         display: 'flex',
         flexDirection: 'column',
         gap: '4px',
@@ -217,7 +217,6 @@ export const ActualVsPredictedScatter: React.FC<ActualVsPredictedScatterProps> =
                     strokeWidth={isSelected ? 2 : 1}
                     style={{
                       cursor: 'pointer',
-                      transition: 'r var(--dur-micro) var(--ease-out)',
                     }}
                   />
                 );

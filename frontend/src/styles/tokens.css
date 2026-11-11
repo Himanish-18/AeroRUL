@@ -64,6 +64,8 @@
 
   --color-error: oklch(70% 0.17 25);
   --color-success: oklch(76% 0.15 150);
+  --color-backdrop: oklch(0% 0 0 / 0.6);
+  --shadow-tooltip: 0 4px 12px oklch(0% 0 0 / 0.4);
 
   --font-display: "Host Grotesk", ui-sans-serif, system-ui, sans-serif;
   --font-body: var(--font-display);
