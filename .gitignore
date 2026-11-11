@@ -71,3 +71,9 @@ Thumbs.db
 # Project Data (Avoid pushing large generated datasets to GitHub)
 data/processed/
 *.parquet
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/public/data/phase5/
+

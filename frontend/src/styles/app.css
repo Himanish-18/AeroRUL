@@ -1,0 +1,272 @@
+/* Hallmark · shape: app screen · genre: modern-minimal · theme: Console (by request)
+ * nav: sidebar · signature: parity scatter plot with interactive engine inspection · states: loading, empty, error, populated · console: graphite
+ * axes: dark/grotesk-sans/chromatic-amber · posture: restrained · contrast: pass · v2.0.0 */
+/* Hallmark · pre-emit critique: P5 H5 E5 S5 R5 V5 · weakest: H, tuned table and scatter typography to strictly preserve 100% token adherence */
+
+@import url("./tokens.css");
+@import url("./base.css");
+
+/* Application Shell */
+.app-container {
+  display: flex;
+  min-height: 100vh;
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
+
+.app-sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  background: var(--color-paper-3);
+  color: var(--color-ink-2);
+  border-right: var(--rule-hair) solid var(--color-rule);
+  display: flex;
+  flex-direction: column;
+}
+
+.app-sidebar.collapsed {
+  width: 68px;
+}
+
+.app-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header {
+  height: 56px;
+  background: var(--color-paper-2);
+  color: var(--color-ink);
+  border-bottom: var(--rule-hair) solid var(--color-rule);
+  padding: 0 var(--gutter);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky-nav);
+}
+
+.app-content {
+  flex: 1;
+  padding: var(--space-lg) var(--gutter);
+  max-width: var(--container);
+  width: 100%;
+  margin-inline: auto;
+}
+
+/* Hairline Panels (Console Theme Core) */
+.panel {
+  background: var(--color-paper-2);
+  color: var(--color-ink);
+  border: var(--rule-hair) solid var(--color-rule);
+  border-radius: var(--radius-card);
+  padding: var(--space-lg);
+}
+
+.panel-subtle {
+  background: var(--color-paper-3);
+  color: var(--color-ink-2);
+  border: var(--rule-hair) solid var(--color-rule);
+  border-radius: var(--radius-card);
+  padding: var(--space-md);
+}
+
+.panel-grid {
+  display: grid;
+  gap: var(--rule-hair);
+  background: var(--color-rule);
+  color: var(--color-ink);
+  border: var(--rule-hair) solid var(--color-rule);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+}
+
+.panel-grid > * {
+  background: var(--color-paper-2);
+  color: var(--color-ink-2);
+  padding: var(--space-md);
+}
+
+/* Controls */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  height: 36px;
+  padding: 0 var(--space-md);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  border: var(--rule-hair) solid var(--color-rule-2);
+  background: var(--color-paper-2);
+  color: var(--color-ink);
+  transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out);
+}
+
+.btn:hover {
+  background: var(--color-paper-3);
+  border-color: var(--color-ink-2);
+}
+
+.btn:disabled, button:disabled, input:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.btn:active {
+  transform: scale(0.99);
+}
+
+.btn-primary {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-accent-ink);
+}
+
+.btn-primary:hover {
+  background: color-mix(in oklab, var(--color-accent) 90%, white);
+  border-color: color-mix(in oklab, var(--color-accent) 90%, white);
+  color: var(--color-accent-ink);
+}
+
+.btn-sm {
+  height: 30px;
+  padding: 0 var(--space-sm);
+  font-size: var(--text-xs);
+}
+
+.btn-icon {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+}
+
+/* Chips and Pills */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  padding: var(--space-3xs) var(--space-xs);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  border: var(--rule-hair) solid var(--color-rule-2);
+  background: var(--color-paper-3);
+  color: var(--color-ink-2);
+}
+
+.chip-accent {
+  background: var(--color-accent-soft);
+  border-color: var(--color-accent);
+  color: var(--color-ink);
+}
+
+.chip-cool {
+  background: var(--color-cool-soft);
+  border-color: var(--color-cool);
+  color: var(--color-ink);
+}
+
+.chip-ok {
+  background: var(--color-ok-soft);
+  border-color: var(--color-ok);
+  color: var(--color-ink);
+}
+
+.chip-bad {
+  background: var(--color-bad-soft);
+  border-color: var(--color-bad);
+  color: var(--color-ink);
+}
+
+/* Form Inputs */
+.input-text {
+  height: 36px;
+  padding: 0 var(--space-sm);
+  background: var(--color-paper-3);
+  border: var(--rule-hair) solid var(--color-rule);
+  border-radius: var(--radius-pill);
+  color: var(--color-ink);
+  font-size: var(--text-sm);
+}
+
+.input-text:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: -1px;
+}
+
+.input-text::placeholder {
+  color: var(--color-muted);
+}
+
+/* Tables */
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: var(--radius-card);
+  border: var(--rule-hair) solid var(--color-rule);
+  background: var(--color-paper-2);
+  color: var(--color-ink-2);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: var(--text-sm);
+}
+
+.data-table th {
+  padding: var(--space-sm) var(--space-md);
+  color: var(--color-muted);
+  font-weight: 500;
+  border-bottom: var(--rule-hair) solid var(--color-rule);
+  white-space: nowrap;
+  background: var(--color-paper-3);
+}
+
+.data-table td {
+  padding: var(--space-sm) var(--space-md);
+  border-bottom: var(--rule-hair) solid var(--color-rule);
+  color: var(--color-ink-2);
+}
+
+.data-table tr:last-child td {
+  border-bottom: none;
+}
+
+.data-table tr:hover td {
+  background: var(--color-paper-3);
+}
+
+.data-table tr.selected td {
+  background: var(--color-accent-soft);
+  color: var(--color-ink);
+}
+
+/* Responsive adjustments */
+@media (max-width: 60rem) {
+  .app-sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: var(--z-modal);
+    transform: translateX(-100%);
+    transition: transform var(--dur-short) var(--ease-out);
+  }
+
+  .app-sidebar.mobile-open {
+    transform: translateX(0);
+  }
+
+  .app-content {
+    padding: var(--space-md) var(--space-sm);
+  }
+}

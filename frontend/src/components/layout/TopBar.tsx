@@ -1,0 +1,145 @@
+import React from 'react';
+import { Menu, ShieldCheck, Database } from 'lucide-react';
+import { DatasetId, VALID_DATASETS } from '../../lib/data/types';
+
+interface TopBarProps {
+  selectedDataset: DatasetId;
+  onSelectDataset: (dataset: DatasetId) => void;
+  frozenTimestamp?: string;
+  onOpenMobileMenu: () => void;
+}
+
+export const TopBar: React.FC<TopBarProps> = ({
+  selectedDataset,
+  onSelectDataset,
+  frozenTimestamp,
+  onOpenMobileMenu,
+}) => {
+  return (
+    <header className="app-header">
+      {/* Left: Mobile trigger & context */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-md)' }}>
+        <button
+          type="button"
+          className="btn btn-icon btn-sm"
+          onClick={onOpenMobileMenu}
+          aria-label="Open navigation menu"
+          style={{ display: 'none' }}
+          id="mobile-menu-btn"
+        >
+          <Menu size={18} />
+        </button>
+
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-xs)' }}>
+            <span
+              style={{
+                fontSize: 'var(--text-sm)',
+                fontWeight: 500,
+                color: 'var(--color-ink)',
+                letterSpacing: '-0.01em',
+              }}
+            >
+              Evaluation overview
+            </span>
+            <span
+              style={{
+                fontSize: '0.65rem',
+                color: 'var(--color-muted)',
+                padding: '1px 6px',
+                borderRadius: 'var(--radius-sm)',
+                background: 'var(--color-paper-3)',
+                border: 'var(--rule-hair) solid var(--color-rule)',
+              }}
+            >
+              Official Test
+            </span>
+          </div>
+          <span style={{ fontSize: '0.75rem', color: 'var(--color-muted)', lineHeight: 1.2 }}>
+            NASA C-MAPSS turbofan degradation benchmark
+          </span>
+        </div>
+      </div>
+
+      {/* Right: Dataset selector & frozen timestamp */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-md)' }}>
+        {/* Dataset switcher segmented control */}
+        <div
+          role="group"
+          aria-label="Select C-MAPSS dataset subset"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            padding: '2px',
+            background: 'var(--color-paper-3)',
+            borderRadius: 'var(--radius-pill)',
+            border: 'var(--rule-hair) solid var(--color-rule)',
+            gap: '2px',
+          }}
+        >
+          <span
+            style={{
+              padding: '0 var(--space-xs)',
+              fontSize: 'var(--text-xs)',
+              color: 'var(--color-muted)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+            }}
+          >
+            <Database size={12} />
+            <span>Dataset</span>
+          </span>
+          {VALID_DATASETS.map((ds) => {
+            const isSelected = ds === selectedDataset;
+            return (
+              <button
+                key={ds}
+                type="button"
+                onClick={() => onSelectDataset(ds)}
+                aria-pressed={isSelected}
+                style={{
+                  height: '28px',
+                  padding: '0 var(--space-sm)',
+                  borderRadius: 'calc(var(--radius-pill) - 2px)',
+                  fontSize: 'var(--text-xs)',
+                  fontFamily: 'var(--font-outlier)',
+                  fontWeight: isSelected ? 500 : 400,
+                  background: isSelected ? 'var(--color-accent)' : 'transparent',
+                  color: isSelected ? 'var(--color-accent-ink)' : 'var(--color-ink-2)',
+                  border: 'none',
+                  transition: 'background-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out)',
+                  cursor: 'pointer',
+                }}
+              >
+                {ds}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Frozen Manifest Stamp */}
+        {frozenTimestamp && (
+          <div
+            title={`Frozen model manifest timestamp: ${frozenTimestamp}`}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 'var(--space-2xs)',
+              fontSize: 'var(--text-xs)',
+              color: 'var(--color-muted)',
+              fontFamily: 'var(--font-outlier)',
+              padding: '4px var(--space-xs)',
+              borderRadius: 'var(--radius-sm)',
+              background: 'var(--color-paper-3)',
+              border: 'var(--rule-hair) solid var(--color-rule)',
+            }}
+          >
+            <ShieldCheck size={14} color="var(--color-cool)" />
+            <span>{frozenTimestamp.split(' ')[0]}</span>
+          </div>
+        )}
+      </div>
+    </header>
+  );
+};
