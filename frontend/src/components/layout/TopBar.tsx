@@ -69,12 +69,29 @@ export const TopBar: React.FC<TopBarProps> = ({
 
       {/* Right: Dataset selector & frozen timestamp */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-md)' }}>
-        {/* Dataset switcher segmented control */}
+        {/* Mobile compact native select (< 40rem) */}
+        <div className="dataset-mobile-selector">
+          <Database size={14} color="var(--color-muted)" />
+          <select
+            className="dataset-native-select"
+            value={selectedDataset}
+            onChange={(e) => onSelectDataset(e.target.value as DatasetId)}
+            aria-label="Select C-MAPSS dataset (mobile)"
+          >
+            {VALID_DATASETS.map((ds) => (
+              <option key={ds} value={ds}>
+                {ds}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Desktop / Tablet segmented button pills (>= 40rem) */}
         <div
           role="group"
           aria-label="Select C-MAPSS dataset subset"
+          className="dataset-desktop-selector"
           style={{
-            display: 'inline-flex',
             alignItems: 'center',
             padding: '2px',
             background: 'var(--color-paper-3)',

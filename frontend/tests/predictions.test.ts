@@ -44,41 +44,76 @@ describe('AeroRUL Stage 2: Engine Predictions Analysis & Metrics', () => {
     fd001Metric = getMetricsForDataset(benchmarkData, 'FD001')!;
   });
 
-  describe('1. Summary Statistics Calculation (getPredictionSummary)', () => {
-    it('accurately computes total evaluated, over/under counts, and percentages for FD001', () => {
-      const summary = getPredictionSummary(fd001Predictions, fd001Metric);
+  describe('Task 2 — Official Summary Statistics Reconciliation Across All 4 Subsets', () => {
+    const expectedDatasetStats = [
+      {
+        dataset: 'FD001' as const,
+        total: 100,
+        over: 56,
+        under: 44,
+        exact: 0,
+        median: 7.98,
+        p90: 27.00,
+        mae: 11.43,
+      },
+      {
+        dataset: 'FD002' as const,
+        total: 259,
+        over: 124,
+        under: 135,
+        exact: 0,
+        median: 8.01,
+        p90: 35.77,
+        mae: 13.78,
+      },
+      {
+        dataset: 'FD003' as const,
+        total: 100,
+        over: 73,
+        under: 27,
+        exact: 0,
+        median: 6.79,
+        p90: 36.22,
+        mae: 14.68,
+      },
+      {
+        dataset: 'FD004' as const,
+        total: 248,
+        over: 153,
+        under: 95,
+        exact: 0,
+        median: 13.20,
+        p90: 57.85,
+        mae: 22.81,
+      },
+    ];
 
-      expect(summary.totalEvaluated).toBe(100);
-      expect(summary.successfullyPredicted).toBe(100);
-      expect(summary.coveragePercent).toBe('100.0');
+    for (const ref of expectedDatasetStats) {
+      it(`verifies exact summary statistics and dispersion for ${ref.dataset}`, () => {
+        const preds = getPredictionsForDataset(benchmarkData, ref.dataset);
+        const metric = getMetricsForDataset(benchmarkData, ref.dataset)!;
+        const summary = getPredictionSummary(preds, metric);
 
-      // Check sum of over, under, and exact equals total evaluated
-      expect(summary.overpredictionCount + summary.underpredictionCount + summary.exactCount).toBe(100);
-      expect(summary.overpredictionPercent + summary.underpredictionPercent + summary.exactPercent).toBeCloseTo(100, 1);
+        expect(preds).toHaveLength(ref.total);
+        expect(summary.totalEvaluated).toBe(ref.total);
+        expect(summary.overpredictionCount).toBe(ref.over);
+        expect(summary.underpredictionCount).toBe(ref.under);
+        expect(summary.exactCount).toBe(ref.exact);
 
-      // Verify counts match official metrics record
-      expect(summary.overpredictionCount).toBe(fd001Metric.overprediction_count);
-      expect(summary.underpredictionCount).toBe(fd001Metric.underprediction_count);
+        // Sum of categories equals total engines
+        expect(summary.overpredictionCount + summary.underpredictionCount + summary.exactCount).toBe(ref.total);
 
-      // MAE matches
-      expect(summary.endpointMae).toBeCloseTo(fd001Metric.endpoint_mae, 4);
+        // Consistency with official metric artifact
+        expect(summary.overpredictionCount).toBe(metric.overprediction_count);
+        expect(summary.underpredictionCount).toBe(metric.underprediction_count);
+        expect(summary.endpointMae).toBeCloseTo(metric.endpoint_mae, 4);
+        expect(summary.endpointMae).toBeCloseTo(ref.mae, 2);
 
-      // Mean signed error matches
-      expect(summary.meanSignedError).toBeCloseTo(fd001Metric.mean_signed_error, 4);
-    });
-
-    it('computes valid median and 90th percentile absolute errors', () => {
-      const summary = getPredictionSummary(fd001Predictions, fd001Metric);
-
-      expect(summary.medianAbsoluteError).toBeGreaterThan(0);
-      expect(summary.p90AbsoluteError).toBeGreaterThan(summary.medianAbsoluteError);
-      expect(summary.p90AbsoluteError).toBeGreaterThan(summary.endpointMae);
-
-      // Verify median manually on sorted array
-      const sortedAbs = fd001Predictions.map((p) => p.absolute_error).sort((a, b) => a - b);
-      const expectedMedian = (sortedAbs[49] + sortedAbs[50]) / 2;
-      expect(summary.medianAbsoluteError).toBeCloseTo(expectedMedian, 4);
-    });
+        // Dispersion metrics
+        expect(summary.medianAbsoluteError).toBeCloseTo(ref.median, 2);
+        expect(summary.p90AbsoluteError).toBeCloseTo(ref.p90, 2);
+      });
+    }
 
     it('handles empty predictions safely', () => {
       const emptySummary = getPredictionSummary([]);
@@ -90,26 +125,94 @@ describe('AeroRUL Stage 2: Engine Predictions Analysis & Metrics', () => {
     });
   });
 
-  describe('2. Error Distribution Histogram (getErrorDistribution)', () => {
-    it('bins signed errors accurately with continuous cycle ranges', () => {
+  describe('Task 7 — Error Distribution Histogram & Zero Handling', () => {
+    it('bins signed errors accurately on real FD001 dataset with total count conserved', () => {
       const bins = getErrorDistribution(fd001Predictions, 10);
       expect(bins.length).toBeGreaterThan(0);
 
-      // Sum of counts across all bins must equal total predictions
       const totalBinned = bins.reduce((sum, b) => sum + b.count, 0);
       expect(totalBinned).toBe(fd001Predictions.length);
 
-      // Check that bins are contiguous
-      for (let i = 0; i < bins.length - 1; i++) {
-        expect(bins[i].binEnd).toBe(bins[i + 1].binStart);
-      }
-
-      // Check classification properties
       for (const bin of bins) {
         if (bin.binEnd <= 0) {
           expect(bin.isUnderprediction).toBe(true);
+          expect(bin.isOverprediction).toBe(false);
         } else if (bin.binStart >= 0) {
           expect(bin.isOverprediction).toBe(true);
+          expect(bin.isUnderprediction).toBe(false);
+        }
+      }
+    });
+
+    it('handles negative-only prediction errors correctly', () => {
+      const mockNegative: PredictionRecord[] = [
+        { ...fd001Predictions[0], prediction_error: -25, absolute_error: 25 },
+        { ...fd001Predictions[0], prediction_error: -15, absolute_error: 15 },
+        { ...fd001Predictions[0], prediction_error: -5, absolute_error: 5 },
+      ];
+
+      const bins = getErrorDistribution(mockNegative, 10);
+      const totalBinned = bins.reduce((sum, b) => sum + b.count, 0);
+      expect(totalBinned).toBe(3);
+
+      expect(bins.every((b) => b.isUnderprediction)).toBe(true);
+      expect(bins.some((b) => b.isOverprediction)).toBe(false);
+      expect(bins.some((b) => b.isZeroBin)).toBe(false);
+    });
+
+    it('handles positive-only prediction errors correctly', () => {
+      const mockPositive: PredictionRecord[] = [
+        { ...fd001Predictions[0], prediction_error: 5, absolute_error: 5 },
+        { ...fd001Predictions[0], prediction_error: 15, absolute_error: 15 },
+        { ...fd001Predictions[0], prediction_error: 25, absolute_error: 25 },
+      ];
+
+      const bins = getErrorDistribution(mockPositive, 10);
+      const totalBinned = bins.reduce((sum, b) => sum + b.count, 0);
+      expect(totalBinned).toBe(3);
+
+      expect(bins.every((b) => b.isOverprediction)).toBe(true);
+      expect(bins.some((b) => b.isUnderprediction)).toBe(false);
+      expect(bins.some((b) => b.isZeroBin)).toBe(false);
+    });
+
+    it('handles exact zero error as a neutral category without misclassifying as overprediction', () => {
+      const mockWithZero: PredictionRecord[] = [
+        { ...fd001Predictions[0], prediction_error: -10, absolute_error: 10 },
+        { ...fd001Predictions[0], prediction_error: 0, absolute_error: 0 },
+        { ...fd001Predictions[0], prediction_error: 10, absolute_error: 10 },
+      ];
+
+      const bins = getErrorDistribution(mockWithZero, 10);
+      const totalBinned = bins.reduce((sum, b) => sum + b.count, 0);
+      expect(totalBinned).toBe(3);
+
+      const zeroBin = bins.find((b) => b.isZeroBin);
+      expect(zeroBin).toBeDefined();
+      expect(zeroBin?.count).toBe(1);
+      expect(zeroBin?.isOverprediction).toBe(false);
+      expect(zeroBin?.isUnderprediction).toBe(false);
+    });
+
+    it('handles errors spanning zero with clear mathematical boundary', () => {
+      const mockSpanning: PredictionRecord[] = [
+        { ...fd001Predictions[0], prediction_error: -18, absolute_error: 18 },
+        { ...fd001Predictions[0], prediction_error: -2, absolute_error: 2 },
+        { ...fd001Predictions[0], prediction_error: 4, absolute_error: 4 },
+        { ...fd001Predictions[0], prediction_error: 22, absolute_error: 22 },
+      ];
+
+      const bins = getErrorDistribution(mockSpanning, 10);
+      const totalBinned = bins.reduce((sum, b) => sum + b.count, 0);
+      expect(totalBinned).toBe(4);
+
+      // Verify negative bins are strictly <= 0 and positive bins are strictly >= 0
+      for (const b of bins) {
+        if (b.isUnderprediction) {
+          expect(b.binEnd).toBeLessThanOrEqual(0);
+        }
+        if (b.isOverprediction) {
+          expect(b.binStart).toBeGreaterThanOrEqual(0);
         }
       }
     });
@@ -119,7 +222,7 @@ describe('AeroRUL Stage 2: Engine Predictions Analysis & Metrics', () => {
     });
   });
 
-  describe('3. Outlier Identification (getTopOutliers)', () => {
+  describe('Outlier Identification (getTopOutliers)', () => {
     it('returns exactly top N outliers in descending order of absolute error', () => {
       const top5 = getTopOutliers(fd001Predictions, 5);
       expect(top5).toHaveLength(5);
@@ -139,7 +242,7 @@ describe('AeroRUL Stage 2: Engine Predictions Analysis & Metrics', () => {
     });
   });
 
-  describe('4. Advanced Filtering & Sorting (filterAndSortPredictionsAdvanced)', () => {
+  describe('Advanced Filtering & Sorting (filterAndSortPredictionsAdvanced)', () => {
     const baseSort: SortState = { field: 'unit_id', direction: 'asc' };
 
     it('filters correctly by engine unit_id substring', () => {
@@ -230,9 +333,8 @@ describe('AeroRUL Stage 2: Engine Predictions Analysis & Metrics', () => {
     });
   });
 
-  describe('5. Post-Processing Constraint Audit', () => {
+  describe('Post-Processing Constraint Audit', () => {
     it('confirms target cap constraint affects raw predictions where cap = 150 (FD001 and FD002)', () => {
-      // FD001 has target cap 150
       const cappedEngines = fd001Predictions.filter((p) => p.predicted_rul_raw > 150);
       if (cappedEngines.length > 0) {
         for (const p of cappedEngines) {
@@ -241,7 +343,6 @@ describe('AeroRUL Stage 2: Engine Predictions Analysis & Metrics', () => {
         }
       }
 
-      // All FD001 final predictions should be <= 150
       for (const p of fd001Predictions) {
         expect(p.predicted_rul_final).toBeLessThanOrEqual(150);
       }

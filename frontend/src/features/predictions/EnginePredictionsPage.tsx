@@ -49,12 +49,10 @@ export const EnginePredictionsPage: React.FC<EnginePredictionsPageProps> = ({ se
     return getPredictionsForDataset(data, selectedDataset);
   }, [data, selectedDataset]);
 
-  // Reset selected unit if dataset changes and unit doesn't exist in new dataset
+  // Task 5: Reset selected unit unconditionally whenever selectedDataset changes
   React.useEffect(() => {
-    if (selectedUnitId !== null && !allPredictions.some((p) => p.unit_id === selectedUnitId)) {
-      setSelectedUnitId(null);
-    }
-  }, [selectedDataset, allPredictions, selectedUnitId]);
+    setSelectedUnitId(null);
+  }, [selectedDataset]);
 
   // Overall dataset summary stats (unfiltered baseline)
   const summary = useMemo(() => {
@@ -167,12 +165,16 @@ export const EnginePredictionsPage: React.FC<EnginePredictionsPageProps> = ({ se
         }}
       >
         <ActualVsPredictedScatter
-          predictions={allPredictions}
+          predictions={filteredPredictions}
           selectedUnitId={selectedUnitId}
           onSelectEngine={(id) => setSelectedUnitId(id)}
         />
 
-        <ErrorDistributionChart predictions={allPredictions} />
+        <ErrorDistributionChart
+          predictions={filteredPredictions}
+          isFiltered={filteredPredictions.length !== allPredictions.length}
+          totalDatasetCount={allPredictions.length}
+        />
       </div>
 
       {/* Filter Toolbar */}

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   ArrowUpDown,
   ArrowUp,
@@ -29,6 +29,11 @@ export const PredictionsDetailedTable: React.FC<PredictionsDetailedTableProps> =
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(25);
 
+  // Task 4: Reset current page to 1 whenever incoming predictions cohort changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [predictions]);
+
   const handleSort = (field: SortField) => {
     if (sortField === field) {
       setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'));
@@ -56,11 +61,14 @@ export const PredictionsDetailedTable: React.FC<PredictionsDetailedTableProps> =
     });
   }, [predictions, sortField, sortDirection]);
 
-  const totalPages = Math.ceil(sortedData.length / pageSize) || 1;
+  const totalPages = Math.max(1, Math.ceil(sortedData.length / pageSize));
+  // Clamp page number to avoid stale out-of-range pagination
+  const safeCurrentPage = Math.min(Math.max(1, currentPage), totalPages);
+
   const paginatedData = useMemo(() => {
-    const start = (currentPage - 1) * pageSize;
+    const start = (safeCurrentPage - 1) * pageSize;
     return sortedData.slice(start, start + pageSize);
-  }, [sortedData, currentPage, pageSize]);
+  }, [sortedData, safeCurrentPage, pageSize]);
 
   const getAriaSort = (field: SortField): 'ascending' | 'descending' | 'none' => {
     if (sortField !== field) return 'none';
@@ -215,7 +223,7 @@ export const PredictionsDetailedTable: React.FC<PredictionsDetailedTableProps> =
                   </button>
                 </th>
 
-                <th style={{ textAlign: 'center', width: '90px' }}>
+                <th style={{ textAlign: 'center', width: '130px' }}>
                   <span>Class</span>
                 </th>
 
@@ -228,7 +236,7 @@ export const PredictionsDetailedTable: React.FC<PredictionsDetailedTableProps> =
               {paginatedData.map((row) => {
                 const isSelected = row.unit_id === selectedUnitId;
                 const isOver = row.prediction_error > 0;
-                const isExact = Math.abs(row.prediction_error) < 0.001;
+                const isUnder = row.prediction_error < 0;
 
                 return (
                   <tr
@@ -270,7 +278,7 @@ export const PredictionsDetailedTable: React.FC<PredictionsDetailedTableProps> =
                       className="measured"
                       style={{
                         textAlign: 'right',
-                        color: isOver ? 'var(--color-ok)' : isExact ? 'var(--color-ink-2)' : 'var(--color-bad)',
+                        color: isOver ? 'var(--color-accent)' : isUnder ? 'var(--color-cool)' : 'var(--color-ink-2)',
                       }}
                     >
                       {formatSignedError(row.prediction_error)}
@@ -281,8 +289,11 @@ export const PredictionsDetailedTable: React.FC<PredictionsDetailedTableProps> =
                     </td>
 
                     <td style={{ textAlign: 'center' }}>
-                      <span className={`chip ${isOver ? 'chip-ok' : isExact ? 'chip-cool' : 'chip-bad'}`} style={{ fontSize: '0.65rem' }}>
-                        {isOver ? '+ over' : isExact ? 'exact' : '- under'}
+                      <span
+                        className={`chip ${isOver ? 'chip-accent' : isUnder ? 'chip-cool' : ''}`}
+                        style={{ fontSize: '0.65rem' }}
+                      >
+                        {isOver ? '+ over (optimistic)' : isUnder ? '- under (conservative)' : 'exact'}
                       </span>
                     </td>
 
@@ -313,8 +324,8 @@ export const PredictionsDetailedTable: React.FC<PredictionsDetailedTableProps> =
       {sortedData.length > 0 && (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 'var(--space-sm)', fontSize: 'var(--text-xs)', color: 'var(--color-muted)' }}>
           <span>
-            Showing {(currentPage - 1) * pageSize + 1} to{' '}
-            {Math.min(currentPage * pageSize, sortedData.length)} of {sortedData.length} engines
+            Showing {(safeCurrentPage - 1) * pageSize + 1} to{' '}
+            {Math.min(safeCurrentPage * pageSize, sortedData.length)} of {sortedData.length} engines
           </span>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-xs)' }}>
@@ -322,25 +333,25 @@ export const PredictionsDetailedTable: React.FC<PredictionsDetailedTableProps> =
               type="button"
               className="btn btn-sm"
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-              disabled={currentPage === 1}
+              disabled={safeCurrentPage === 1}
               aria-label="Previous page"
-              style={{ opacity: currentPage === 1 ? 0.4 : 1 }}
+              style={{ opacity: safeCurrentPage === 1 ? 0.4 : 1 }}
             >
               <ChevronLeft size={14} />
               <span>Previous</span>
             </button>
 
             <span className="measured" style={{ padding: '0 var(--space-xs)' }}>
-              Page {currentPage} of {totalPages}
+              Page {safeCurrentPage} of {totalPages}
             </span>
 
             <button
               type="button"
               className="btn btn-sm"
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-              disabled={currentPage === totalPages}
+              disabled={safeCurrentPage === totalPages}
               aria-label="Next page"
-              style={{ opacity: currentPage === totalPages ? 0.4 : 1 }}
+              style={{ opacity: safeCurrentPage === totalPages ? 0.4 : 1 }}
             >
               <span>Next</span>
               <ChevronRight size={14} />

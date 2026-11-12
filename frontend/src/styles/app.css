@@ -92,25 +92,6 @@
 }
 
 /* Controls */
-.mobile-menu-btn {
-  display: none;
-}
-
-@media (max-width: 60rem) {
-  .mobile-menu-btn {
-    display: inline-flex !important;
-  }
-}
-
-@media (max-width: 40rem) {
-  .header-stamp,
-  .header-subtitle,
-  .header-badge,
-  .dataset-label-text {
-    display: none !important;
-  }
-}
-
 .btn {
   display: inline-flex;
   align-items: center;
@@ -126,6 +107,64 @@
   background: var(--color-paper-2);
   color: var(--color-ink);
   transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out);
+}
+
+/* Specificity override for mobile menu button without hacky !important */
+.btn.mobile-menu-btn {
+  display: none;
+}
+
+@media (max-width: 60rem) {
+  .btn.mobile-menu-btn {
+    display: inline-flex;
+  }
+}
+
+/* Dataset Selector Responsive Switch */
+.dataset-mobile-selector {
+  display: none;
+}
+
+.dataset-desktop-selector {
+  display: inline-flex;
+}
+
+@media (max-width: 40rem) {
+  .header-stamp,
+  .header-subtitle,
+  .header-badge,
+  .dataset-label-text,
+  .dataset-desktop-selector {
+    display: none !important;
+  }
+
+  .dataset-mobile-selector {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    background: var(--color-paper-3);
+    border: var(--rule-hair) solid var(--color-rule);
+    border-radius: var(--radius-pill);
+    padding: var(--space-3xs) var(--space-xs);
+  }
+
+  .dataset-native-select {
+    height: 28px;
+    padding: 0 var(--space-2xs);
+    font-size: var(--text-xs);
+    font-family: var(--font-outlier);
+    font-weight: 500;
+    background: transparent;
+    border: none;
+    color: var(--color-ink);
+    cursor: pointer;
+    outline: none;
+  }
+
+  .dataset-native-select:focus-visible {
+    outline: 2px solid var(--color-focus);
+    border-radius: var(--radius-sm);
+  }
 }
 
 .btn:hover {

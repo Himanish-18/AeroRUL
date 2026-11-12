@@ -201,6 +201,13 @@ export function getPredictionSummary(
 /**
  * Computes frequency distribution bins of signed errors around 0.
  * Default bin width is 10 cycles.
+ *
+ * Guarantees:
+ * - Negative signed errors represent underpredictions (< 0).
+ * - Positive signed errors represent overpredictions (> 0).
+ * - Exact zero errors are never counted as overpredictions.
+ * - Negative and positive bins never straddle 0.
+ * - Total binned count strictly equals input predictions length.
  */
 export function getErrorDistribution(
   predictions: PredictionRecord[],
@@ -208,44 +215,80 @@ export function getErrorDistribution(
 ): ErrorDistributionBin[] {
   if (predictions.length === 0) return [];
 
-  let minError = Infinity;
-  let maxError = -Infinity;
-
-  for (const p of predictions) {
-    if (p.prediction_error < minError) minError = p.prediction_error;
-    if (p.prediction_error > maxError) maxError = p.prediction_error;
-  }
-
-  const start = Math.floor(minError / binWidth) * binWidth;
-  let end = Math.ceil(maxError / binWidth) * binWidth;
-  if (start === end) end += binWidth;
+  const underList = predictions.filter((p) => p.prediction_error < 0);
+  const exactList = predictions.filter((p) => p.prediction_error === 0);
+  const overList = predictions.filter((p) => p.prediction_error > 0);
 
   const bins: ErrorDistributionBin[] = [];
 
-  for (let b = start; b < end; b += binWidth) {
-    const binEnd = b + binWidth;
-    const isLastBin = binEnd >= end;
+  // 1. Negative bins (Underpredictions: conservative RUL estimate)
+  if (underList.length > 0) {
+    let minNegative = 0;
+    for (const p of underList) {
+      if (p.prediction_error < minNegative) minNegative = p.prediction_error;
+    }
+    const start = Math.floor(minNegative / binWidth) * binWidth;
 
-    const count = predictions.filter((p) => {
-      if (isLastBin) {
-        return p.prediction_error >= b && p.prediction_error <= binEnd;
-      }
-      return p.prediction_error >= b && p.prediction_error < binEnd;
-    }).length;
+    for (let b = start; b < 0; b += binWidth) {
+      const binEnd = b + binWidth;
+      // Match errors in [b, binEnd)
+      const count = underList.filter(
+        (p) => p.prediction_error >= b && p.prediction_error < binEnd
+      ).length;
 
-    const formatBound = (val: number) => (val > 0 ? `+${val}` : `${val}`);
-    const binLabel = `${formatBound(b)} to ${formatBound(binEnd)}`;
+      bins.push({
+        binStart: b,
+        binEnd,
+        binLabel: `${b} to ${binEnd}`,
+        count,
+        percentage: (count / predictions.length) * 100,
+        isUnderprediction: true,
+        isOverprediction: false,
+        isZeroBin: false,
+      });
+    }
+  }
 
+  // 2. Exact Zero matches (Neutral / Exact parity)
+  if (exactList.length > 0) {
     bins.push({
-      binStart: b,
-      binEnd,
-      binLabel,
-      count,
-      percentage: (count / predictions.length) * 100,
-      isOverprediction: b >= 0 && binEnd > 0,
-      isUnderprediction: binEnd <= 0,
-      isZeroBin: b <= 0 && binEnd >= 0,
+      binStart: 0,
+      binEnd: 0,
+      binLabel: '0 (Exact)',
+      count: exactList.length,
+      percentage: (exactList.length / predictions.length) * 100,
+      isUnderprediction: false,
+      isOverprediction: false,
+      isZeroBin: true,
     });
+  }
+
+  // 3. Positive bins (Overpredictions: optimistic RUL estimate)
+  if (overList.length > 0) {
+    let maxPositive = 0;
+    for (const p of overList) {
+      if (p.prediction_error > maxPositive) maxPositive = p.prediction_error;
+    }
+    const end = Math.ceil(maxPositive / binWidth) * binWidth;
+
+    for (let b = 0; b < end; b += binWidth) {
+      const binEnd = b + binWidth;
+      // Match errors in (b, binEnd]
+      const count = overList.filter(
+        (p) => p.prediction_error > b && p.prediction_error <= binEnd
+      ).length;
+
+      bins.push({
+        binStart: b,
+        binEnd,
+        binLabel: `+${b} to +${binEnd}`,
+        count,
+        percentage: (count / predictions.length) * 100,
+        isUnderprediction: false,
+        isOverprediction: true,
+        isZeroBin: false,
+      });
+    }
   }
 
   return bins;

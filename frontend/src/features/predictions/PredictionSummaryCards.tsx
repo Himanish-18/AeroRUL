@@ -1,7 +1,7 @@
 import React from 'react';
 import { PredictionSummaryStats, TestMetricRecord } from '../../lib/data/types';
 import { formatCycles, formatInteger, formatPercent } from '../../lib/utils/format';
-import { Activity, AlertTriangle, ArrowUpRight, CheckCircle2 } from 'lucide-react';
+import { Activity, ArrowDownRight, ArrowUpRight, CheckCircle2 } from 'lucide-react';
 
 interface PredictionSummaryCardsProps {
   summary: PredictionSummaryStats;
@@ -22,11 +22,11 @@ export const PredictionSummaryCards: React.FC<PredictionSummaryCardsProps> = ({
         gap: 'var(--space-md)',
       }}
     >
-      {/* 1. Engines Evaluated */}
+      {/* 1. Official Fleet Test Endpoints */}
       <div className="panel" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-xs)' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <span style={{ fontSize: 'var(--text-xs)', color: 'var(--color-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-            Engines Evaluated
+            Official Test Endpoints
           </span>
           <CheckCircle2 size={16} color="var(--color-cool)" />
         </div>
@@ -43,18 +43,18 @@ export const PredictionSummaryCards: React.FC<PredictionSummaryCardsProps> = ({
             {summary.coveragePercent}% coverage
           </span>
           <span style={{ fontSize: '0.75rem', color: 'var(--color-muted)' }}>
-            Zero test engines censored or omitted
+            All official test endpoints have predictions.
           </span>
         </div>
       </div>
 
-      {/* 2. Overpredictions */}
+      {/* 2. Overpredictions (Optimistic RUL) */}
       <div className="panel" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-xs)' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <span style={{ fontSize: 'var(--text-xs)', color: 'var(--color-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-            Overpredictions
+            Overpredictions (Optimistic)
           </span>
-          <ArrowUpRight size={16} color="var(--color-ok)" />
+          <ArrowUpRight size={16} color="var(--color-accent)" />
         </div>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: 'var(--space-xs)' }}>
           <span className="measured" style={{ fontSize: '1.75rem', fontWeight: 500, color: 'var(--color-ink)', lineHeight: 1.1 }}>
@@ -65,22 +65,22 @@ export const PredictionSummaryCards: React.FC<PredictionSummaryCardsProps> = ({
           </span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2xs)', marginTop: 'auto' }}>
-          <span className="chip chip-ok" style={{ fontSize: '0.7rem' }}>
+          <span className="chip chip-accent" style={{ fontSize: '0.7rem' }}>
             pred &gt; actual
           </span>
           <span style={{ fontSize: '0.75rem', color: 'var(--color-muted)' }}>
-            Premature maintenance inspection
+            Could delay servicing under threshold policy
           </span>
         </div>
       </div>
 
-      {/* 3. Underpredictions */}
+      {/* 3. Underpredictions (Conservative RUL) */}
       <div className="panel" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-xs)' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <span style={{ fontSize: 'var(--text-xs)', color: 'var(--color-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-            Underpredictions
+            Underpredictions (Conservative)
           </span>
-          <AlertTriangle size={16} color="var(--color-bad)" />
+          <ArrowDownRight size={16} color="var(--color-cool)" />
         </div>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: 'var(--space-xs)' }}>
           <span className="measured" style={{ fontSize: '1.75rem', fontWeight: 500, color: 'var(--color-ink)', lineHeight: 1.1 }}>
@@ -91,11 +91,11 @@ export const PredictionSummaryCards: React.FC<PredictionSummaryCardsProps> = ({
           </span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2xs)', marginTop: 'auto' }}>
-          <span className="chip chip-bad" style={{ fontSize: '0.7rem' }}>
+          <span className="chip chip-cool" style={{ fontSize: '0.7rem' }}>
             pred &lt; actual
           </span>
           <span style={{ fontSize: '0.75rem', color: 'var(--color-muted)' }}>
-            Late servicing risk (penalized heavily)
+            Could trigger earlier maintenance inspection
           </span>
         </div>
       </div>
@@ -104,7 +104,7 @@ export const PredictionSummaryCards: React.FC<PredictionSummaryCardsProps> = ({
       <div className="panel" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-xs)' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <span style={{ fontSize: 'var(--text-xs)', color: 'var(--color-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-            Endpoint MAE & Dispersion
+            Official Endpoint MAE
           </span>
           <Activity size={16} color="var(--color-accent)" />
         </div>
@@ -112,7 +112,7 @@ export const PredictionSummaryCards: React.FC<PredictionSummaryCardsProps> = ({
           <span className="measured" style={{ fontSize: '1.75rem', fontWeight: 500, color: 'var(--color-ink)', lineHeight: 1.1 }}>
             {formatCycles(summary.endpointMae)}
           </span>
-          <span style={{ fontSize: 'var(--text-xs)', color: 'var(--color-muted)' }}>cycles MAE</span>
+          <span style={{ fontSize: 'var(--text-xs)', color: 'var(--color-muted)' }}>cycles MAE (fleet baseline)</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2xs)', marginTop: 'auto', flexWrap: 'wrap' }}>
           <span style={{ fontSize: '0.75rem', color: 'var(--color-muted)' }}>

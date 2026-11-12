@@ -135,6 +135,7 @@ export const PredictionFilterToolbar: React.FC<PredictionFilterToolbarProps> = (
               type="button"
               onClick={() => handleClassification('over')}
               aria-pressed={filters.errorClassification === 'over'}
+              title="Overpredictions: optimistic RUL estimate (predicted RUL > actual RUL)"
               style={{
                 height: '28px',
                 padding: '0 var(--space-sm)',
@@ -153,6 +154,7 @@ export const PredictionFilterToolbar: React.FC<PredictionFilterToolbarProps> = (
               type="button"
               onClick={() => handleClassification('under')}
               aria-pressed={filters.errorClassification === 'under'}
+              title="Underpredictions: conservative RUL estimate (predicted RUL < actual RUL)"
               style={{
                 height: '28px',
                 padding: '0 var(--space-sm)',
@@ -219,3 +221,4 @@ export const PredictionFilterToolbar: React.FC<PredictionFilterToolbarProps> = (
     </div>
   );
 };
+

@@ -21,15 +21,15 @@ export const TopOutliersCard: React.FC<TopOutliersCardProps> = ({
 
   return (
     <div className="panel" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 'var(--space-xs)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-xs)' }}>
-          <AlertCircle size={16} color="var(--color-bad)" />
+          <AlertCircle size={16} color="var(--color-accent)" />
           <h3 style={{ fontSize: 'var(--text-title)', color: 'var(--color-ink)', margin: 0 }}>
-            Largest Prediction Errors (Top 5 Outliers)
+            Largest Prediction Errors (Top 5 Fleet Outliers)
           </h3>
         </div>
         <span style={{ fontSize: 'var(--text-xs)', color: 'var(--color-muted)' }}>
-          Ranked by absolute cycle error
+          Whole-dataset ranking · Ranked by absolute endpoint error
         </span>
       </div>
 
@@ -62,8 +62,8 @@ export const TopOutliersCard: React.FC<TopOutliersCardProps> = ({
                 <span style={{ fontSize: 'var(--text-xs)', color: 'var(--color-muted)', fontWeight: 500 }}>
                   #{idx + 1} Outlier
                 </span>
-                <span className={`chip ${isOver ? 'chip-ok' : 'chip-bad'}`} style={{ fontSize: '0.65rem' }}>
-                  {isOver ? '+ over' : '- under'}
+                <span className={`chip ${isOver ? 'chip-accent' : 'chip-cool'}`} style={{ fontSize: '0.65rem' }}>
+                  {isOver ? '+ over (optimistic)' : '- under (conservative)'}
                 </span>
               </div>
 
@@ -71,7 +71,7 @@ export const TopOutliersCard: React.FC<TopOutliersCardProps> = ({
                 <span className="measured" style={{ fontSize: 'var(--text-md)', fontWeight: 500, color: 'var(--color-ink)' }}>
                   Unit #{engine.unit_id}
                 </span>
-                <span className="measured" style={{ fontSize: 'var(--text-sm)', color: isOver ? 'var(--color-ok)' : 'var(--color-bad)' }}>
+                <span className="measured" style={{ fontSize: 'var(--text-sm)', color: isOver ? 'var(--color-accent)' : 'var(--color-cool)' }}>
                   {formatSignedError(engine.prediction_error)} cyc
                 </span>
               </div>
@@ -97,7 +97,7 @@ export const TopOutliersCard: React.FC<TopOutliersCardProps> = ({
                   height: '28px',
                 }}
               >
-                <span>{isSelected ? 'Inspecting' : 'Inspect engine'}</span>
+                <span>{isSelected ? 'Inspecting' : 'Inspect endpoint'}</span>
                 <ChevronRight size={14} />
               </button>
             </div>

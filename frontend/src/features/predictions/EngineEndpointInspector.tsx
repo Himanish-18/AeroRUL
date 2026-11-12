@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { X, ShieldAlert, CheckCircle, Info } from 'lucide-react';
+import { X, Info } from 'lucide-react';
 import { PredictionRecord } from '../../lib/data/types';
 import { formatCycles, formatSignedError, formatSignedDelta } from '../../lib/utils/format';
 
@@ -27,6 +27,7 @@ export const EngineEndpointInspector: React.FC<EngineEndpointInspectorProps> = (
 
   const isOver = prediction.prediction_error > 0;
   const isExact = Math.abs(prediction.prediction_error) < 0.001;
+  const isUnder = prediction.prediction_error < 0;
   const relError = prediction.actual_rul_official > 0
     ? (prediction.prediction_error / prediction.actual_rul_official) * 100
     : 0;
@@ -52,11 +53,15 @@ export const EngineEndpointInspector: React.FC<EngineEndpointInspectorProps> = (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 'var(--space-sm)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)' }}>
           <span style={{ fontSize: 'var(--text-md)', fontWeight: 500, color: 'var(--color-ink)' }}>
-            Engine Trajectory Detail: Unit #{prediction.unit_id}
+            Engine Endpoint Detail: Unit #{prediction.unit_id}
           </span>
           <span className="chip chip-cool">{prediction.dataset}</span>
-          <span className={`chip ${isOver ? 'chip-ok' : isExact ? 'chip-cool' : 'chip-bad'}`}>
-            {isOver ? 'Overprediction' : isExact ? 'Exact parity' : 'Underprediction'}
+          <span className={`chip ${isOver ? 'chip-accent' : isExact ? '' : 'chip-cool'}`}>
+            {isOver
+              ? 'Overprediction (optimistic)'
+              : isExact
+              ? 'Exact parity'
+              : 'Underprediction (conservative)'}
           </span>
         </div>
 
@@ -122,14 +127,14 @@ export const EngineEndpointInspector: React.FC<EngineEndpointInspectorProps> = (
             style={{
               fontSize: '1.25rem',
               fontWeight: 500,
-              color: isOver ? 'var(--color-ok)' : 'var(--color-bad)',
+              color: isOver ? 'var(--color-accent)' : isUnder ? 'var(--color-cool)' : 'var(--color-ink)',
               marginTop: '2px',
             }}
           >
             {formatSignedError(prediction.prediction_error)}
           </div>
-          <span style={{ fontSize: '0.7rem', color: isOver ? 'var(--color-ok)' : 'var(--color-bad)' }}>
-            {isOver ? '+ overprediction' : '- underprediction'}
+          <span style={{ fontSize: '0.7rem', color: 'var(--color-muted)' }}>
+            {isOver ? '+ over (optimistic)' : isUnder ? '- under (conservative)' : 'exact'}
           </span>
         </div>
 
@@ -188,21 +193,17 @@ export const EngineEndpointInspector: React.FC<EngineEndpointInspectorProps> = (
             gap: 'var(--space-xs)',
           }}
         >
-          {isOver ? (
-            <CheckCircle size={16} color="var(--color-ok)" style={{ marginTop: '2px', flexShrink: 0 }} />
-          ) : (
-            <ShieldAlert size={16} color="var(--color-bad)" style={{ marginTop: '2px', flexShrink: 0 }} />
-          )}
+          <Info size={16} color={isOver ? 'var(--color-accent)' : 'var(--color-cool)'} style={{ marginTop: '2px', flexShrink: 0 }} />
           <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', fontSize: 'var(--text-xs)' }}>
             <span style={{ fontWeight: 500, color: 'var(--color-ink)' }}>
               Operational Domain Context
             </span>
             <span style={{ color: 'var(--color-muted)' }}>
               {isOver
-                ? `Engine overpredicted by ${formatCycles(prediction.prediction_error)} cycles. In maintenance scheduling, premature service triggers earlier inspections with lower risk of in-flight exhaustion.`
+                ? `Engine RUL was overpredicted by ${formatCycles(prediction.prediction_error)} cycles (optimistic estimate: predicted ${formatCycles(prediction.predicted_rul_final)} vs actual ${formatCycles(prediction.actual_rul_official)}). If used directly in a threshold-based maintenance policy, this could delay inspection or servicing.`
                 : isExact
-                ? `Perfect parity with official NASA ground truth. Zero prediction bias observed.`
-                : `Engine underpredicted by ${formatCycles(Math.abs(prediction.prediction_error))} cycles. Model predicted fewer cycles remaining than actual life (conservative estimate).`}
+                ? `Exact parity with official test ground truth. Zero prediction bias observed for this endpoint.`
+                : `Engine RUL was underpredicted by ${formatCycles(Math.abs(prediction.prediction_error))} cycles (conservative estimate: predicted ${formatCycles(prediction.predicted_rul_final)} vs actual ${formatCycles(prediction.actual_rul_official)}). Conservative estimates could trigger maintenance inspection or servicing earlier than necessary.`}
             </span>
           </div>
         </div>
