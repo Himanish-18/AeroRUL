@@ -6,6 +6,7 @@
  * Never fetches from external or mock services.
  */
 
+import { useState, useEffect, useCallback } from 'react';
 import {
   TestMetricRecord,
   PredictionRecord,
@@ -94,5 +95,48 @@ export async function loadBenchmarkData(forceReload = false): Promise<LoadedBenc
 export function clearBenchmarkCache(): void {
   cachedData = null;
   inflightPromise = null;
+}
+
+export function useBenchmarkData() {
+  const [data, setData] = useState<LoadedBenchmarkData | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const reload = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const loaded = await loadBenchmarkData(true);
+      setData(loaded);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Unknown error loading research artifacts';
+      setError(msg);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    loadBenchmarkData()
+      .then((loaded) => {
+        if (!cancelled) {
+          setData(loaded);
+          setLoading(false);
+        }
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          const msg = err instanceof Error ? err.message : 'Unknown error loading research artifacts';
+          setError(msg);
+          setLoading(false);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  return { data, loading, error, reload };
 }
 

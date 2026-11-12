@@ -92,6 +92,25 @@
 }
 
 /* Controls */
+.mobile-menu-btn {
+  display: none;
+}
+
+@media (max-width: 60rem) {
+  .mobile-menu-btn {
+    display: inline-flex !important;
+  }
+}
+
+@media (max-width: 40rem) {
+  .header-stamp,
+  .header-subtitle,
+  .header-badge,
+  .dataset-label-text {
+    display: none !important;
+  }
+}
+
 .btn {
   display: inline-flex;
   align-items: center;

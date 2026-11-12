@@ -11,6 +11,10 @@ export type DatasetId = 'FD001' | 'FD002' | 'FD003' | 'FD004';
 
 export const VALID_DATASETS: readonly DatasetId[] = ['FD001', 'FD002', 'FD003', 'FD004'];
 
+export type AppView = 'overview' | 'predictions';
+
+export const VALID_VIEWS: readonly AppView[] = ['overview', 'predictions'];
+
 export interface TestMetricRecord {
   dataset: DatasetId;
   selected_model: string;
@@ -85,6 +89,7 @@ export type SortField =
   | 'unit_id'
   | 'last_observed_cycle'
   | 'actual_rul_official'
+  | 'predicted_rul_raw'
   | 'predicted_rul_final'
   | 'prediction_error'
   | 'absolute_error';
@@ -96,8 +101,44 @@ export interface SortState {
   direction: SortDirection;
 }
 
+export type ErrorClassificationFilter = 'all' | 'over' | 'under';
+
+export interface PredictionFilterState {
+  searchQuery: string;
+  errorClassification: ErrorClassificationFilter;
+  minAbsoluteError: number;
+}
+
 export interface EngineFilterState {
   searchQuery: string;
   errorCategory?: 'all' | 'under' | 'over';
+}
+
+export interface PredictionSummaryStats {
+  totalEvaluated: number;
+  successfullyPredicted: number;
+  coveragePercent: string;
+  overpredictionCount: number;
+  overpredictionPercent: number;
+  underpredictionCount: number;
+  underpredictionPercent: number;
+  exactCount: number;
+  exactPercent: number;
+  endpointMae: number;
+  medianAbsoluteError: number;
+  p90AbsoluteError: number;
+  meanSignedError: number;
+  nasaScoreSum: number;
+}
+
+export interface ErrorDistributionBin {
+  binStart: number;
+  binEnd: number;
+  binLabel: string;
+  count: number;
+  percentage: number;
+  isOverprediction: boolean;
+  isUnderprediction: boolean;
+  isZeroBin: boolean;
 }
 

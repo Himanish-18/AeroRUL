@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { DatasetId, VALID_DATASETS } from './lib/data/types';
+import { DatasetId, VALID_DATASETS, AppView, VALID_VIEWS } from './lib/data/types';
 import { AppShell } from './components/layout/AppShell';
 import { OverviewDashboard } from './features/overview/OverviewDashboard';
+import { EnginePredictionsPage } from './features/predictions/EnginePredictionsPage';
 
 function getInitialDataset(): DatasetId {
   try {
@@ -16,14 +17,28 @@ function getInitialDataset(): DatasetId {
   return 'FD001';
 }
 
+function getInitialView(): AppView {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const v = params.get('view') as AppView | null;
+    if (v && VALID_VIEWS.includes(v)) {
+      return v;
+    }
+  } catch {
+    // fallback to overview
+  }
+  return 'overview';
+}
+
 export const App: React.FC = () => {
   const [selectedDataset, setSelectedDataset] = useState<DatasetId>(getInitialDataset);
+  const [currentView, setCurrentView] = useState<AppView>(getInitialView);
 
   // Sync state to URL query parameter
-  const handleSelectDataset = useCallback((dataset: DatasetId) => {
-    setSelectedDataset(dataset);
+  const updateUrlParams = useCallback((view: AppView, dataset: DatasetId) => {
     try {
       const url = new URL(window.location.href);
+      url.searchParams.set('view', view);
       url.searchParams.set('dataset', dataset);
       window.history.pushState({}, '', url.toString());
     } catch {
@@ -31,10 +46,21 @@ export const App: React.FC = () => {
     }
   }, []);
 
+  const handleSelectDataset = useCallback((dataset: DatasetId) => {
+    setSelectedDataset(dataset);
+    updateUrlParams(currentView, dataset);
+  }, [currentView, updateUrlParams]);
+
+  const handleNavigate = useCallback((view: AppView) => {
+    setCurrentView(view);
+    updateUrlParams(view, selectedDataset);
+  }, [selectedDataset, updateUrlParams]);
+
   // Sync state when browser forward/back button is used
   useEffect(() => {
     const onPopState = () => {
       setSelectedDataset(getInitialDataset());
+      setCurrentView(getInitialView());
     };
     window.addEventListener('popstate', onPopState);
     return () => window.removeEventListener('popstate', onPopState);
@@ -42,13 +68,17 @@ export const App: React.FC = () => {
 
   return (
     <AppShell
+      currentView={currentView}
+      onNavigate={handleNavigate}
       selectedDataset={selectedDataset}
       onSelectDataset={handleSelectDataset}
       frozenTimestamp="2026-10-27 00:35:50"
     >
-      <OverviewDashboard
-        selectedDataset={selectedDataset}
-      />
+      {currentView === 'predictions' ? (
+        <EnginePredictionsPage selectedDataset={selectedDataset} />
+      ) : (
+        <OverviewDashboard selectedDataset={selectedDataset} />
+      )}
     </AppShell>
   );
 };

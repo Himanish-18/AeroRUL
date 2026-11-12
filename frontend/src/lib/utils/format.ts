@@ -51,3 +51,14 @@ export function formatPercent(value: number | undefined | null, decimals = 1): s
   return `${(value * 100).toFixed(decimals)}%`;
 }
 
+export function formatSignedDelta(value: number | undefined | null, decimals = 2): string {
+  if (value === undefined || value === null || Number.isNaN(value)) {
+    return '—';
+  }
+  if (Math.abs(value) < 0.0001) {
+    return '0.00';
+  }
+  const prefix = value > 0 ? '+' : '';
+  return `${prefix}${value.toFixed(decimals)}`;
+}
+

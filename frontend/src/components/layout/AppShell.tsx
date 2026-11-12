@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Sidebar } from './Sidebar';
 import { TopBar } from './TopBar';
-import { DatasetId } from '../../lib/data/types';
+import { DatasetId, AppView } from '../../lib/data/types';
 
 interface AppShellProps {
+  currentView: AppView;
+  onNavigate: (view: AppView) => void;
   selectedDataset: DatasetId;
   onSelectDataset: (dataset: DatasetId) => void;
   frozenTimestamp?: string;
@@ -11,6 +13,8 @@ interface AppShellProps {
 }
 
 export const AppShell: React.FC<AppShellProps> = ({
+  currentView,
+  onNavigate,
   selectedDataset,
   onSelectDataset,
   frozenTimestamp,
@@ -22,6 +26,8 @@ export const AppShell: React.FC<AppShellProps> = ({
   return (
     <div className="app-container">
       <Sidebar
+        currentView={currentView}
+        onNavigate={onNavigate}
         collapsed={collapsed}
         onToggleCollapse={() => setCollapsed(!collapsed)}
         mobileOpen={mobileOpen}
@@ -30,6 +36,7 @@ export const AppShell: React.FC<AppShellProps> = ({
 
       <div className="app-main">
         <TopBar
+          currentView={currentView}
           selectedDataset={selectedDataset}
           onSelectDataset={onSelectDataset}
           frozenTimestamp={frozenTimestamp}

@@ -12,14 +12,13 @@ if (!fs.existsSync(outputDir)) {
   fs.mkdirSync(outputDir, { recursive: true });
 }
 
-async function waitForServer(url, timeout = 10000) {
+async function waitForServer(url, timeout = 15000) {
   const start = Date.now();
   while (Date.now() - start < timeout) {
     try {
       const res = await fetch(url);
       if (res.ok) return true;
     } catch {
-      // wait 200ms
       await new Promise((r) => setTimeout(r, 200));
     }
   }
@@ -29,7 +28,7 @@ async function waitForServer(url, timeout = 10000) {
 async function runCapture() {
   console.log('[capture-screens] Starting Vite preview server...');
   const viteBin = path.resolve(__dirname, '..', 'node_modules', 'vite', 'bin', 'vite.js');
-  const server = spawn(process.execPath, [viteBin, 'preview', '--port', '4173', '--strictPort'], {
+  const server = spawn(process.execPath, [viteBin, 'preview', '--host', '127.0.0.1', '--port', '4173', '--strictPort'], {
     cwd: path.resolve(__dirname, '..'),
     env: { ...process.env, NODE_ENV: 'production' },
   });
@@ -38,7 +37,7 @@ async function runCapture() {
   server.stderr.on('data', (d) => console.error(`[vite error] ${d}`));
 
   try {
-    await waitForServer('http://localhost:4173');
+    await waitForServer('http://127.0.0.1:4173');
     console.log('[capture-screens] Server is ready. Launching headless Chrome...');
 
     const browser = await puppeteer.launch({
@@ -57,39 +56,65 @@ async function runCapture() {
 
     const page = await browser.newPage();
 
-    const viewports = [
-      { name: 'desktop-1440', width: 1440, height: 900 },
-      { name: 'desktop-1280', width: 1280, height: 800 },
-      { name: 'tablet-768', width: 768, height: 1024 },
-      { name: 'mobile-390', width: 390, height: 844 }
-    ];
-
-    for (const vp of viewports) {
-      console.log(`[capture-screens] Capturing ${vp.name} (${vp.width}x${vp.height})...`);
-      await page.setViewport({ width: vp.width, height: vp.height });
-      await page.goto('http://localhost:4173/?dataset=FD001', { waitUntil: 'networkidle0' });
-
-      // Wait for table and chart elements to ensure populated state
-      await page.waitForSelector('.data-table', { timeout: 5000 });
-
-      const filepath = path.join(outputDir, `${vp.name}.png`);
-      await page.screenshot({ path: filepath, fullPage: false });
-      console.log(`[capture-screens] Saved: ${filepath}`);
-    }
-
-    // Capture interaction: Click first table row to inspect engine
-    console.log('[capture-screens] Testing engine selection interaction...');
+    // 1. Overview Screen Captures
+    console.log('[capture-screens] Capturing Overview (desktop-1440)...');
     await page.setViewport({ width: 1440, height: 900 });
-    await page.goto('http://localhost:4173/?dataset=FD001', { waitUntil: 'networkidle0' });
-    await page.waitForSelector('.data-table tbody tr');
-    await page.click('.data-table tbody tr:first-child');
-    await new Promise((r) => setTimeout(r, 400)); // wait for inspector render
-    const selectedFilepath = path.join(outputDir, 'desktop-1440-selected-engine.png');
-    await page.screenshot({ path: selectedFilepath, fullPage: false });
-    console.log(`[capture-screens] Saved selected engine capture: ${selectedFilepath}`);
+    await page.goto('http://127.0.0.1:4173/?view=overview&dataset=FD001', { waitUntil: 'networkidle0' });
+    await page.waitForSelector('.data-table', { timeout: 5000 });
+    await page.screenshot({ path: path.join(outputDir, 'desktop-1440.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Overview (mobile-390)...');
+    await page.setViewport({ width: 390, height: 844 });
+    await page.goto('http://127.0.0.1:4173/?view=overview&dataset=FD001', { waitUntil: 'networkidle0' });
+    await page.waitForSelector('.data-table', { timeout: 5000 });
+    await page.screenshot({ path: path.join(outputDir, 'mobile-390.png'), fullPage: false });
+
+    // 2. Engine Predictions Workspace Captures
+    console.log('[capture-screens] Capturing Predictions Workspace (predictions-desktop-1440)...');
+    await page.setViewport({ width: 1440, height: 900 });
+    await page.goto('http://127.0.0.1:4173/?view=predictions&dataset=FD001', { waitUntil: 'networkidle0' });
+    await page.waitForSelector('.data-table', { timeout: 5000 });
+    await page.screenshot({ path: path.join(outputDir, 'predictions-desktop-1440.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Predictions with Engine Inspected (predictions-desktop-1440-selected)...');
+    // Click inspect on the top outlier card
+    const outlierBtn = await page.$('button[aria-label^="Inspect outlier unit"]');
+    if (outlierBtn) {
+      await outlierBtn.click();
+    } else {
+      const inspectBtn = await page.$('.data-table tbody tr button');
+      if (inspectBtn) await inspectBtn.click();
+    }
+    await new Promise((r) => setTimeout(r, 400));
+    const inspector = await page.$('[aria-label^="Engine endpoint inspection"]');
+    if (inspector) {
+      await inspector.evaluate((el) => el.scrollIntoView({ behavior: 'instant', block: 'center' }));
+    }
+    await page.screenshot({ path: path.join(outputDir, 'predictions-desktop-1440-selected.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Predictions Mobile (predictions-mobile-390)...');
+    await page.setViewport({ width: 390, height: 844 });
+    await page.goto('http://127.0.0.1:4173/?view=predictions&dataset=FD001', { waitUntil: 'networkidle0' });
+    await page.waitForSelector('.data-table', { timeout: 5000 });
+    await page.screenshot({ path: path.join(outputDir, 'predictions-mobile-390.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Predictions Mobile Inspector (predictions-mobile-390-inspector)...');
+    const mobileOutlierBtn = await page.$('button[aria-label^="Inspect outlier unit"]');
+    if (mobileOutlierBtn) {
+      await mobileOutlierBtn.click();
+    } else {
+      const mobileInspectBtn = await page.$('.data-table tbody tr button');
+      if (mobileInspectBtn) await mobileInspectBtn.click();
+    }
+    await new Promise((r) => setTimeout(r, 400));
+    const mobileInspector = await page.$('[aria-label^="Engine endpoint inspection"]');
+    if (mobileInspector) {
+      await mobileInspector.evaluate((el) => el.scrollIntoView({ behavior: 'instant', block: 'center' }));
+    }
+    await page.screenshot({ path: path.join(outputDir, 'predictions-mobile-390-inspector.png'), fullPage: false });
 
     await browser.close();
-    console.log('[capture-screens] All screenshots captured successfully!');
+    console.log('[capture-screens] All Stage 2 screenshots captured successfully!');
   } finally {
     server.kill();
     console.log('[capture-screens] Server stopped.');

@@ -11,8 +11,11 @@ import {
   ChevronRight,
   Plane,
 } from 'lucide-react';
+import { AppView } from '../../lib/data/types';
 
 interface SidebarProps {
+  currentView: AppView;
+  onNavigate: (view: AppView) => void;
   collapsed: boolean;
   onToggleCollapse: () => void;
   mobileOpen: boolean;
@@ -23,8 +26,7 @@ interface NavItem {
   id: string;
   label: string;
   icon: React.ReactNode;
-  active?: boolean;
-  status?: 'active' | 'planned';
+  status: 'active' | 'planned';
 }
 
 const NAV_ITEMS: NavItem[] = [
@@ -32,14 +34,13 @@ const NAV_ITEMS: NavItem[] = [
     id: 'overview',
     label: 'Overview',
     icon: <LayoutDashboard size={18} />,
-    active: true,
     status: 'active',
   },
   {
     id: 'predictions',
     label: 'Engine Predictions',
     icon: <Gauge size={18} />,
-    status: 'planned',
+    status: 'active',
   },
   {
     id: 'sensors',
@@ -74,6 +75,8 @@ const NAV_ITEMS: NavItem[] = [
 ];
 
 export const Sidebar: React.FC<SidebarProps> = ({
+  currentView,
+  onNavigate,
   collapsed,
   onToggleCollapse,
   mobileOpen,
@@ -175,15 +178,30 @@ export const Sidebar: React.FC<SidebarProps> = ({
         >
           {NAV_ITEMS.map((item) => {
             const isPlanned = item.status === 'planned';
-            const isActive = item.active;
+            const isActive = currentView === item.id;
+
+            const handleClick = () => {
+              if (!isPlanned && item.id !== currentView) {
+                onNavigate(item.id as AppView);
+                onCloseMobile();
+              }
+            };
 
             return (
               <div
                 key={item.id}
                 role="link"
+                tabIndex={isPlanned ? -1 : 0}
                 aria-disabled={isPlanned ? 'true' : undefined}
                 aria-current={isActive ? 'page' : undefined}
                 title={collapsed ? `${item.label}${isPlanned ? ' (Planned)' : ''}` : undefined}
+                onClick={handleClick}
+                onKeyDown={(e) => {
+                  if (!isPlanned && (e.key === 'Enter' || e.key === ' ')) {
+                    e.preventDefault();
+                    handleClick();
+                  }
+                }}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -198,6 +216,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   cursor: isPlanned ? 'not-allowed' : 'pointer',
                   opacity: isPlanned ? 0.65 : 1,
                   position: 'relative',
+                  outline: 'none',
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-xs)', minWidth: 0 }}>
@@ -282,7 +301,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2xs)' }}>
               <span style={{ color: 'var(--color-cool)' }}>Benchmark</span>
-              <span>Stage 1</span>
+              <span>Stage 2</span>
             </div>
             <span style={{ fontSize: '0.7rem' }}>NASA C-MAPSS FD001-FD004</span>
           </div>

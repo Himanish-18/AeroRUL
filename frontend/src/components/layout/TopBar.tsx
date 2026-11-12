@@ -1,8 +1,9 @@
 import React from 'react';
 import { Menu, ShieldCheck, Database } from 'lucide-react';
-import { DatasetId, VALID_DATASETS } from '../../lib/data/types';
+import { DatasetId, VALID_DATASETS, AppView } from '../../lib/data/types';
 
 interface TopBarProps {
+  currentView: AppView;
   selectedDataset: DatasetId;
   onSelectDataset: (dataset: DatasetId) => void;
   frozenTimestamp?: string;
@@ -10,21 +11,23 @@ interface TopBarProps {
 }
 
 export const TopBar: React.FC<TopBarProps> = ({
+  currentView,
   selectedDataset,
   onSelectDataset,
   frozenTimestamp,
   onOpenMobileMenu,
 }) => {
+  const isPredictions = currentView === 'predictions';
+
   return (
     <header className="app-header">
       {/* Left: Mobile trigger & context */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-md)' }}>
         <button
           type="button"
-          className="btn btn-icon btn-sm"
+          className="btn btn-icon btn-sm mobile-menu-btn"
           onClick={onOpenMobileMenu}
           aria-label="Open navigation menu"
-          style={{ display: 'none' }}
           id="mobile-menu-btn"
         >
           <Menu size={18} />
@@ -40,9 +43,10 @@ export const TopBar: React.FC<TopBarProps> = ({
                 letterSpacing: '-0.01em',
               }}
             >
-              Evaluation overview
+              {isPredictions ? 'Engine Predictions' : 'Evaluation overview'}
             </span>
             <span
+              className="header-badge"
               style={{
                 fontSize: '0.65rem',
                 color: 'var(--color-muted)',
@@ -55,8 +59,10 @@ export const TopBar: React.FC<TopBarProps> = ({
               Official Test
             </span>
           </div>
-          <span style={{ fontSize: '0.75rem', color: 'var(--color-muted)', lineHeight: 1.2 }}>
-            NASA C-MAPSS turbofan degradation benchmark
+          <span className="header-subtitle" style={{ fontSize: '0.75rem', color: 'var(--color-muted)', lineHeight: 1.2 }}>
+            {isPredictions
+              ? 'Official test engine RUL endpoints and error decomposition'
+              : 'NASA C-MAPSS turbofan degradation benchmark'}
           </span>
         </div>
       </div>
@@ -88,7 +94,7 @@ export const TopBar: React.FC<TopBarProps> = ({
             }}
           >
             <Database size={12} />
-            <span>Dataset</span>
+            <span className="dataset-label-text">Dataset</span>
           </span>
           {VALID_DATASETS.map((ds) => {
             const isSelected = ds === selectedDataset;
@@ -121,6 +127,7 @@ export const TopBar: React.FC<TopBarProps> = ({
         {/* Frozen Manifest Stamp */}
         {frozenTimestamp && (
           <div
+            className="header-stamp"
             title={`Frozen model manifest timestamp: ${frozenTimestamp}`}
             style={{
               display: 'flex',

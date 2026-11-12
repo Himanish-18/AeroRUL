@@ -217,23 +217,31 @@ export const EnginePredictionTable: React.FC<EnginePredictionTableProps> = ({
                     key={row.unit_id}
                     className={isSelected ? 'selected' : ''}
                     onClick={() => onSelectEngine(row.unit_id)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        onSelectEngine(row.unit_id);
-                      }
-                    }}
-                    tabIndex={0}
-                    role="button"
-                    aria-selected={isSelected}
-                    aria-label={`Engine unit ${row.unit_id}, actual RUL ${row.actual_rul_official} cycles, predicted RUL ${row.predicted_rul_final.toFixed(2)} cycles, signed error ${row.prediction_error > 0 ? '+' : ''}${row.prediction_error.toFixed(2)} cycles`}
                     style={{ cursor: 'pointer' }}
                   >
                     <td>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2xs)' }}>
-                        <span className="measured" style={{ fontWeight: 500, color: 'var(--color-ink)' }}>
+                        <button
+                          type="button"
+                          className="btn btn-sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onSelectEngine(row.unit_id);
+                          }}
+                          aria-label={`Inspect engine unit ${row.unit_id}`}
+                          style={{
+                            padding: '0 6px',
+                            height: '24px',
+                            fontFamily: 'var(--font-outlier)',
+                            fontWeight: 500,
+                            color: isSelected ? 'var(--color-accent-ink)' : 'var(--color-ink)',
+                            background: isSelected ? 'var(--color-accent)' : 'var(--color-paper-3)',
+                            borderColor: isSelected ? 'var(--color-accent)' : 'var(--color-rule-2)',
+                            fontSize: 'var(--text-xs)',
+                          }}
+                        >
                           #{row.unit_id}
-                        </span>
+                        </button>
                         {isSelected && (
                           <span className="chip chip-accent" style={{ padding: '0 4px', fontSize: '0.65rem' }}>
                             selected
