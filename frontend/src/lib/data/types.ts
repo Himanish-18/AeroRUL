@@ -246,4 +246,29 @@ export interface HyperparameterTrialRecord {
   status: string;
 }
 
+export interface RankComparisonItem {
+  model: string;
+  cvRank: number | null;
+  cvMae: number | null;
+  devRank: number | null;
+  devCommonRank: number | null;
+  devMae: number | null;
+  rankDelta: number | null;
+  isReversal: boolean;
+  isChallengerVariant: boolean;
+}
+
+export interface HyperparameterTrialSummary {
+  totalStoredTrials: number;
+  completedTrials: number;
+  bestEngineMacroMae: number;
+  medianEngineMacroMae: number;
+  bestPooledMae: number;
+  bestPooledMaeTrialId: number;
+  bestPooledRmse: number;
+  bestPooledRmseTrialId: number;
+  bestTrialId: number;
+  runtimeSecBestTrial: number;
+}
+
 

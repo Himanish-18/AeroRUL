@@ -222,14 +222,54 @@ async function runCapture() {
     await page.setViewport({ width: 1440, height: 900 });
     await page.goto('http://127.0.0.1:4173/?view=models&dataset=FD004', { waitUntil: 'networkidle0' });
     await page.waitForSelector('.data-table', { timeout: 5000 });
+    await page.evaluate(() => {
+      const devHeading = Array.from(document.querySelectorAll('h2')).find((h) =>
+        h.textContent?.includes('Development Validation Partition Evaluation')
+      );
+      if (devHeading) {
+        devHeading.scrollIntoView({ behavior: 'instant', block: 'start' });
+      }
+    });
+    await new Promise((r) => setTimeout(r, 400));
     await page.screenshot({ path: path.join(outputDir, 'model-evaluation-phase5-fd004.png'), fullPage: false });
 
     console.log('[capture-screens] Capturing Configuration & Tuning Trial Inspector (model-evaluation-trial-inspector)...');
+    await page.setViewport({ width: 1440, height: 900 });
+    await page.goto('http://127.0.0.1:4173/?view=models&dataset=FD001', { waitUntil: 'networkidle0' });
+    await page.waitForSelector('.data-table', { timeout: 5000 });
+
     const configTab = await page.$('button[role="tab"]:nth-child(3)');
     if (configTab) {
       await configTab.click();
       await new Promise((r) => setTimeout(r, 600));
     }
+
+    // 1. Scroll to the Optuna Hyperparameter Search Explorer section
+    await page.evaluate(() => {
+      const explorer = Array.from(document.querySelectorAll('h2')).find((h) =>
+        h.textContent?.includes('Optuna Hyperparameter Search Explorer')
+      );
+      if (explorer) {
+        explorer.scrollIntoView({ behavior: 'instant', block: 'start' });
+      }
+    });
+    await new Promise((r) => setTimeout(r, 300));
+
+    // 2. Select an actual stored trial dot in the Optuna chart
+    const trialDot = await page.$('.recharts-line circle');
+    if (trialDot) {
+      await trialDot.click();
+      await new Promise((r) => setTimeout(r, 400));
+    }
+
+    // 3. Wait for the detail inspector to render and scroll it into view
+    await page.waitForSelector('#optuna-trial-inspector', { timeout: 5000 });
+    const trialInspector = await page.$('#optuna-trial-inspector');
+    if (trialInspector) {
+      await trialInspector.evaluate((el) => el.scrollIntoView({ behavior: 'instant', block: 'center' }));
+    }
+    await new Promise((r) => setTimeout(r, 400));
+
     await page.screenshot({ path: path.join(outputDir, 'model-evaluation-trial-inspector.png'), fullPage: false });
 
     await browser.close();

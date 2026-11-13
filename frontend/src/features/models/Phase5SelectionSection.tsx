@@ -416,12 +416,18 @@ export const Phase5SelectionSection: React.FC<Phase5SelectionSectionProps> = ({
                     </td>
                     <td style={{ textAlign: 'center' }}>
                       {comp ? (
-                        <span
-                          className={`chip ${comp.isReversal ? 'chip-accent' : ''}`}
-                          style={{ fontSize: '0.65rem' }}
-                        >
-                          CV #{comp.cvRank} → Dev #{comp.devRank}
-                        </span>
+                        comp.cvRank === null ? (
+                          <span className="chip" style={{ fontSize: '0.65rem' }}>
+                            Not evaluated
+                          </span>
+                        ) : (
+                          <span
+                            className={`chip ${comp.isReversal ? 'chip-accent' : ''}`}
+                            style={{ fontSize: '0.65rem' }}
+                          >
+                            CV #{comp.cvRank} → Dev #{comp.devCommonRank}
+                          </span>
+                        )
                       ) : (
                         '—'
                       )}

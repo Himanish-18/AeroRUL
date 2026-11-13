@@ -15,7 +15,11 @@ import {
   Phase5TargetCapSensitivityRecord,
   HyperparameterTrialRecord,
   Phase4SortMetric,
+  RankComparisonItem,
+  HyperparameterTrialSummary,
 } from './types';
+
+export type { RankComparisonItem, HyperparameterTrialSummary };
 
 // ==========================================
 // Phase 4 Benchmark Adapters
@@ -110,62 +114,70 @@ export function getPhase5DevValLeader(
 // Cross-Validation vs Development-Validation Comparison
 // ==========================================
 
-export interface RankComparisonItem {
-  model: string;
-  cvRank: number;
-  cvMae: number;
-  devRank: number | null;
-  devMae: number | null;
-  rankDelta: number | null; // devRank - cvRank (positive = dropped rank, negative = improved rank)
-  isReversal: boolean;
-  isChallengerVariant: boolean;
-}
-
 export function compareCvAndDevValRanks(
   cvRecords: Phase5CrossValidationRecord[],
   devRecords: Phase5DevelopmentValidationRecord[]
 ): RankComparisonItem[] {
+  // 1. Sort CV candidates (5 common models in CV)
   const sortedCv = sortPhase5CvCandidates(cvRecords, 'asc');
-  const sortedDev = sortPhase5DevValCandidates(devRecords, 'asc');
+  const cvModelSet = new Set(sortedCv.map((r) => r.model));
 
   const cvRankMap = new Map<string, { rank: number; mae: number }>();
   sortedCv.forEach((rec, idx) => {
     cvRankMap.set(rec.model, { rank: idx + 1, mae: rec.engine_macro_mae });
   });
 
-  const devRankMap = new Map<string, { rank: number; mae: number }>();
-  sortedDev.forEach((rec, idx) => {
-    devRankMap.set(rec.model, { rank: idx + 1, mae: rec.engine_macro_mae });
+  // 2. Sort ALL dev records (6 models: includes Cap125 challenger)
+  const sortedDevOverall = sortPhase5DevValCandidates(devRecords, 'asc');
+  const devOverallRankMap = new Map<string, { rank: number; mae: number }>();
+  sortedDevOverall.forEach((rec, idx) => {
+    devOverallRankMap.set(rec.model, { rank: idx + 1, mae: rec.engine_macro_mae });
   });
 
-  // Group models, prioritizing models present in CV
-  const allModels = Array.from(new Set([...sortedCv.map((r) => r.model), ...sortedDev.map((r) => r.model)]));
+  // 3. Calculate ranks for common candidate set (excluding Cap125)
+  const commonDevRecords = sortedDevOverall.filter((r) => cvModelSet.has(r.model));
+  const sortedCommonDev = sortPhase5DevValCandidates(commonDevRecords, 'asc');
+  const devCommonRankMap = new Map<string, { rank: number; mae: number }>();
+  sortedCommonDev.forEach((rec, idx) => {
+    devCommonRankMap.set(rec.model, { rank: idx + 1, mae: rec.engine_macro_mae });
+  });
+
+  // 4. Map each candidate model
+  const allModels = Array.from(new Set([...sortedDevOverall.map((r) => r.model)]));
 
   return allModels.map((model) => {
     const cvInfo = cvRankMap.get(model);
-    const devInfo = devRankMap.get(model);
+    const devOverallInfo = devOverallRankMap.get(model);
+    const devCommonInfo = devCommonRankMap.get(model);
+    const isChallengerVariant = model.includes('Cap125') || !cvInfo;
 
-    const cvRank = cvInfo ? cvInfo.rank : 999;
-    const cvMae = cvInfo ? cvInfo.mae : 0;
-    const devRank = devInfo ? devInfo.rank : null;
-    const devMae = devInfo ? devInfo.mae : null;
+    const cvRank = cvInfo ? cvInfo.rank : null;
+    const cvMae = cvInfo ? cvInfo.mae : null;
+    const devRank = devOverallInfo ? devOverallInfo.rank : null;
+    const devCommonRank = devCommonInfo ? devCommonInfo.rank : null;
+    const devMae = devOverallInfo ? devOverallInfo.mae : null;
 
-    const rankDelta = devRank !== null && cvInfo ? devRank - cvRank : null;
-    // A reversal occurs if the top CV model is not top in dev, or rank relative to direct competitor swapped
-    const isReversal = rankDelta !== null && rankDelta !== 0;
-    const isChallengerVariant = model.includes('Cap125');
+    // Rank delta and reversal are defined strictly over the shared candidate set
+    const rankDelta = (cvRank !== null && devCommonRank !== null) ? devCommonRank - cvRank : null;
+    const isReversal = cvRank !== null && devCommonRank !== null && cvRank !== devCommonRank;
 
     return {
       model,
       cvRank,
       cvMae,
       devRank,
+      devCommonRank,
       devMae,
       rankDelta,
       isReversal,
       isChallengerVariant,
     };
-  }).sort((a, b) => a.cvRank - b.cvRank);
+  }).sort((a, b) => {
+    if (a.cvRank !== null && b.cvRank !== null) return a.cvRank - b.cvRank;
+    if (a.cvRank !== null) return -1;
+    if (b.cvRank !== null) return 1;
+    return (a.devRank || 999) - (b.devRank || 999);
+  });
 }
 
 export interface SelectionMargin {
@@ -249,15 +261,26 @@ export function getBestHyperparameterTrial(
   return [...completed].sort((a, b) => a.engine_macro_mae - b.engine_macro_mae)[0];
 }
 
-export interface HyperparameterTrialSummary {
-  totalStoredTrials: number;
-  completedTrials: number;
-  bestEngineMacroMae: number;
-  medianEngineMacroMae: number;
-  bestPooledMae: number;
-  bestPooledRmse: number;
-  bestTrialId: number;
-  runtimeSecBestTrial: number;
+export function getTrialIdentity(
+  dataset: DatasetId,
+  modelFamily: string,
+  trialId: number
+): string {
+  return `${dataset}:${modelFamily}:${trialId}`;
+}
+
+export function parseTrialIdentity(identity: string): {
+  dataset: DatasetId;
+  modelFamily: string;
+  trialId: number;
+} | null {
+  const parts = identity.split(':');
+  if (parts.length !== 3) return null;
+  return {
+    dataset: parts[0] as DatasetId,
+    modelFamily: parts[1],
+    trialId: parseInt(parts[2], 10),
+  };
 }
 
 export function getHyperparameterTrialSummary(
@@ -276,17 +299,20 @@ export function getHyperparameterTrialSummary(
     ? sortedByMae[mid].engine_macro_mae
     : (sortedByMae[mid - 1].engine_macro_mae + sortedByMae[mid].engine_macro_mae) / 2;
 
-  const bestPooledMae = [...completed].sort((a, b) => a.pooled_mae - b.pooled_mae)[0].pooled_mae;
-  const bestPooledRmse = [...completed].sort((a, b) => a.pooled_rmse - b.pooled_rmse)[0].pooled_rmse;
+  const bestPooledMaeTrial = [...completed].sort((a, b) => a.pooled_mae - b.pooled_mae)[0];
+  const bestPooledRmseTrial = [...completed].sort((a, b) => a.pooled_rmse - b.pooled_rmse)[0];
 
   return {
     totalStoredTrials: trials.length,
     completedTrials: completed.length,
     bestEngineMacroMae: best.engine_macro_mae,
     medianEngineMacroMae,
-    bestPooledMae,
-    bestPooledRmse,
+    bestPooledMae: bestPooledMaeTrial.pooled_mae,
+    bestPooledMaeTrialId: bestPooledMaeTrial.trial_id,
+    bestPooledRmse: bestPooledRmseTrial.pooled_rmse,
+    bestPooledRmseTrialId: bestPooledRmseTrial.trial_id,
     bestTrialId: best.trial_id,
     runtimeSecBestTrial: best.runtime_sec,
   };
 }
+

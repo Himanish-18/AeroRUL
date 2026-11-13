@@ -41,7 +41,7 @@ export const App: React.FC = () => {
       const url = new URL(window.location.href);
       url.searchParams.set('view', view);
       url.searchParams.set('dataset', dataset);
-      window.history.pushState({}, '', url.toString());
+      window.history.pushState({}, '', url.pathname + url.search);
     } catch {
       // Ignore if URL manipulations fail
     }
@@ -56,6 +56,23 @@ export const App: React.FC = () => {
     setCurrentView(view);
     updateUrlParams(view, selectedDataset);
   }, [selectedDataset, updateUrlParams]);
+
+  // Ensure URL query parameters reflect initial view and dataset on mount
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const hasView = params.has('view');
+      const hasDs = params.has('dataset');
+      if (!hasView || !hasDs) {
+        const url = new URL(window.location.href);
+        if (!hasView) url.searchParams.set('view', currentView);
+        if (!hasDs) url.searchParams.set('dataset', selectedDataset);
+        window.history.replaceState({}, '', url.pathname + url.search);
+      }
+    } catch {
+      // Ignore if URL manipulations fail
+    }
+  }, [currentView, selectedDataset]);
 
   // Sync state when browser forward/back button is used
   useEffect(() => {

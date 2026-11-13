@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import { PredictionsDetailedTable } from '../src/features/predictions/PredictionsDetailedTable';
 import { EngineEndpointInspector } from '../src/features/predictions/EngineEndpointInspector';
 import { TopOutliersCard } from '../src/features/predictions/TopOutliersCard';
@@ -7,7 +7,26 @@ import { TopBar } from '../src/components/layout/TopBar';
 import { Sidebar } from '../src/components/layout/Sidebar';
 import { ModelEvaluationHeader } from '../src/features/models/ModelEvaluationHeader';
 import { Phase4BenchmarkSection } from '../src/features/models/Phase4BenchmarkSection';
+import { App } from '../src/App';
 import { PredictionRecord, VALID_DATASETS, DatasetId, VALID_VIEWS, AppView, Phase4BenchmarkRecord } from '../src/lib/data/types';
+
+vi.mock('../src/features/overview/OverviewDashboard', () => ({
+  OverviewDashboard: ({ selectedDataset }: { selectedDataset: string }) => (
+    <div data-testid="page-overview">Overview Screen ({selectedDataset})</div>
+  ),
+}));
+
+vi.mock('../src/features/predictions/EnginePredictionsPage', () => ({
+  EnginePredictionsPage: ({ selectedDataset }: { selectedDataset: string }) => (
+    <div data-testid="page-predictions">Predictions Screen ({selectedDataset})</div>
+  ),
+}));
+
+vi.mock('../src/features/models/ModelEvaluationPage', () => ({
+  ModelEvaluationPage: ({ selectedDataset }: { selectedDataset: string }) => (
+    <div data-testid="page-models">Models Screen ({selectedDataset})</div>
+  ),
+}));
 
 // Mock predictions array (30 items to test pagination)
 const mockPredictions: PredictionRecord[] = Array.from({ length: 30 }, (_, i) => ({
@@ -345,6 +364,86 @@ describe('AeroRUL Stage 2 UI Interaction & Component Regression Tests', () => {
       fireEvent.click(ridgeRow);
 
       expect(screen.getByText(/Candidate Detail: RidgeRegression/i)).toBeDefined();
+    });
+  });
+
+  describe('Task 5 — App Component Navigation & Browser History Integration Tests', () => {
+    it('exercises actual App routing, query syncing, dataset switching, and history navigation', async () => {
+      // 1. Initial mount with empty search query
+      window.history.replaceState({}, '', '/');
+      const { unmount } = render(<App />);
+
+      // Verify initial URL parameters are populated
+      const initialUrl = new URL(window.location.href);
+      expect(initialUrl.searchParams.get('view')).toBe('overview');
+      expect(initialUrl.searchParams.get('dataset')).toBe('FD001');
+      expect(screen.getByTestId('page-overview')).toBeDefined();
+      expect(screen.getByText(/Overview Screen \(FD001\)/i)).toBeDefined();
+
+      // 2. Sidebar navigation to predictions
+      const predictionsNav = screen.getByText('Engine Predictions');
+      fireEvent.click(predictionsNav);
+
+      const predictionsUrl = new URL(window.location.href);
+      expect(predictionsUrl.searchParams.get('view')).toBe('predictions');
+      expect(predictionsUrl.searchParams.get('dataset')).toBe('FD001');
+      expect(screen.getByTestId('page-predictions')).toBeDefined();
+
+      // 3. Sidebar navigation to models
+      const modelsNav = screen.getByText('Model Evaluation');
+      fireEvent.click(modelsNav);
+
+      const modelsUrl = new URL(window.location.href);
+      expect(modelsUrl.searchParams.get('view')).toBe('models');
+      expect(modelsUrl.searchParams.get('dataset')).toBe('FD001');
+      expect(screen.getByTestId('page-models')).toBeDefined();
+
+      // 4. Dataset switching to FD003
+      const fd003Btn = screen.getByRole('button', { name: 'FD003' });
+      fireEvent.click(fd003Btn);
+
+      const fd003Url = new URL(window.location.href);
+      expect(fd003Url.searchParams.get('view')).toBe('models');
+      expect(fd003Url.searchParams.get('dataset')).toBe('FD003');
+      expect(screen.getByText(/Models Screen \(FD003\)/i)).toBeDefined();
+
+      // 5. Browser Back popstate simulation (simulating popping to previous state: models + FD001)
+      window.history.pushState({}, '', '?view=models&dataset=FD001');
+      act(() => {
+        window.dispatchEvent(new PopStateEvent('popstate'));
+      });
+      expect(screen.getByText(/Models Screen \(FD001\)/i)).toBeDefined();
+
+      // Popstate back to predictions + FD001
+      window.history.pushState({}, '', '?view=predictions&dataset=FD001');
+      act(() => {
+        window.dispatchEvent(new PopStateEvent('popstate'));
+      });
+      expect(screen.getByTestId('page-predictions')).toBeDefined();
+
+      // Popstate back to overview + FD001
+      window.history.pushState({}, '', '?view=overview&dataset=FD001');
+      act(() => {
+        window.dispatchEvent(new PopStateEvent('popstate'));
+      });
+      expect(screen.getByTestId('page-overview')).toBeDefined();
+
+      // 6. Browser Forward popstate simulation
+      window.history.pushState({}, '', '?view=models&dataset=FD003');
+      act(() => {
+        window.dispatchEvent(new PopStateEvent('popstate'));
+      });
+      expect(screen.getByText(/Models Screen \(FD003\)/i)).toBeDefined();
+
+      // 7. Invalid view and dataset parameters fallback
+      window.history.pushState({}, '', '?view=unrecognized_view&dataset=FD999');
+      act(() => {
+        window.dispatchEvent(new PopStateEvent('popstate'));
+      });
+      expect(screen.getByTestId('page-overview')).toBeDefined();
+      expect(screen.getByText(/Overview Screen \(FD001\)/i)).toBeDefined();
+
+      unmount();
     });
   });
 });

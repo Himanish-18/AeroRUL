@@ -43,9 +43,10 @@ export const Phase4BenchmarkSection: React.FC<Phase4BenchmarkSectionProps> = ({
   const sortedRecords = sortPhase4Candidates(records, sortMetric, sortDirection);
   const leaderEndpoint = getPhase4Leader(records, 'endpoint_mae');
   const leaderRow = getPhase4Leader(records, 'row_mae');
+  const activeLeader = getPhase4Leader(records, sortMetric);
 
-  // Active inspected model (defaults to endpoint leader)
-  const inspectedRecord = records.find((r) => r.model === selectedModel) || leaderEndpoint || records[0];
+  // Active inspected model (defaults to active metric leader or endpoint leader)
+  const inspectedRecord = records.find((r) => r.model === selectedModel) || activeLeader || leaderEndpoint || records[0];
 
   const validationEngines = records.length > 0 ? records[0].n_engines : 0;
 
@@ -69,7 +70,7 @@ export const Phase4BenchmarkSection: React.FC<Phase4BenchmarkSectionProps> = ({
   const chartData = [...records].sort((a, b) => a[sortMetric] - b[sortMetric]).map((r) => ({
     model: r.model,
     value: Number(r[sortMetric].toFixed(2)),
-    isLeader: r.model === (sortMetric === 'endpoint_mae' ? leaderEndpoint?.model : leaderRow?.model),
+    isLeader: r.model === activeLeader?.model,
   }));
 
   return (
@@ -303,7 +304,7 @@ export const Phase4BenchmarkSection: React.FC<Phase4BenchmarkSectionProps> = ({
             <tbody>
               {sortedRecords.map((row, idx) => {
                 const isInspected = row.model === inspectedRecord?.model;
-                const isEndpointLeader = row.model === leaderEndpoint?.model;
+                const isLeader = row.model === activeLeader?.model;
 
                 return (
                   <tr
@@ -317,32 +318,32 @@ export const Phase4BenchmarkSection: React.FC<Phase4BenchmarkSectionProps> = ({
                     </td>
                     <td>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-xs)' }}>
-                        <span style={{ fontWeight: isEndpointLeader ? 600 : 500, color: isEndpointLeader ? 'var(--color-ink)' : 'var(--color-ink-2)' }}>
+                        <span style={{ fontWeight: isLeader ? 600 : 500, color: isLeader ? 'var(--color-ink)' : 'var(--color-ink-2)' }}>
                           {row.model}
                         </span>
-                        {isEndpointLeader && (
+                        {isLeader && (
                           <span className="chip chip-accent" style={{ fontSize: '0.65rem', padding: '0 4px' }}>
                             leader
                           </span>
                         )}
                       </div>
                     </td>
-                    <td className="measured" style={{ textAlign: 'right', fontWeight: 600, color: isEndpointLeader ? 'var(--color-accent)' : 'var(--color-ink)' }}>
+                    <td className="measured" style={{ textAlign: 'right', fontWeight: sortMetric === 'endpoint_mae' && isLeader ? 600 : 400, color: sortMetric === 'endpoint_mae' && isLeader ? 'var(--color-accent)' : 'var(--color-ink)' }}>
                       {formatCycles(row.endpoint_mae, 2)}
                     </td>
                     <td className="measured" style={{ textAlign: 'right' }}>
                       {formatCycles(row.endpoint_rmse, 2)}
                     </td>
-                    <td className="measured" style={{ textAlign: 'right' }}>
+                    <td className="measured" style={{ textAlign: 'right', fontWeight: sortMetric === 'row_mae' && isLeader ? 600 : 400, color: sortMetric === 'row_mae' && isLeader ? 'var(--color-accent)' : 'var(--color-ink)' }}>
                       {formatCycles(row.row_mae, 2)}
                     </td>
-                    <td className="measured" style={{ textAlign: 'right' }}>
+                    <td className="measured" style={{ textAlign: 'right', fontWeight: sortMetric === 'row_rmse' && isLeader ? 600 : 400, color: sortMetric === 'row_rmse' && isLeader ? 'var(--color-accent)' : 'var(--color-ink)' }}>
                       {formatCycles(row.row_rmse, 2)}
                     </td>
                     <td className="measured" style={{ textAlign: 'right' }}>
                       {formatR2(row.row_r2, 3)}
                     </td>
-                    <td className="measured" style={{ textAlign: 'right' }}>
+                    <td className="measured" style={{ textAlign: 'right', fontWeight: sortMetric === 'macro_mae' && isLeader ? 600 : 400, color: sortMetric === 'macro_mae' && isLeader ? 'var(--color-accent)' : 'var(--color-ink)' }}>
                       {formatCycles(row.macro_mae, 2)}
                     </td>
                     <td className="measured" style={{ textAlign: 'right' }}>

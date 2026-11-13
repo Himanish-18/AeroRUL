@@ -24,6 +24,7 @@ import {
   getHyperparameterTrialsForDataset,
   getBestHyperparameterTrial,
   getHyperparameterTrialSummary,
+  getTrialIdentity,
 } from '../../lib/data/modelEvaluationAdapter';
 import {
   formatCycles,
@@ -48,7 +49,12 @@ export const ConfigurationTuningSection: React.FC<ConfigurationTuningSectionProp
   manifestConfig,
 }) => {
   const [modelFamilyFilter, setModelFamilyFilter] = useState<'all' | 'LightGBM' | 'XGBoost'>('LightGBM');
-  const [selectedTrialId, setSelectedTrialId] = useState<number | null>(null);
+  const [selectedTrialKey, setSelectedTrialKey] = useState<string | null>(null);
+
+  // Reset trial selection when dataset or family filter changes to prevent cross-dataset contamination
+  React.useEffect(() => {
+    setSelectedTrialKey(null);
+  }, [dataset, modelFamilyFilter]);
 
   // Filtered dataset records
   const dsWindowRecords = getWindowAblationForDataset(windowRecords, dataset);
@@ -57,9 +63,19 @@ export const ConfigurationTuningSection: React.FC<ConfigurationTuningSectionProp
 
   const trialSummary = getHyperparameterTrialSummary(dsTrials);
   const bestTrial = getBestHyperparameterTrial(dsTrials);
+  const bestTrialKey = bestTrial ? getTrialIdentity(bestTrial.dataset, bestTrial.model_family, bestTrial.trial_id) : null;
 
   // Selected inspected trial (defaults to best trial)
-  const inspectedTrial = dsTrials.find((t) => t.trial_id === selectedTrialId) || bestTrial || dsTrials[0];
+  const inspectedTrial =
+    (selectedTrialKey
+      ? dsTrials.find((t) => getTrialIdentity(t.dataset, t.model_family, t.trial_id) === selectedTrialKey)
+      : null) ||
+    bestTrial ||
+    dsTrials[0];
+
+  const inspectedTrialKey = inspectedTrial
+    ? getTrialIdentity(inspectedTrial.dataset, inspectedTrial.model_family, inspectedTrial.trial_id)
+    : null;
 
   // Feature window chart data
   const windowChartData = dsWindowRecords.map((w) => ({
@@ -78,14 +94,36 @@ export const ConfigurationTuningSection: React.FC<ConfigurationTuningSectionProp
     isFrozen: String(c.target_cap) === String(manifestConfig.target_cap),
   }));
 
-  // Trial history chart data
-  const trialChartData = dsTrials.map((t) => ({
-    trial_id: t.trial_id,
-    mae: Number(t.engine_macro_mae.toFixed(2)),
-    model_family: t.model_family,
-    isBest: t.trial_id === bestTrial?.trial_id,
-    runtime: t.runtime_sec,
-  }));
+  // Multi-family chart data for 'all' mode: separate series for LightGBM and XGBoost
+  const maxTrialId = dsTrials.length > 0 ? Math.max(...dsTrials.map((t) => t.trial_id)) : 0;
+  const multiFamilyChartData = Array.from({ length: maxTrialId + 1 }, (_, trialId) => {
+    const lgb = dsTrials.find((t) => t.model_family === 'LightGBM' && t.trial_id === trialId);
+    const xgb = dsTrials.find((t) => t.model_family === 'XGBoost' && t.trial_id === trialId);
+    return {
+      trial_id: trialId,
+      lgbMae: lgb ? Number(lgb.engine_macro_mae.toFixed(2)) : null,
+      lgbTrial: lgb,
+      lgbKey: lgb ? getTrialIdentity(lgb.dataset, lgb.model_family, lgb.trial_id) : null,
+      lgbIsBest: lgb ? getTrialIdentity(lgb.dataset, lgb.model_family, lgb.trial_id) === bestTrialKey : false,
+      xgbMae: xgb ? Number(xgb.engine_macro_mae.toFixed(2)) : null,
+      xgbTrial: xgb,
+      xgbKey: xgb ? getTrialIdentity(xgb.dataset, xgb.model_family, xgb.trial_id) : null,
+      xgbIsBest: xgb ? getTrialIdentity(xgb.dataset, xgb.model_family, xgb.trial_id) === bestTrialKey : false,
+    };
+  });
+
+  // Single-family chart data
+  const singleFamilyChartData = dsTrials.map((t) => {
+    const key = getTrialIdentity(t.dataset, t.model_family, t.trial_id);
+    return {
+      trial_id: t.trial_id,
+      mae: Number(t.engine_macro_mae.toFixed(2)),
+      model_family: t.model_family,
+      trialKey: key,
+      isBest: key === bestTrialKey,
+      runtime: t.runtime_sec,
+    };
+  });
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-lg)' }}>
@@ -430,9 +468,22 @@ export const ConfigurationTuningSection: React.FC<ConfigurationTuningSectionProp
             </div>
 
             <div style={{ padding: 'var(--space-sm)', background: 'var(--color-paper-3)', borderRadius: 'var(--radius-sm)', border: 'var(--rule-hair) solid var(--color-rule)' }}>
-              <div style={{ fontSize: 'var(--text-xs)', color: 'var(--color-muted)' }}>Best Pooled MAE / RMSE</div>
+              <div style={{ fontSize: 'var(--text-xs)', color: 'var(--color-muted)' }}>Best Recorded Pooled MAE</div>
               <div style={{ fontSize: 'var(--text-md)', fontWeight: 600, color: 'var(--color-ink)' }}>
-                {formatCycles(trialSummary.bestPooledMae, 2)} / {formatCycles(trialSummary.bestPooledRmse, 2)} cyc
+                {formatCycles(trialSummary.bestPooledMae, 2)} cyc
+              </div>
+              <div style={{ fontSize: 'var(--text-xs)', color: 'var(--color-muted)' }}>
+                trial #{trialSummary.bestPooledMaeTrialId}
+              </div>
+            </div>
+
+            <div style={{ padding: 'var(--space-sm)', background: 'var(--color-paper-3)', borderRadius: 'var(--radius-sm)', border: 'var(--rule-hair) solid var(--color-rule)' }}>
+              <div style={{ fontSize: 'var(--text-xs)', color: 'var(--color-muted)' }}>Best Recorded Pooled RMSE</div>
+              <div style={{ fontSize: 'var(--text-md)', fontWeight: 600, color: 'var(--color-ink)' }}>
+                {formatCycles(trialSummary.bestPooledRmse, 2)} cyc
+              </div>
+              <div style={{ fontSize: 'var(--text-xs)', color: 'var(--color-muted)' }}>
+                trial #{trialSummary.bestPooledRmseTrialId}
               </div>
             </div>
 
@@ -448,76 +499,199 @@ export const ConfigurationTuningSection: React.FC<ConfigurationTuningSectionProp
         {/* Trial History Chart */}
         <div style={{ height: '240px', width: '100%' }}>
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart
-              data={trialChartData}
-              margin={{ top: 10, right: 30, left: 10, bottom: 5 }}
-              onClick={(e) => {
-                if (e && e.activePayload && e.activePayload.length > 0) {
-                  setSelectedTrialId(e.activePayload[0].payload.trial_id);
-                }
-              }}
-            >
-              <CartesianGrid stroke="var(--color-rule)" strokeDasharray="3 3" vertical={false} />
-              <XAxis dataKey="trial_id" stroke="var(--color-ink-2)" fontSize={11} label={{ value: 'Trial ID', position: 'insideBottomRight', offset: -5, fontSize: 10, fill: 'var(--color-muted)' }} />
-              <YAxis stroke="var(--color-muted)" fontSize={11} unit=" cyc" domain={['auto', 'auto']} />
-              <Tooltip
-                content={({ active, payload }) => {
-                  if (!active || !payload || payload.length === 0) return null;
-                  const item = payload[0].payload;
-                  return (
-                    <div
-                      style={{
-                        background: 'var(--color-paper-3)',
-                        border: 'var(--rule-hair) solid var(--color-rule-2)',
-                        padding: 'var(--space-xs) var(--space-sm)',
-                        borderRadius: 'var(--radius-sm)',
-                        fontSize: 'var(--text-xs)',
-                      }}
-                    >
-                      <div style={{ fontWeight: 600, color: 'var(--color-ink)' }}>
-                        Trial #{item.trial_id} ({item.model_family})
-                      </div>
-                      <div style={{ color: 'var(--color-accent)' }}>Macro MAE: {item.mae} cycles</div>
-                      <div style={{ color: 'var(--color-muted)' }}>Runtime: {formatRuntime(item.runtime)}</div>
-                      {item.isBest && (
-                        <div style={{ color: 'var(--color-accent)', fontWeight: 600, marginTop: '2px' }}>
-                          ★ Best Stored Trial
+            {modelFamilyFilter === 'all' ? (
+              <LineChart
+                data={multiFamilyChartData}
+                margin={{ top: 10, right: 30, left: 10, bottom: 5 }}
+              >
+                <CartesianGrid stroke="var(--color-rule)" strokeDasharray="3 3" vertical={false} />
+                <XAxis
+                  dataKey="trial_id"
+                  stroke="var(--color-ink-2)"
+                  fontSize={11}
+                  label={{ value: 'Trial ID', position: 'insideBottomRight', offset: -5, fontSize: 10, fill: 'var(--color-muted)' }}
+                />
+                <YAxis stroke="var(--color-muted)" fontSize={11} unit=" cyc" domain={['auto', 'auto']} />
+                <Legend verticalAlign="top" align="right" wrapperStyle={{ fontSize: '11px', paddingBottom: '4px' }} />
+                <Tooltip
+                  content={({ active, payload }) => {
+                    if (!active || !payload || payload.length === 0) return null;
+                    return (
+                      <div
+                        style={{
+                          background: 'var(--color-paper-3)',
+                          border: 'var(--rule-hair) solid var(--color-rule-2)',
+                          padding: 'var(--space-xs) var(--space-sm)',
+                          borderRadius: 'var(--radius-sm)',
+                          fontSize: 'var(--text-xs)',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '4px',
+                        }}
+                      >
+                        <div style={{ fontWeight: 600, color: 'var(--color-ink)' }}>
+                          Trial #{payload[0].payload.trial_id}
                         </div>
-                      )}
-                    </div>
-                  );
-                }}
-              />
-              <Line
-                type="monotone"
-                dataKey="mae"
-                stroke="var(--color-accent)"
-                strokeWidth={2}
-                dot={(props: any) => {
-                  const { cx, cy, payload } = props;
-                  const isSelected = payload.trial_id === inspectedTrial?.trial_id;
-                  const isBest = payload.isBest;
-                  return (
-                    <circle
-                      key={`dot-${payload.trial_id}`}
-                      cx={cx}
-                      cy={cy}
-                      r={isSelected ? 6 : isBest ? 5 : 3.5}
-                      fill={isBest ? 'var(--color-accent)' : isSelected ? 'var(--color-ink)' : 'var(--color-paper-3)'}
-                      stroke={isSelected ? 'var(--color-accent)' : 'var(--color-rule-2)'}
-                      strokeWidth={isSelected ? 2 : 1}
-                      style={{ cursor: 'pointer' }}
-                    />
-                  );
-                }}
-              />
-            </LineChart>
+                        {payload.map((entry: any) => {
+                          if (entry.value === null || entry.value === undefined) return null;
+                          const isLgb = entry.dataKey === 'lgbMae';
+                          const trial = isLgb ? entry.payload.lgbTrial : entry.payload.xgbTrial;
+                          if (!trial) return null;
+                          const isBest = isLgb ? entry.payload.lgbIsBest : entry.payload.xgbIsBest;
+                          return (
+                            <div key={entry.dataKey} style={{ borderTop: '1px solid var(--color-rule)', paddingTop: '2px' }}>
+                              <div style={{ color: entry.stroke, fontWeight: 500 }}>
+                                {trial.model_family}: {entry.value} cycles {isBest ? '★ (Best Stored Trial)' : ''}
+                              </div>
+                              <div style={{ color: 'var(--color-muted)', fontSize: '0.7rem' }}>
+                                Runtime: {formatRuntime(trial.runtime_sec)} · Status: {trial.status}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    );
+                  }}
+                />
+                <Line
+                  name="LightGBM"
+                  dataKey="lgbMae"
+                  stroke="var(--color-accent)"
+                  strokeWidth={2}
+                  connectNulls={false}
+                  dot={(props: any) => {
+                    const { cx, cy, payload } = props;
+                    if (cx === undefined || cy === undefined || payload.lgbMae === null) {
+                      return <g key={`empty-lgb-${payload?.trial_id}`} />;
+                    }
+                    const isSelected = payload.lgbKey === inspectedTrialKey;
+                    const isBest = payload.lgbIsBest;
+                    return (
+                      <circle
+                        key={`lgb-dot-${payload.trial_id}`}
+                        cx={cx}
+                        cy={cy}
+                        r={isSelected ? 6 : isBest ? 5 : 3.5}
+                        fill={isBest ? 'var(--color-accent)' : isSelected ? 'var(--color-ink)' : 'var(--color-paper-3)'}
+                        stroke={isSelected ? 'var(--color-accent)' : 'var(--color-accent)'}
+                        strokeWidth={isSelected ? 2 : 1.5}
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => {
+                          if (payload.lgbKey) setSelectedTrialKey(payload.lgbKey);
+                        }}
+                      />
+                    );
+                  }}
+                />
+                <Line
+                  name="XGBoost"
+                  dataKey="xgbMae"
+                  stroke="var(--color-cool)"
+                  strokeWidth={2}
+                  connectNulls={false}
+                  dot={(props: any) => {
+                    const { cx, cy, payload } = props;
+                    if (cx === undefined || cy === undefined || payload.xgbMae === null) {
+                      return <g key={`empty-xgb-${payload?.trial_id}`} />;
+                    }
+                    const isSelected = payload.xgbKey === inspectedTrialKey;
+                    const isBest = payload.xgbIsBest;
+                    return (
+                      <circle
+                        key={`xgb-dot-${payload.trial_id}`}
+                        cx={cx}
+                        cy={cy}
+                        r={isSelected ? 6 : isBest ? 5 : 3.5}
+                        fill={isBest ? 'var(--color-cool)' : isSelected ? 'var(--color-ink)' : 'var(--color-paper-3)'}
+                        stroke={isSelected ? 'var(--color-cool)' : 'var(--color-cool)'}
+                        strokeWidth={isSelected ? 2 : 1.5}
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => {
+                          if (payload.xgbKey) setSelectedTrialKey(payload.xgbKey);
+                        }}
+                      />
+                    );
+                  }}
+                />
+              </LineChart>
+            ) : (
+              <LineChart
+                data={singleFamilyChartData}
+                margin={{ top: 10, right: 30, left: 10, bottom: 5 }}
+              >
+                <CartesianGrid stroke="var(--color-rule)" strokeDasharray="3 3" vertical={false} />
+                <XAxis
+                  dataKey="trial_id"
+                  stroke="var(--color-ink-2)"
+                  fontSize={11}
+                  label={{ value: 'Trial ID', position: 'insideBottomRight', offset: -5, fontSize: 10, fill: 'var(--color-muted)' }}
+                />
+                <YAxis stroke="var(--color-muted)" fontSize={11} unit=" cyc" domain={['auto', 'auto']} />
+                <Legend verticalAlign="top" align="right" wrapperStyle={{ fontSize: '11px', paddingBottom: '4px' }} />
+                <Tooltip
+                  content={({ active, payload }) => {
+                    if (!active || !payload || payload.length === 0) return null;
+                    const item = payload[0].payload;
+                    return (
+                      <div
+                        style={{
+                          background: 'var(--color-paper-3)',
+                          border: 'var(--rule-hair) solid var(--color-rule-2)',
+                          padding: 'var(--space-xs) var(--space-sm)',
+                          borderRadius: 'var(--radius-sm)',
+                          fontSize: 'var(--text-xs)',
+                        }}
+                      >
+                        <div style={{ fontWeight: 600, color: 'var(--color-ink)' }}>
+                          Trial #{item.trial_id} ({item.model_family})
+                        </div>
+                        <div style={{ color: 'var(--color-accent)' }}>Macro MAE: {item.mae} cycles</div>
+                        <div style={{ color: 'var(--color-muted)' }}>Runtime: {formatRuntime(item.runtime)}</div>
+                        {item.isBest && (
+                          <div style={{ color: 'var(--color-accent)', fontWeight: 600, marginTop: '2px' }}>
+                            ★ Best Stored Trial
+                          </div>
+                        )}
+                      </div>
+                    );
+                  }}
+                />
+                <Line
+                  name={modelFamilyFilter}
+                  type="monotone"
+                  dataKey="mae"
+                  stroke="var(--color-accent)"
+                  strokeWidth={2}
+                  dot={(props: any) => {
+                    const { cx, cy, payload } = props;
+                    const isSelected = payload.trialKey === inspectedTrialKey;
+                    const isBest = payload.isBest;
+                    return (
+                      <circle
+                        key={`dot-${payload.trialKey}`}
+                        cx={cx}
+                        cy={cy}
+                        r={isSelected ? 6 : isBest ? 5 : 3.5}
+                        fill={isBest ? 'var(--color-accent)' : isSelected ? 'var(--color-ink)' : 'var(--color-paper-3)'}
+                        stroke={isSelected ? 'var(--color-accent)' : 'var(--color-rule-2)'}
+                        strokeWidth={isSelected ? 2 : 1}
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => setSelectedTrialKey(payload.trialKey)}
+                      />
+                    );
+                  }}
+                />
+              </LineChart>
+            )}
           </ResponsiveContainer>
         </div>
 
         {/* Trial Detail Inspector Card */}
         {inspectedTrial && (
           <div
+            id="optuna-trial-inspector"
+            data-testid="optuna-trial-inspector"
+            aria-label="Optuna trial detail inspector"
             style={{
               padding: 'var(--space-md)',
               background: 'var(--color-paper-3)',
@@ -534,7 +708,7 @@ export const ConfigurationTuningSection: React.FC<ConfigurationTuningSectionProp
                 <span style={{ fontWeight: 600, fontSize: 'var(--text-sm)', color: 'var(--color-ink)' }}>
                   Inspecting Trial #{inspectedTrial.trial_id}: {inspectedTrial.model_family} ({dataset})
                 </span>
-                {inspectedTrial.trial_id === bestTrial?.trial_id && (
+                {inspectedTrialKey === bestTrialKey && (
                   <span className="chip chip-accent" style={{ fontSize: '0.65rem' }}>
                     best trial
                   </span>
