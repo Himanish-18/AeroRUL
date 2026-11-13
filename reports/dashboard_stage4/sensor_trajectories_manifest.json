@@ -1,0 +1,526 @@
+{
+  "manifest_version": "1.0.0",
+  "generated_at": "2026-11-13T15:36:54.308935+00:00",
+  "sampling_strategy": "Deterministic stride-2 subsampling (cycle % 2 == 1 or cycle == terminal_cycle) across 10 representative engines spanning lifetime percentiles (min, 25%, median, 75%, max) and standard fleet engines 1-5. Authentic C-MAPSS training measurements only.",
+  "sensor_specifications": {
+    "sensor_1": {
+      "name": "Total temp at fan inlet",
+      "unit": "\u00b0R",
+      "type": "Temperature"
+    },
+    "sensor_2": {
+      "name": "Total temp at LPC outlet",
+      "unit": "\u00b0R",
+      "type": "Temperature"
+    },
+    "sensor_3": {
+      "name": "Total temp at HPC outlet",
+      "unit": "\u00b0R",
+      "type": "Temperature"
+    },
+    "sensor_4": {
+      "name": "Total temp at LPT outlet",
+      "unit": "\u00b0R",
+      "type": "Temperature"
+    },
+    "sensor_5": {
+      "name": "Pressure at fan inlet",
+      "unit": "psia",
+      "type": "Pressure"
+    },
+    "sensor_6": {
+      "name": "Total pressure in bypass duct",
+      "unit": "psia",
+      "type": "Pressure"
+    },
+    "sensor_7": {
+      "name": "Total pressure at HPC outlet",
+      "unit": "psia",
+      "type": "Pressure"
+    },
+    "sensor_8": {
+      "name": "Physical fan speed",
+      "unit": "rpm",
+      "type": "Speed"
+    },
+    "sensor_9": {
+      "name": "Physical core speed",
+      "unit": "rpm",
+      "type": "Speed"
+    },
+    "sensor_10": {
+      "name": "Engine pressure ratio (P50/P2)",
+      "unit": "\u2014",
+      "type": "Ratio"
+    },
+    "sensor_11": {
+      "name": "Static pressure at HPC outlet",
+      "unit": "psia",
+      "type": "Pressure"
+    },
+    "sensor_12": {
+      "name": "Ratio of fuel flow to Ps30",
+      "unit": "pps/psia",
+      "type": "Ratio"
+    },
+    "sensor_13": {
+      "name": "Corrected fan speed",
+      "unit": "rpm",
+      "type": "Speed"
+    },
+    "sensor_14": {
+      "name": "Corrected core speed",
+      "unit": "rpm",
+      "type": "Speed"
+    },
+    "sensor_15": {
+      "name": "Bypass ratio",
+      "unit": "\u2014",
+      "type": "Ratio"
+    },
+    "sensor_16": {
+      "name": "Burner fuel-air ratio",
+      "unit": "\u2014",
+      "type": "Ratio"
+    },
+    "sensor_17": {
+      "name": "Bleed enthalpy",
+      "unit": "\u2014",
+      "type": "Enthalpy"
+    },
+    "sensor_18": {
+      "name": "Demanded fan speed",
+      "unit": "rpm",
+      "type": "Speed"
+    },
+    "sensor_19": {
+      "name": "Demanded corrected fan speed",
+      "unit": "rpm",
+      "type": "Speed"
+    },
+    "sensor_20": {
+      "name": "HPT coolant bleed",
+      "unit": "lbm/s",
+      "type": "Flow"
+    },
+    "sensor_21": {
+      "name": "LPT coolant bleed",
+      "unit": "lbm/s",
+      "type": "Flow"
+    }
+  },
+  "subsets": {
+    "FD001": {
+      "dataset": "FD001",
+      "default_unit_id": 1,
+      "selected_units": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        26,
+        39,
+        69,
+        75,
+        87
+      ],
+      "unit_metadata": {
+        "1": {
+          "unit_id": 1,
+          "lifetime_cycles": 192,
+          "sampled_points": 97,
+          "is_fleet_standard": true
+        },
+        "2": {
+          "unit_id": 2,
+          "lifetime_cycles": 287,
+          "sampled_points": 144,
+          "is_fleet_standard": true
+        },
+        "3": {
+          "unit_id": 3,
+          "lifetime_cycles": 179,
+          "sampled_points": 90,
+          "is_fleet_standard": true
+        },
+        "4": {
+          "unit_id": 4,
+          "lifetime_cycles": 189,
+          "sampled_points": 95,
+          "is_fleet_standard": true
+        },
+        "5": {
+          "unit_id": 5,
+          "lifetime_cycles": 269,
+          "sampled_points": 135,
+          "is_fleet_standard": true
+        },
+        "26": {
+          "unit_id": 26,
+          "lifetime_cycles": 199,
+          "sampled_points": 100,
+          "is_fleet_standard": false
+        },
+        "39": {
+          "unit_id": 39,
+          "lifetime_cycles": 128,
+          "sampled_points": 65,
+          "is_fleet_standard": false
+        },
+        "69": {
+          "unit_id": 69,
+          "lifetime_cycles": 362,
+          "sampled_points": 182,
+          "is_fleet_standard": false
+        },
+        "75": {
+          "unit_id": 75,
+          "lifetime_cycles": 229,
+          "sampled_points": 115,
+          "is_fleet_standard": false
+        },
+        "87": {
+          "unit_id": 87,
+          "lifetime_cycles": 178,
+          "sampled_points": 90,
+          "is_fleet_standard": false
+        }
+      },
+      "available_sensors": [
+        "sensor_1",
+        "sensor_2",
+        "sensor_3",
+        "sensor_4",
+        "sensor_5",
+        "sensor_6",
+        "sensor_7",
+        "sensor_8",
+        "sensor_9",
+        "sensor_10",
+        "sensor_11",
+        "sensor_12",
+        "sensor_13",
+        "sensor_14",
+        "sensor_15",
+        "sensor_16",
+        "sensor_17",
+        "sensor_18",
+        "sensor_19",
+        "sensor_20",
+        "sensor_21"
+      ],
+      "total_sampled_cycles": 1113,
+      "total_measurement_records": 23373
+    },
+    "FD002": {
+      "dataset": "FD002",
+      "default_unit_id": 1,
+      "selected_units": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        7,
+        9,
+        112,
+        243,
+        244
+      ],
+      "unit_metadata": {
+        "1": {
+          "unit_id": 1,
+          "lifetime_cycles": 149,
+          "sampled_points": 75,
+          "is_fleet_standard": true
+        },
+        "2": {
+          "unit_id": 2,
+          "lifetime_cycles": 269,
+          "sampled_points": 135,
+          "is_fleet_standard": true
+        },
+        "3": {
+          "unit_id": 3,
+          "lifetime_cycles": 206,
+          "sampled_points": 104,
+          "is_fleet_standard": true
+        },
+        "4": {
+          "unit_id": 4,
+          "lifetime_cycles": 235,
+          "sampled_points": 118,
+          "is_fleet_standard": true
+        },
+        "5": {
+          "unit_id": 5,
+          "lifetime_cycles": 154,
+          "sampled_points": 78,
+          "is_fleet_standard": true
+        },
+        "7": {
+          "unit_id": 7,
+          "lifetime_cycles": 174,
+          "sampled_points": 88,
+          "is_fleet_standard": false
+        },
+        "9": {
+          "unit_id": 9,
+          "lifetime_cycles": 199,
+          "sampled_points": 100,
+          "is_fleet_standard": false
+        },
+        "112": {
+          "unit_id": 112,
+          "lifetime_cycles": 378,
+          "sampled_points": 190,
+          "is_fleet_standard": false
+        },
+        "243": {
+          "unit_id": 243,
+          "lifetime_cycles": 230,
+          "sampled_points": 116,
+          "is_fleet_standard": false
+        },
+        "244": {
+          "unit_id": 244,
+          "lifetime_cycles": 128,
+          "sampled_points": 65,
+          "is_fleet_standard": false
+        }
+      },
+      "available_sensors": [
+        "sensor_1",
+        "sensor_2",
+        "sensor_3",
+        "sensor_4",
+        "sensor_5",
+        "sensor_6",
+        "sensor_7",
+        "sensor_8",
+        "sensor_9",
+        "sensor_10",
+        "sensor_11",
+        "sensor_12",
+        "sensor_13",
+        "sensor_14",
+        "sensor_15",
+        "sensor_16",
+        "sensor_17",
+        "sensor_18",
+        "sensor_19",
+        "sensor_20",
+        "sensor_21"
+      ],
+      "total_sampled_cycles": 1069,
+      "total_measurement_records": 22449
+    },
+    "FD003": {
+      "dataset": "FD003",
+      "default_unit_id": 1,
+      "selected_units": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        21,
+        51,
+        55,
+        99
+      ],
+      "unit_metadata": {
+        "1": {
+          "unit_id": 1,
+          "lifetime_cycles": 259,
+          "sampled_points": 130,
+          "is_fleet_standard": true
+        },
+        "2": {
+          "unit_id": 2,
+          "lifetime_cycles": 253,
+          "sampled_points": 127,
+          "is_fleet_standard": true
+        },
+        "3": {
+          "unit_id": 3,
+          "lifetime_cycles": 222,
+          "sampled_points": 112,
+          "is_fleet_standard": true
+        },
+        "4": {
+          "unit_id": 4,
+          "lifetime_cycles": 272,
+          "sampled_points": 137,
+          "is_fleet_standard": true
+        },
+        "5": {
+          "unit_id": 5,
+          "lifetime_cycles": 213,
+          "sampled_points": 107,
+          "is_fleet_standard": true
+        },
+        "6": {
+          "unit_id": 6,
+          "lifetime_cycles": 278,
+          "sampled_points": 140,
+          "is_fleet_standard": false
+        },
+        "21": {
+          "unit_id": 21,
+          "lifetime_cycles": 220,
+          "sampled_points": 111,
+          "is_fleet_standard": false
+        },
+        "51": {
+          "unit_id": 51,
+          "lifetime_cycles": 190,
+          "sampled_points": 96,
+          "is_fleet_standard": false
+        },
+        "55": {
+          "unit_id": 55,
+          "lifetime_cycles": 525,
+          "sampled_points": 263,
+          "is_fleet_standard": false
+        },
+        "99": {
+          "unit_id": 99,
+          "lifetime_cycles": 145,
+          "sampled_points": 73,
+          "is_fleet_standard": false
+        }
+      },
+      "available_sensors": [
+        "sensor_1",
+        "sensor_2",
+        "sensor_3",
+        "sensor_4",
+        "sensor_5",
+        "sensor_6",
+        "sensor_7",
+        "sensor_8",
+        "sensor_9",
+        "sensor_10",
+        "sensor_11",
+        "sensor_12",
+        "sensor_13",
+        "sensor_14",
+        "sensor_15",
+        "sensor_16",
+        "sensor_17",
+        "sensor_18",
+        "sensor_19",
+        "sensor_20",
+        "sensor_21"
+      ],
+      "total_sampled_cycles": 1296,
+      "total_measurement_records": 27216
+    },
+    "FD004": {
+      "dataset": "FD004",
+      "default_unit_id": 1,
+      "selected_units": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        118,
+        129,
+        147,
+        208,
+        214
+      ],
+      "unit_metadata": {
+        "1": {
+          "unit_id": 1,
+          "lifetime_cycles": 321,
+          "sampled_points": 161,
+          "is_fleet_standard": true
+        },
+        "2": {
+          "unit_id": 2,
+          "lifetime_cycles": 299,
+          "sampled_points": 150,
+          "is_fleet_standard": true
+        },
+        "3": {
+          "unit_id": 3,
+          "lifetime_cycles": 307,
+          "sampled_points": 154,
+          "is_fleet_standard": true
+        },
+        "4": {
+          "unit_id": 4,
+          "lifetime_cycles": 274,
+          "sampled_points": 138,
+          "is_fleet_standard": true
+        },
+        "5": {
+          "unit_id": 5,
+          "lifetime_cycles": 193,
+          "sampled_points": 97,
+          "is_fleet_standard": true
+        },
+        "118": {
+          "unit_id": 118,
+          "lifetime_cycles": 543,
+          "sampled_points": 272,
+          "is_fleet_standard": false
+        },
+        "129": {
+          "unit_id": 129,
+          "lifetime_cycles": 190,
+          "sampled_points": 96,
+          "is_fleet_standard": false
+        },
+        "147": {
+          "unit_id": 147,
+          "lifetime_cycles": 234,
+          "sampled_points": 118,
+          "is_fleet_standard": false
+        },
+        "208": {
+          "unit_id": 208,
+          "lifetime_cycles": 290,
+          "sampled_points": 146,
+          "is_fleet_standard": false
+        },
+        "214": {
+          "unit_id": 214,
+          "lifetime_cycles": 128,
+          "sampled_points": 65,
+          "is_fleet_standard": false
+        }
+      },
+      "available_sensors": [
+        "sensor_1",
+        "sensor_2",
+        "sensor_3",
+        "sensor_4",
+        "sensor_5",
+        "sensor_6",
+        "sensor_7",
+        "sensor_8",
+        "sensor_9",
+        "sensor_10",
+        "sensor_11",
+        "sensor_12",
+        "sensor_13",
+        "sensor_14",
+        "sensor_15",
+        "sensor_16",
+        "sensor_17",
+        "sensor_18",
+        "sensor_19",
+        "sensor_20",
+        "sensor_21"
+      ],
+      "total_sampled_cycles": 1397,
+      "total_measurement_records": 29337
+    }
+  }
+}

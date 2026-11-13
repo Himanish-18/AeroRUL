@@ -11,9 +11,9 @@ export type DatasetId = 'FD001' | 'FD002' | 'FD003' | 'FD004';
 
 export const VALID_DATASETS: readonly DatasetId[] = ['FD001', 'FD002', 'FD003', 'FD004'];
 
-export type AppView = 'overview' | 'predictions' | 'models';
+export type AppView = 'overview' | 'predictions' | 'models' | 'features';
 
-export const VALID_VIEWS: readonly AppView[] = ['overview', 'predictions', 'models'];
+export const VALID_VIEWS: readonly AppView[] = ['overview', 'predictions', 'models', 'features'];
 
 export interface TestMetricRecord {
   dataset: DatasetId;
@@ -270,5 +270,113 @@ export interface HyperparameterTrialSummary {
   bestTrialId: number;
   runtimeSecBestTrial: number;
 }
+
+// ---------------------------------------------------------------------------
+// Stage 4: Feature Intelligence & Degradation Dynamics
+// ---------------------------------------------------------------------------
+
+export interface FeatureImportanceRecord {
+  dataset: DatasetId;
+  feature_name: string;
+  sensor: string;
+  statistic: string;
+  window_or_lag: string;
+  description: string;
+  gain_importance: number;
+  split_importance: number;
+  gain_importance_pct: number;
+  split_importance_pct: number;
+  gain_rank: number;
+  split_rank: number;
+  correlation_pearson: number | null;
+  correlation_spearman: number | null;
+  abs_pearson: number | null;
+  abs_spearman: number | null;
+}
+
+export interface SensorImportanceRecord {
+  dataset: DatasetId;
+  sensor: string;
+  gain_importance: number;
+  split_importance: number;
+  gain_importance_pct: number;
+  split_importance_pct: number;
+  gain_rank: number;
+  split_rank: number;
+  feature_count: number;
+  top_feature: string;
+}
+
+export interface FeatureFamilyRecord {
+  dataset: DatasetId;
+  family_type: 'sensor' | 'statistic' | 'window';
+  family_key: string;
+  gain_importance: number;
+  split_importance: number;
+  gain_importance_pct: number;
+  split_importance_pct: number;
+  feature_count: number;
+  rank_in_family: number;
+}
+
+export interface SensorTrajectoryRecord {
+  dataset: DatasetId;
+  unit_id: number;
+  cycle: number;
+  sensor: string;
+  sensor_value: number;
+}
+
+export interface FeatureManifestEntry {
+  dataset: DatasetId;
+  source_model_path: string;
+  model_file_sha256: string;
+  model_family: string;
+  feature_configuration: string;
+  n_features: number;
+  total_gain_importance: number;
+  total_split_importance: number;
+  importance_methods: string[];
+  normalization_method: string;
+  top_feature_by_gain: string;
+  top_feature_gain_pct: number;
+  top_sensor_by_gain: string;
+  top_sensor_gain_pct: number;
+}
+
+export interface FeatureImportanceManifest {
+  manifest_version: string;
+  generated_at: string;
+  datasets: Record<DatasetId, FeatureManifestEntry>;
+  interpretability_notice: string;
+}
+
+export interface SensorMetadata {
+  name: string;
+  unit: string;
+  type: string;
+}
+
+export interface SensorTrajectoriesManifest {
+  manifest_version: string;
+  generated_at: string;
+  sampling_strategy: string;
+  sensor_specifications: Record<string, SensorMetadata>;
+  subsets: Record<DatasetId, {
+    dataset: DatasetId;
+    default_unit_id: number;
+    selected_units: number[];
+    unit_metadata: Record<string, {
+      unit_id: number;
+      lifetime_cycles: number;
+      sampled_points: number;
+      is_fleet_standard: boolean;
+    }>;
+    available_sensors: string[];
+    total_sampled_cycles: number;
+    total_measurement_records: number;
+  }>;
+}
+
 
 

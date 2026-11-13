@@ -272,8 +272,84 @@ async function runCapture() {
 
     await page.screenshot({ path: path.join(outputDir, 'model-evaluation-trial-inspector.png'), fullPage: false });
 
+    // 5. Stage 4 — Feature Intelligence & Degradation Dynamics Captures
+    console.log('[capture-screens] Capturing Feature Intelligence (feature-intelligence-desktop-1440)...');
+    await page.setViewport({ width: 1440, height: 900 });
+    await page.goto('http://127.0.0.1:4173/?view=features&dataset=FD001', { waitUntil: 'networkidle0' });
+    await page.waitForSelector('[data-testid="feature-importance-chart"]', { timeout: 5000 });
+    await page.screenshot({ path: path.join(outputDir, 'feature-intelligence-desktop-1440.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Feature Intelligence (feature-intelligence-desktop-1280)...');
+    await page.setViewport({ width: 1280, height: 800 });
+    await page.goto('http://127.0.0.1:4173/?view=features&dataset=FD001', { waitUntil: 'networkidle0' });
+    await page.waitForSelector('[data-testid="feature-importance-chart"]', { timeout: 5000 });
+    await page.screenshot({ path: path.join(outputDir, 'feature-intelligence-desktop-1280.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Feature Intelligence (feature-intelligence-tablet-768)...');
+    await page.setViewport({ width: 768, height: 1024 });
+    await page.goto('http://127.0.0.1:4173/?view=features&dataset=FD001', { waitUntil: 'networkidle0' });
+    await page.waitForSelector('[data-testid="feature-importance-chart"]', { timeout: 5000 });
+    await page.screenshot({ path: path.join(outputDir, 'feature-intelligence-tablet-768.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Feature Intelligence (feature-intelligence-mobile-390)...');
+    await page.setViewport({ width: 390, height: 844 });
+    await page.goto('http://127.0.0.1:4173/?view=features&dataset=FD001', { waitUntil: 'networkidle0' });
+    await page.waitForSelector('[data-testid="feature-importance-chart"]', { timeout: 5000 });
+    await page.screenshot({ path: path.join(outputDir, 'feature-intelligence-mobile-390.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Feature Detail Inspector (feature-intelligence-detail-inspector)...');
+    await page.setViewport({ width: 1440, height: 900 });
+    await page.goto('http://127.0.0.1:4173/?view=features&dataset=FD001', { waitUntil: 'networkidle0' });
+    await page.waitForSelector('#feature-detail-inspector', { timeout: 5000 });
+    const featInspector = await page.$('#feature-detail-inspector');
+    if (featInspector) {
+      await featInspector.evaluate((el) => el.scrollIntoView({ behavior: 'instant', block: 'center' }));
+    }
+    await new Promise((r) => setTimeout(r, 400));
+    await page.screenshot({ path: path.join(outputDir, 'feature-intelligence-detail-inspector.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Feature Family Breakdown (feature-intelligence-family-breakdown)...');
+    await page.evaluate(() => {
+      const familyCard = document.querySelector('[data-testid="feature-family-breakdown"]');
+      if (familyCard) {
+        familyCard.scrollIntoView({ behavior: 'instant', block: 'center' });
+      }
+    });
+    await new Promise((r) => setTimeout(r, 400));
+    await page.screenshot({ path: path.join(outputDir, 'feature-intelligence-family-breakdown.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Importance vs Correlation (feature-intelligence-importance-vs-correlation)...');
+    await page.evaluate(() => {
+      const vsCard = document.querySelector('[data-testid="importance-vs-correlation"]');
+      if (vsCard) {
+        vsCard.scrollIntoView({ behavior: 'instant', block: 'center' });
+      }
+    });
+    await new Promise((r) => setTimeout(r, 400));
+    await page.screenshot({ path: path.join(outputDir, 'feature-intelligence-importance-vs-correlation.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Sensor Degradation Trajectory (sensor-degradation-trajectory)...');
+    await page.goto('http://127.0.0.1:4173/?view=features&dataset=FD001', { waitUntil: 'networkidle0' });
+    await page.waitForSelector('#tab-sensor-degradation', { timeout: 5000 });
+    await page.click('#tab-sensor-degradation');
+    await new Promise((r) => setTimeout(r, 600));
+    await page.waitForSelector('[data-testid="sensor-trajectory-chart"]', { timeout: 5000 });
+    await page.screenshot({ path: path.join(outputDir, 'sensor-degradation-trajectory.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Multi-Engine Comparison (sensor-degradation-multi-engine)...');
+    // Click button to compare Fleet 1-5
+    const compareFleetBtn = Array.from(await page.$$('button')).find(async (btn) => {
+      const txt = await page.evaluate(el => el.textContent, btn);
+      return txt && txt.includes('Compare Fleet');
+    });
+    if (compareFleetBtn) {
+      await compareFleetBtn.click();
+      await new Promise((r) => setTimeout(r, 500));
+    }
+    await page.screenshot({ path: path.join(outputDir, 'sensor-degradation-multi-engine.png'), fullPage: false });
+
     await browser.close();
-    console.log('[capture-screens] All Stage 2 & Stage 3 verification screenshots captured successfully!');
+    console.log('[capture-screens] All Stage 2, 3, & 4 verification screenshots captured successfully!');
   } finally {
     server.kill();
     console.log('[capture-screens] Server stopped.');

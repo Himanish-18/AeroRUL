@@ -4,6 +4,7 @@ import { AppShell } from './components/layout/AppShell';
 import { OverviewDashboard } from './features/overview/OverviewDashboard';
 import { EnginePredictionsPage } from './features/predictions/EnginePredictionsPage';
 import { ModelEvaluationPage } from './features/models/ModelEvaluationPage';
+import { FeatureIntelligencePage } from './features/feature-intelligence/FeatureIntelligencePage';
 
 function getInitialDataset(): DatasetId {
   try {
@@ -21,7 +22,11 @@ function getInitialDataset(): DatasetId {
 function getInitialView(): AppView {
   try {
     const params = new URLSearchParams(window.location.search);
-    const v = params.get('view') as AppView | null;
+    const raw = params.get('view');
+    if (raw === 'feature-intelligence' || raw === 'features') {
+      return 'features';
+    }
+    const v = raw as AppView | null;
     if (v && VALID_VIEWS.includes(v)) {
       return v;
     }
@@ -96,6 +101,8 @@ export const App: React.FC = () => {
         <ModelEvaluationPage selectedDataset={selectedDataset} />
       ) : currentView === 'predictions' ? (
         <EnginePredictionsPage selectedDataset={selectedDataset} />
+      ) : currentView === 'features' ? (
+        <FeatureIntelligencePage selectedDataset={selectedDataset} />
       ) : (
         <OverviewDashboard selectedDataset={selectedDataset} />
       )}

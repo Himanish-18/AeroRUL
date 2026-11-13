@@ -43,10 +43,10 @@ const NAV_ITEMS: NavItem[] = [
     status: 'active',
   },
   {
-    id: 'sensors',
-    label: 'Sensor Analytics',
+    id: 'features',
+    label: 'Feature Intelligence',
     icon: <Activity size={18} />,
-    status: 'planned',
+    status: 'active',
   },
   {
     id: 'models',

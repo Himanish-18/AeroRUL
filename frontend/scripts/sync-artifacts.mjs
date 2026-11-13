@@ -45,6 +45,28 @@ const SYNC_TARGETS = [
       'target_cap_sensitivity.csv',
     ],
   },
+  {
+    phase: 'stage4',
+    sourceDir: path.join(PROJECT_ROOT, 'reports', 'dashboard_stage4'),
+    destDir: path.resolve(__dirname, '..', 'public', 'data', 'stage4'),
+    allowlist: [
+      'feature_importance_FD001.csv',
+      'feature_importance_FD002.csv',
+      'feature_importance_FD003.csv',
+      'feature_importance_FD004.csv',
+      'sensor_importance_FD001.csv',
+      'sensor_importance_FD002.csv',
+      'sensor_importance_FD003.csv',
+      'sensor_importance_FD004.csv',
+      'feature_family_importance.csv',
+      'feature_importance_manifest.json',
+      'sensor_trajectories_FD001.csv',
+      'sensor_trajectories_FD002.csv',
+      'sensor_trajectories_FD003.csv',
+      'sensor_trajectories_FD004.csv',
+      'sensor_trajectories_manifest.json',
+    ],
+  },
 ];
 
 console.log('[sync-artifacts] Starting research artifact synchronization...');

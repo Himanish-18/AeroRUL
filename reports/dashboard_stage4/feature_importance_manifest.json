@@ -1,0 +1,83 @@
+{
+  "manifest_version": "1.0.0",
+  "generated_at": "2026-11-13T15:36:47.295229+00:00",
+  "datasets": {
+    "FD001": {
+      "dataset": "FD001",
+      "source_model_path": "models\\final\\FD001\\model.joblib",
+      "model_file_sha256": "b6d37fd494f5b0482a10bd96d999bb7d2d53cfc5e08e25c132cdff0115316194",
+      "model_family": "LightGBM",
+      "feature_configuration": "ALL_WINDOWS",
+      "n_features": 670,
+      "total_gain_importance": 429013599.2246,
+      "total_split_importance": 5571,
+      "importance_methods": [
+        "gain",
+        "split"
+      ],
+      "normalization_method": "percentage_of_total",
+      "top_feature_by_gain": "sensor_4_mean_10",
+      "top_feature_gain_pct": 23.332,
+      "top_sensor_by_gain": "sensor_4",
+      "top_sensor_gain_pct": 27.2989
+    },
+    "FD002": {
+      "dataset": "FD002",
+      "source_model_path": "models\\final\\FD002\\model.joblib",
+      "model_file_sha256": "812347ca17ec142d4fcd0e6b7024e63017783cedd54d0c7faab1508dd1662215",
+      "model_family": "LightGBM",
+      "feature_configuration": "W75",
+      "n_features": 231,
+      "total_gain_importance": 1266751474.4597,
+      "total_split_importance": 22400,
+      "importance_methods": [
+        "gain",
+        "split"
+      ],
+      "normalization_method": "percentage_of_total",
+      "top_feature_by_gain": "sensor_11_r2_75",
+      "top_feature_gain_pct": 50.767,
+      "top_sensor_by_gain": "sensor_11",
+      "top_sensor_gain_pct": 65.9928
+    },
+    "FD003": {
+      "dataset": "FD003",
+      "source_model_path": "models\\final\\FD003\\model.joblib",
+      "model_file_sha256": "9ded048d8faec0d4f58027a5ce74717a46104a08b5b1702817e316ea831c3ce2",
+      "model_family": "LightGBM",
+      "feature_configuration": "ALL_WINDOWS",
+      "n_features": 681,
+      "total_gain_importance": 2134707434.7072,
+      "total_split_importance": 4651,
+      "importance_methods": [
+        "gain",
+        "split"
+      ],
+      "normalization_method": "percentage_of_total",
+      "top_feature_by_gain": "sensor_3_mean_20",
+      "top_feature_gain_pct": 16.0274,
+      "top_sensor_by_gain": "sensor_3",
+      "top_sensor_gain_pct": 22.4161
+    },
+    "FD004": {
+      "dataset": "FD004",
+      "source_model_path": "models\\final\\FD004\\model.joblib",
+      "model_file_sha256": "03b1bc6ce8ddc3fbc66138b49143e6732c15e7ac3b7fe1b11b24cc596b6c4735",
+      "model_family": "LightGBM",
+      "feature_configuration": "ALL_WINDOWS",
+      "n_features": 768,
+      "total_gain_importance": 4101394508.1205,
+      "total_split_importance": 12321,
+      "importance_methods": [
+        "gain",
+        "split"
+      ],
+      "normalization_method": "percentage_of_total",
+      "top_feature_by_gain": "sensor_8_max_75",
+      "top_feature_gain_pct": 15.1878,
+      "top_sensor_by_gain": "sensor_11",
+      "top_sensor_gain_pct": 24.942
+    }
+  },
+  "interpretability_notice": "Gain measures the reduction in split impurity attributable to a feature across trees. Split importance counts feature usage in decision nodes. Neither metric represents SHAP values or individual prediction causality."
+}

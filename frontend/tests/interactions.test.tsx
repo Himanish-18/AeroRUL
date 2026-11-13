@@ -28,6 +28,12 @@ vi.mock('../src/features/models/ModelEvaluationPage', () => ({
   ),
 }));
 
+vi.mock('../src/features/feature-intelligence/FeatureIntelligencePage', () => ({
+  FeatureIntelligencePage: ({ selectedDataset }: { selectedDataset: string }) => (
+    <div data-testid="page-features">Features Screen ({selectedDataset})</div>
+  ),
+}));
+
 // Mock predictions array (30 items to test pagination)
 const mockPredictions: PredictionRecord[] = Array.from({ length: 30 }, (_, i) => ({
   dataset: 'FD001',
@@ -442,6 +448,12 @@ describe('AeroRUL Stage 2 UI Interaction & Component Regression Tests', () => {
       });
       expect(screen.getByTestId('page-overview')).toBeDefined();
       expect(screen.getByText(/Overview Screen \(FD001\)/i)).toBeDefined();
+
+      // 8. Navigate to Feature Intelligence
+      const featuresNavItem = screen.getByText(/Feature Intelligence/i);
+      fireEvent.click(featuresNavItem);
+      expect(screen.getByTestId('page-features')).toBeDefined();
+      expect(window.location.search).toContain('view=features');
 
       unmount();
     });

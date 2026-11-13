@@ -77,6 +77,7 @@ frontend/node_modules/
 frontend/dist/
 frontend/public/data/phase4/
 frontend/public/data/phase5/
+frontend/public/data/stage4/
 
 # Agent artifacts
 .agents/

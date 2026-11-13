@@ -19,6 +19,12 @@ import {
   Phase5WindowAblationRecord,
   Phase5TargetCapSensitivityRecord,
   HyperparameterTrialRecord,
+  FeatureImportanceRecord,
+  SensorImportanceRecord,
+  FeatureFamilyRecord,
+  SensorTrajectoryRecord,
+  FeatureImportanceManifest,
+  SensorTrajectoriesManifest,
 } from './types';
 
 export const VALID_OPTUNA_STATUSES: readonly string[] = [
@@ -748,3 +754,323 @@ export function parseHyperparameterSearchCsv(csvText: string): HyperparameterTri
     };
   });
 }
+
+// ---------------------------------------------------------------------------
+// Stage 4: Feature Importance & Degradation Dynamics Parsers
+// ---------------------------------------------------------------------------
+
+export const REQUIRED_FEATURE_IMPORTANCE_HEADERS: readonly string[] = [
+  'dataset',
+  'feature_name',
+  'sensor',
+  'statistic',
+  'window_or_lag',
+  'description',
+  'gain_importance',
+  'split_importance',
+  'gain_importance_pct',
+  'split_importance_pct',
+  'gain_rank',
+  'split_rank',
+  'correlation_pearson',
+  'correlation_spearman',
+  'abs_pearson',
+  'abs_spearman',
+];
+
+export const REQUIRED_SENSOR_IMPORTANCE_HEADERS: readonly string[] = [
+  'dataset',
+  'sensor',
+  'gain_importance',
+  'split_importance',
+  'gain_importance_pct',
+  'split_importance_pct',
+  'gain_rank',
+  'split_rank',
+  'feature_count',
+  'top_feature',
+];
+
+export const REQUIRED_FEATURE_FAMILY_HEADERS: readonly string[] = [
+  'dataset',
+  'family_type',
+  'family_key',
+  'gain_importance',
+  'split_importance',
+  'gain_importance_pct',
+  'split_importance_pct',
+  'feature_count',
+  'rank_in_family',
+];
+
+export const REQUIRED_SENSOR_TRAJECTORIES_HEADERS: readonly string[] = [
+  'dataset',
+  'unit_id',
+  'cycle',
+  'sensor',
+  'sensor_value',
+];
+
+export function parseOptionalFloat(val: unknown, fieldName: string, rowIdx: number): number | null {
+  if (val === null || val === undefined) return null;
+  const str = String(val).trim();
+  if (str === '' || str.toLowerCase() === 'nan' || str.toLowerCase() === 'null') return null;
+  return parseStrictFloat(str, fieldName, rowIdx);
+}
+
+export function parseFeatureImportanceCsv(
+  csvText: string,
+  expectedDataset?: DatasetId
+): FeatureImportanceRecord[] {
+  const parsed = Papa.parse<Record<string, string>>(csvText.trim(), {
+    header: true,
+    skipEmptyLines: 'greedy',
+  });
+
+  if (parsed.errors.length > 0) {
+    throw new Error(`CSV parse error in feature importance: ${parsed.errors[0].message}`);
+  }
+
+  const rows = parsed.data;
+  if (rows.length === 0) {
+    throw new Error('Feature importance CSV is empty or has no data rows');
+  }
+
+  validateRequiredHeaders(parsed.meta.fields, REQUIRED_FEATURE_IMPORTANCE_HEADERS, 'feature_importance.csv');
+
+  const seenFeatureKeys = new Set<string>();
+
+  return rows.map((row, idx) => {
+    const dataset = parseDatasetId(row.dataset, idx);
+    if (expectedDataset && dataset !== expectedDataset) {
+      throw new Error(`Row ${idx} dataset "${dataset}" does not match expected "${expectedDataset}"`);
+    }
+
+    const feature_name = String(row.feature_name || '').trim();
+    if (!feature_name) {
+      throw new Error(`Missing feature_name at row ${idx}`);
+    }
+
+    const recordKey = `${dataset}:${feature_name}`;
+    if (seenFeatureKeys.has(recordKey)) {
+      throw new Error(`Duplicate feature importance record for dataset "${dataset}", feature "${feature_name}" at row ${idx}`);
+    }
+    seenFeatureKeys.add(recordKey);
+
+    const gain_importance = parseStrictFloat(row.gain_importance, 'gain_importance', idx);
+    if (gain_importance < 0) {
+      throw new Error(`gain_importance cannot be negative at row ${idx}: ${gain_importance}`);
+    }
+
+    const split_importance = parseStrictNonNegativeInt(row.split_importance, 'split_importance', idx);
+    const gain_importance_pct = parseStrictFloat(row.gain_importance_pct, 'gain_importance_pct', idx);
+    const split_importance_pct = parseStrictFloat(row.split_importance_pct, 'split_importance_pct', idx);
+    const gain_rank = parseStrictPositiveInt(row.gain_rank, 'gain_rank', idx);
+    const split_rank = parseStrictPositiveInt(row.split_rank, 'split_rank', idx);
+
+    const correlation_pearson = parseOptionalFloat(row.correlation_pearson, 'correlation_pearson', idx);
+    const correlation_spearman = parseOptionalFloat(row.correlation_spearman, 'correlation_spearman', idx);
+    const abs_pearson = parseOptionalFloat(row.abs_pearson, 'abs_pearson', idx);
+    const abs_spearman = parseOptionalFloat(row.abs_spearman, 'abs_spearman', idx);
+
+    return {
+      dataset,
+      feature_name,
+      sensor: String(row.sensor || '').trim(),
+      statistic: String(row.statistic || '').trim(),
+      window_or_lag: String(row.window_or_lag || '').trim(),
+      description: String(row.description || '').trim(),
+      gain_importance,
+      split_importance,
+      gain_importance_pct,
+      split_importance_pct,
+      gain_rank,
+      split_rank,
+      correlation_pearson,
+      correlation_spearman,
+      abs_pearson,
+      abs_spearman,
+    };
+  });
+}
+
+export function parseSensorImportanceCsv(
+  csvText: string,
+  expectedDataset?: DatasetId
+): SensorImportanceRecord[] {
+  const parsed = Papa.parse<Record<string, string>>(csvText.trim(), {
+    header: true,
+    skipEmptyLines: 'greedy',
+  });
+
+  if (parsed.errors.length > 0) {
+    throw new Error(`CSV parse error in sensor importance: ${parsed.errors[0].message}`);
+  }
+
+  const rows = parsed.data;
+  if (rows.length === 0) {
+    throw new Error('Sensor importance CSV is empty or has no data rows');
+  }
+
+  validateRequiredHeaders(parsed.meta.fields, REQUIRED_SENSOR_IMPORTANCE_HEADERS, 'sensor_importance.csv');
+
+  const seenSensorKeys = new Set<string>();
+
+  return rows.map((row, idx) => {
+    const dataset = parseDatasetId(row.dataset, idx);
+    if (expectedDataset && dataset !== expectedDataset) {
+      throw new Error(`Row ${idx} dataset "${dataset}" does not match expected "${expectedDataset}"`);
+    }
+
+    const sensor = String(row.sensor || '').trim();
+    if (!sensor) {
+      throw new Error(`Missing sensor at row ${idx}`);
+    }
+
+    const recordKey = `${dataset}:${sensor}`;
+    if (seenSensorKeys.has(recordKey)) {
+      throw new Error(`Duplicate sensor record for dataset "${dataset}", sensor "${sensor}" at row ${idx}`);
+    }
+    seenSensorKeys.add(recordKey);
+
+    return {
+      dataset,
+      sensor,
+      gain_importance: parseStrictFloat(row.gain_importance, 'gain_importance', idx),
+      split_importance: parseStrictNonNegativeInt(row.split_importance, 'split_importance', idx),
+      gain_importance_pct: parseStrictFloat(row.gain_importance_pct, 'gain_importance_pct', idx),
+      split_importance_pct: parseStrictFloat(row.split_importance_pct, 'split_importance_pct', idx),
+      gain_rank: parseStrictPositiveInt(row.gain_rank, 'gain_rank', idx),
+      split_rank: parseStrictPositiveInt(row.split_rank, 'split_rank', idx),
+      feature_count: parseStrictPositiveInt(row.feature_count, 'feature_count', idx),
+      top_feature: String(row.top_feature || '').trim(),
+    };
+  });
+}
+
+export function parseFeatureFamilyCsv(csvText: string): FeatureFamilyRecord[] {
+  const parsed = Papa.parse<Record<string, string>>(csvText.trim(), {
+    header: true,
+    skipEmptyLines: 'greedy',
+  });
+
+  if (parsed.errors.length > 0) {
+    throw new Error(`CSV parse error in feature family importance: ${parsed.errors[0].message}`);
+  }
+
+  const rows = parsed.data;
+  if (rows.length === 0) {
+    throw new Error('Feature family importance CSV is empty or has no data rows');
+  }
+
+  validateRequiredHeaders(parsed.meta.fields, REQUIRED_FEATURE_FAMILY_HEADERS, 'feature_family_importance.csv');
+
+  const seenFamilyKeys = new Set<string>();
+
+  return rows.map((row, idx) => {
+    const dataset = parseDatasetId(row.dataset, idx);
+    const rawFamType = String(row.family_type || '').trim();
+    if (!['sensor', 'statistic', 'window'].includes(rawFamType)) {
+      throw new Error(`Invalid family_type "${rawFamType}" at row ${idx}`);
+    }
+    const family_type = rawFamType as 'sensor' | 'statistic' | 'window';
+    const family_key = String(row.family_key || '').trim();
+    if (!family_key) {
+      throw new Error(`Missing family_key at row ${idx}`);
+    }
+
+    const recordKey = `${dataset}:${family_type}:${family_key}`;
+    if (seenFamilyKeys.has(recordKey)) {
+      throw new Error(`Duplicate family record for key "${recordKey}" at row ${idx}`);
+    }
+    seenFamilyKeys.add(recordKey);
+
+    return {
+      dataset,
+      family_type,
+      family_key,
+      gain_importance: parseStrictFloat(row.gain_importance, 'gain_importance', idx),
+      split_importance: parseStrictNonNegativeInt(row.split_importance, 'split_importance', idx),
+      gain_importance_pct: parseStrictFloat(row.gain_importance_pct, 'gain_importance_pct', idx),
+      split_importance_pct: parseStrictFloat(row.split_importance_pct, 'split_importance_pct', idx),
+      feature_count: parseStrictPositiveInt(row.feature_count, 'feature_count', idx),
+      rank_in_family: parseStrictPositiveInt(row.rank_in_family, 'rank_in_family', idx),
+    };
+  });
+}
+
+export function parseSensorTrajectoriesCsv(
+  csvText: string,
+  expectedDataset?: DatasetId
+): SensorTrajectoryRecord[] {
+  const parsed = Papa.parse<Record<string, string>>(csvText.trim(), {
+    header: true,
+    skipEmptyLines: 'greedy',
+  });
+
+  if (parsed.errors.length > 0) {
+    throw new Error(`CSV parse error in sensor trajectories: ${parsed.errors[0].message}`);
+  }
+
+  const rows = parsed.data;
+  if (rows.length === 0) {
+    throw new Error('Sensor trajectories CSV is empty or has no data rows');
+  }
+
+  validateRequiredHeaders(parsed.meta.fields, REQUIRED_SENSOR_TRAJECTORIES_HEADERS, 'sensor_trajectories.csv');
+
+  const seenTrajectoryKeys = new Set<string>();
+
+  return rows.map((row, idx) => {
+    const dataset = parseDatasetId(row.dataset, idx);
+    if (expectedDataset && dataset !== expectedDataset) {
+      throw new Error(`Row ${idx} dataset "${dataset}" does not match expected "${expectedDataset}"`);
+    }
+
+    const unit_id = parseStrictPositiveInt(row.unit_id, 'unit_id', idx);
+    const cycle = parseStrictPositiveInt(row.cycle, 'cycle', idx);
+    const sensor = String(row.sensor || '').trim();
+    if (!sensor) {
+      throw new Error(`Missing sensor identifier at row ${idx}`);
+    }
+
+    const recordKey = `${dataset}:${unit_id}:${cycle}:${sensor}`;
+    if (seenTrajectoryKeys.has(recordKey)) {
+      throw new Error(`Duplicate trajectory point for key "${recordKey}" at row ${idx}`);
+    }
+    seenTrajectoryKeys.add(recordKey);
+
+    const sensor_value = parseStrictFloat(row.sensor_value, 'sensor_value', idx);
+
+    return {
+      dataset,
+      unit_id,
+      cycle,
+      sensor,
+      sensor_value,
+    };
+  });
+}
+
+export function parseFeatureImportanceManifest(jsonObj: unknown): FeatureImportanceManifest {
+  if (typeof jsonObj !== 'object' || jsonObj === null || Array.isArray(jsonObj)) {
+    throw new Error('Feature importance manifest is not a valid JSON object');
+  }
+  const obj = jsonObj as Record<string, unknown>;
+  if (!obj.manifest_version || !obj.generated_at || !obj.datasets) {
+    throw new Error('Feature importance manifest is missing required top-level keys');
+  }
+  return obj as unknown as FeatureImportanceManifest;
+}
+
+export function parseSensorTrajectoriesManifest(jsonObj: unknown): SensorTrajectoriesManifest {
+  if (typeof jsonObj !== 'object' || jsonObj === null || Array.isArray(jsonObj)) {
+    throw new Error('Sensor trajectories manifest is not a valid JSON object');
+  }
+  const obj = jsonObj as Record<string, unknown>;
+  if (!obj.manifest_version || !obj.generated_at || !obj.subsets) {
+    throw new Error('Sensor trajectories manifest is missing required top-level keys');
+  }
+  return obj as unknown as SensorTrajectoriesManifest;
+}
+

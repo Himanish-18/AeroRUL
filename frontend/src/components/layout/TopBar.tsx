@@ -45,6 +45,8 @@ export const TopBar: React.FC<TopBarProps> = ({
             >
               {currentView === 'models'
                 ? 'Model Evaluation'
+                : currentView === 'features'
+                ? 'Feature Intelligence'
                 : isPredictions
                 ? 'Engine Predictions'
                 : 'Evaluation overview'}
