@@ -3,6 +3,7 @@ import { DatasetId, VALID_DATASETS, AppView, VALID_VIEWS } from './lib/data/type
 import { AppShell } from './components/layout/AppShell';
 import { OverviewDashboard } from './features/overview/OverviewDashboard';
 import { EnginePredictionsPage } from './features/predictions/EnginePredictionsPage';
+import { ModelEvaluationPage } from './features/models/ModelEvaluationPage';
 
 function getInitialDataset(): DatasetId {
   try {
@@ -74,7 +75,9 @@ export const App: React.FC = () => {
       onSelectDataset={handleSelectDataset}
       frozenTimestamp="2026-10-27 00:35:50"
     >
-      {currentView === 'predictions' ? (
+      {currentView === 'models' ? (
+        <ModelEvaluationPage selectedDataset={selectedDataset} />
+      ) : currentView === 'predictions' ? (
         <EnginePredictionsPage selectedDataset={selectedDataset} />
       ) : (
         <OverviewDashboard selectedDataset={selectedDataset} />

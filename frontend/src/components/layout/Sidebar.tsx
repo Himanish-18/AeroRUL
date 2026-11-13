@@ -52,7 +52,7 @@ const NAV_ITEMS: NavItem[] = [
     id: 'models',
     label: 'Model Evaluation',
     icon: <Binary size={18} />,
-    status: 'planned',
+    status: 'active',
   },
   {
     id: 'experiments',

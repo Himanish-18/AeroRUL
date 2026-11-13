@@ -75,6 +75,7 @@ data/processed/
 # Frontend
 frontend/node_modules/
 frontend/dist/
+frontend/public/data/phase4/
 frontend/public/data/phase5/
 
 # Agent artifacts

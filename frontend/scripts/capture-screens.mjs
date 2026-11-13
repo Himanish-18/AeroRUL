@@ -193,8 +193,47 @@ async function runCapture() {
     await new Promise((r) => setTimeout(r, 400));
     await page.screenshot({ path: path.join(outputDir, 'predictions-mobile-390-fd004.png'), fullPage: false });
 
+    // 4. Stage 3 — Model Evaluation Workspace Captures
+    console.log('[capture-screens] Capturing Model Evaluation (model-evaluation-desktop-1440)...');
+    await page.setViewport({ width: 1440, height: 900 });
+    await page.goto('http://127.0.0.1:4173/?view=models&dataset=FD001', { waitUntil: 'networkidle0' });
+    await page.waitForSelector('.data-table', { timeout: 5000 });
+    await page.screenshot({ path: path.join(outputDir, 'model-evaluation-desktop-1440.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Model Evaluation (model-evaluation-desktop-1280)...');
+    await page.setViewport({ width: 1280, height: 800 });
+    await page.goto('http://127.0.0.1:4173/?view=models&dataset=FD001', { waitUntil: 'networkidle0' });
+    await page.waitForSelector('.data-table', { timeout: 5000 });
+    await page.screenshot({ path: path.join(outputDir, 'model-evaluation-desktop-1280.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Model Evaluation (model-evaluation-tablet-768)...');
+    await page.setViewport({ width: 768, height: 1024 });
+    await page.goto('http://127.0.0.1:4173/?view=models&dataset=FD001', { waitUntil: 'networkidle0' });
+    await page.waitForSelector('.data-table', { timeout: 5000 });
+    await page.screenshot({ path: path.join(outputDir, 'model-evaluation-tablet-768.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Model Evaluation (model-evaluation-mobile-390)...');
+    await page.setViewport({ width: 390, height: 844 });
+    await page.goto('http://127.0.0.1:4173/?view=models&dataset=FD001', { waitUntil: 'networkidle0' });
+    await page.waitForSelector('.data-table', { timeout: 5000 });
+    await page.screenshot({ path: path.join(outputDir, 'model-evaluation-mobile-390.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Model Evaluation FD004 Reversal (model-evaluation-phase5-fd004)...');
+    await page.setViewport({ width: 1440, height: 900 });
+    await page.goto('http://127.0.0.1:4173/?view=models&dataset=FD004', { waitUntil: 'networkidle0' });
+    await page.waitForSelector('.data-table', { timeout: 5000 });
+    await page.screenshot({ path: path.join(outputDir, 'model-evaluation-phase5-fd004.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Configuration & Tuning Trial Inspector (model-evaluation-trial-inspector)...');
+    const configTab = await page.$('button[role="tab"]:nth-child(3)');
+    if (configTab) {
+      await configTab.click();
+      await new Promise((r) => setTimeout(r, 600));
+    }
+    await page.screenshot({ path: path.join(outputDir, 'model-evaluation-trial-inspector.png'), fullPage: false });
+
     await browser.close();
-    console.log('[capture-screens] All Stage 2 verification screenshots captured successfully!');
+    console.log('[capture-screens] All Stage 2 & Stage 3 verification screenshots captured successfully!');
   } finally {
     server.kill();
     console.log('[capture-screens] Server stopped.');

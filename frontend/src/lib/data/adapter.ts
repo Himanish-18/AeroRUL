@@ -352,3 +352,6 @@ export function filterAndSortPredictionsAdvanced(
 
   return sorted;
 }
+
+export * from './modelEvaluationAdapter';
+

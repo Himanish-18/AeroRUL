@@ -11,9 +11,9 @@ export type DatasetId = 'FD001' | 'FD002' | 'FD003' | 'FD004';
 
 export const VALID_DATASETS: readonly DatasetId[] = ['FD001', 'FD002', 'FD003', 'FD004'];
 
-export type AppView = 'overview' | 'predictions';
+export type AppView = 'overview' | 'predictions' | 'models';
 
-export const VALID_VIEWS: readonly AppView[] = ['overview', 'predictions'];
+export const VALID_VIEWS: readonly AppView[] = ['overview', 'predictions', 'models'];
 
 export interface TestMetricRecord {
   dataset: DatasetId;
@@ -141,4 +141,109 @@ export interface ErrorDistributionBin {
   isUnderprediction: boolean;
   isZeroBin: boolean;
 }
+
+// ==========================================
+// Stage 3 — Model Evaluation & Benchmarks
+// ==========================================
+
+export type ModelEvaluationTab = 'phase5_selection' | 'phase4_benchmark' | 'configuration_tuning';
+
+export type Phase4SortMetric = 'endpoint_mae' | 'row_mae' | 'row_rmse' | 'macro_mae';
+
+export interface Phase4BenchmarkRecord {
+  dataset: DatasetId;
+  model: string;
+  row_mae: number;
+  row_rmse: number;
+  row_r2: number;
+  n_observations: number;
+  macro_mae: number;
+  macro_rmse: number;
+  n_engines: number;
+  endpoint_mae: number;
+  endpoint_rmse: number;
+  endpoint_r2: number;
+  endpoint_nasa_score: number;
+  endpoint_nasa_avg: number;
+  mean_signed_error: number;
+  n_underpredictions: number;
+  n_overpredictions: number;
+  runtime: number;
+}
+
+export interface Phase5CrossValidationRecord {
+  dataset: DatasetId;
+  model: string;
+  engine_macro_mae: number;
+  engine_macro_mae_std: number;
+  engine_macro_rmse: number;
+  pooled_mae: number;
+  pooled_rmse: number;
+  mean_signed_error: number;
+  nasa_score_sum: number;
+  nasa_score_mean: number;
+}
+
+export interface Phase5DevelopmentValidationRecord {
+  dataset: DatasetId;
+  model: string;
+  target_cap: number | 'None';
+  engine_macro_mae: number;
+  engine_macro_rmse: number;
+  pooled_mae: number;
+  pooled_rmse: number;
+  mean_signed_error: number;
+  nasa_score_sum: number;
+  nasa_score_mean: number;
+  n_observations: number;
+  n_unique_engines: number;
+}
+
+export interface Phase5WindowAblationRecord {
+  dataset: DatasetId;
+  window_configuration: string;
+  target_window: number | 'ALL';
+  feature_count: number;
+  cv_engine_macro_mae: number;
+  cv_pooled_mae: number;
+  cv_pooled_rmse: number;
+  cv_nasa_score_mean: number;
+  val_engine_macro_mae: number;
+  val_pooled_mae: number;
+  val_pooled_rmse: number;
+  val_nasa_score_sum: number;
+  val_nasa_score_mean: number;
+}
+
+export interface Phase5TargetCapSensitivityRecord {
+  dataset: DatasetId;
+  target_cap: number | 'None';
+  output_constraint: string;
+  cv_engine_macro_mae: number;
+  cv_pooled_mae: number;
+  cv_pooled_rmse: number;
+  cv_nasa_score_mean: number;
+  val_engine_macro_mae: number;
+  val_pooled_mae: number;
+  val_pooled_rmse: number;
+  val_nasa_score_sum: number;
+  val_nasa_score_mean: number;
+  n_val_observations: number;
+  n_val_engines: number;
+}
+
+export interface HyperparameterTrialRecord {
+  dataset: DatasetId;
+  model_family: string;
+  trial_id: number;
+  params: Record<string, unknown>;
+  params_raw: string;
+  engine_macro_mae: number;
+  pooled_mae: number;
+  pooled_rmse: number;
+  nasa_score_mean: number;
+  runtime_sec: number;
+  status: string;
+}
+
 

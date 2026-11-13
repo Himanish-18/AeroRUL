@@ -43,7 +43,11 @@ export const TopBar: React.FC<TopBarProps> = ({
                 letterSpacing: '-0.01em',
               }}
             >
-              {isPredictions ? 'Engine Predictions' : 'Evaluation overview'}
+              {currentView === 'models'
+                ? 'Model Evaluation'
+                : isPredictions
+                ? 'Engine Predictions'
+                : 'Evaluation overview'}
             </span>
             <span
               className="header-badge"
@@ -56,11 +60,13 @@ export const TopBar: React.FC<TopBarProps> = ({
                 border: 'var(--rule-hair) solid var(--color-rule)',
               }}
             >
-              Official Test
+              {currentView === 'models' ? 'Candidate Benchmarks' : 'Official Test'}
             </span>
           </div>
           <span className="header-subtitle" style={{ fontSize: '0.75rem', color: 'var(--color-muted)', lineHeight: 1.2 }}>
-            {isPredictions
+            {currentView === 'models'
+              ? 'Candidate model benchmarking, cross-validation, and selection evidence'
+              : isPredictions
               ? 'Official test engine RUL endpoints and error decomposition'
               : 'NASA C-MAPSS turbofan degradation benchmark'}
           </span>

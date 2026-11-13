@@ -62,3 +62,20 @@ export function formatSignedDelta(value: number | undefined | null, decimals = 2
   return `${prefix}${value.toFixed(decimals)}`;
 }
 
+export function formatRuntime(value: number | undefined | null): string {
+  if (value === undefined || value === null || Number.isNaN(value)) {
+    return '—';
+  }
+  if (value < 0.01) {
+    return '< 0.01s';
+  }
+  if (value >= 60) {
+    const mins = Math.floor(value / 60);
+    const secs = (value % 60).toFixed(1);
+    return `${mins}m ${secs}s`;
+  }
+  return `${value.toFixed(2)}s`;
+}
+
+
+

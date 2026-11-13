@@ -4,7 +4,10 @@ import { PredictionsDetailedTable } from '../src/features/predictions/Prediction
 import { EngineEndpointInspector } from '../src/features/predictions/EngineEndpointInspector';
 import { TopOutliersCard } from '../src/features/predictions/TopOutliersCard';
 import { TopBar } from '../src/components/layout/TopBar';
-import { PredictionRecord, VALID_DATASETS, DatasetId, VALID_VIEWS, AppView } from '../src/lib/data/types';
+import { Sidebar } from '../src/components/layout/Sidebar';
+import { ModelEvaluationHeader } from '../src/features/models/ModelEvaluationHeader';
+import { Phase4BenchmarkSection } from '../src/features/models/Phase4BenchmarkSection';
+import { PredictionRecord, VALID_DATASETS, DatasetId, VALID_VIEWS, AppView, Phase4BenchmarkRecord } from '../src/lib/data/types';
 
 // Mock predictions array (30 items to test pagination)
 const mockPredictions: PredictionRecord[] = Array.from({ length: 30 }, (_, i) => ({
@@ -20,6 +23,13 @@ const mockPredictions: PredictionRecord[] = Array.from({ length: 30 }, (_, i) =>
   selected_feature_configuration: 'ALL_WINDOWS',
   selected_target_cap: 150,
 }));
+
+// JSDOM polyfill for ResizeObserver used by Recharts ResponsiveContainer
+global.ResizeObserver = class ResizeObserver {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+};
 
 describe('AeroRUL Stage 2 UI Interaction & Component Regression Tests', () => {
   beforeEach(() => {
@@ -219,6 +229,122 @@ describe('AeroRUL Stage 2 UI Interaction & Component Regression Tests', () => {
       handleDatasetChange('FD002');
       expect(dataset).toBe('FD002');
       expect(selectedUnitId).toBeNull();
+    });
+  });
+
+  describe('Stage 3 — Model Evaluation Navigation & Interaction Tests', () => {
+    it('1. sidebar renders Model Evaluation as active link and handles navigation', () => {
+      const onNavigate = vi.fn();
+      render(
+        <Sidebar
+          currentView="overview"
+          onNavigate={onNavigate}
+          collapsed={false}
+          onToggleCollapse={vi.fn()}
+          mobileOpen={false}
+          onCloseMobile={vi.fn()}
+        />
+      );
+
+      const modelsLink = screen.getByText('Model Evaluation');
+      expect(modelsLink).toBeDefined();
+
+      fireEvent.click(modelsLink);
+      expect(onNavigate).toHaveBeenCalledWith('models');
+    });
+
+    it('2. resolves view=models parameter from URL and preserves dataset across navigation', () => {
+      const url = new URL('http://localhost:4173/?view=models&dataset=FD003');
+      const viewParam = url.searchParams.get('view') as AppView;
+      const datasetParam = url.searchParams.get('dataset') as DatasetId;
+
+      expect(VALID_VIEWS.includes(viewParam)).toBe(true);
+      expect(viewParam).toBe('models');
+      expect(VALID_DATASETS.includes(datasetParam)).toBe(true);
+      expect(datasetParam).toBe('FD003');
+    });
+
+    it('3. switches evaluation context tabs in ModelEvaluationHeader', () => {
+      const onTabChange = vi.fn();
+      render(
+        <ModelEvaluationHeader
+          selectedDataset="FD001"
+          activeTab="phase5_selection"
+          onTabChange={onTabChange}
+          candidateCount={5}
+          frozenModel="LightGBM"
+          selectionCriterion="inner_cv_engine_macro_mae"
+        />
+      );
+
+      const p4Tab = screen.getByRole('tab', { name: /Phase 4: Initial Benchmark/i });
+      fireEvent.click(p4Tab);
+      expect(onTabChange).toHaveBeenCalledWith('phase4_benchmark');
+
+      const configTab = screen.getByRole('tab', { name: /Configuration & Tuning/i });
+      fireEvent.click(configTab);
+      expect(onTabChange).toHaveBeenCalledWith('configuration_tuning');
+    });
+
+    it('4. Phase 4 candidate selection updates inspected model details', () => {
+      const mockP4Records: Phase4BenchmarkRecord[] = [
+        {
+          dataset: 'FD001',
+          model: 'RidgeRegression',
+          row_mae: 14.3,
+          row_rmse: 18.1,
+          row_r2: 0.85,
+          n_observations: 100,
+          macro_mae: 14.5,
+          macro_rmse: 18.2,
+          n_engines: 20,
+          endpoint_mae: 16.5,
+          endpoint_rmse: 20.1,
+          endpoint_r2: 0.0,
+          endpoint_nasa_score: 150,
+          endpoint_nasa_avg: 7.5,
+          mean_signed_error: -1.2,
+          n_underpredictions: 12,
+          n_overpredictions: 8,
+          runtime: 0.5,
+        },
+        {
+          dataset: 'FD001',
+          model: 'LightGBM',
+          row_mae: 11.2,
+          row_rmse: 15.0,
+          row_r2: 0.90,
+          n_observations: 100,
+          macro_mae: 11.4,
+          macro_rmse: 15.1,
+          n_engines: 20,
+          endpoint_mae: 13.0,
+          endpoint_rmse: 16.2,
+          endpoint_r2: 0.0,
+          endpoint_nasa_score: 90,
+          endpoint_nasa_avg: 4.5,
+          mean_signed_error: 0.3,
+          n_underpredictions: 9,
+          n_overpredictions: 11,
+          runtime: 2.1,
+        },
+      ];
+
+      render(
+        <Phase4BenchmarkSection
+          dataset="FD001"
+          records={mockP4Records}
+        />
+      );
+
+      // Verify leader initially inspected
+      expect(screen.getByText(/Candidate Detail: LightGBM/i)).toBeDefined();
+
+      // Click row for RidgeRegression
+      const ridgeRow = screen.getByText('RidgeRegression');
+      fireEvent.click(ridgeRow);
+
+      expect(screen.getByText(/Candidate Detail: RidgeRegression/i)).toBeDefined();
     });
   });
 });
