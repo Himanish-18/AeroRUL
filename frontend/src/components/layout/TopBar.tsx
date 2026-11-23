@@ -47,6 +47,8 @@ export const TopBar: React.FC<TopBarProps> = ({
                 ? 'Model Evaluation'
                 : currentView === 'features'
                 ? 'Feature Intelligence'
+                : currentView === 'datasets'
+                ? 'Dataset Explorer'
                 : isPredictions
                 ? 'Engine Predictions'
                 : 'Evaluation overview'}
@@ -66,6 +68,8 @@ export const TopBar: React.FC<TopBarProps> = ({
                 ? 'Candidate Benchmarks'
                 : currentView === 'features'
                 ? 'Training-Derived'
+                : currentView === 'datasets'
+                ? 'Raw Dataset'
                 : 'Official Test'}
             </span>
           </div>
@@ -74,6 +78,8 @@ export const TopBar: React.FC<TopBarProps> = ({
               ? 'Candidate model benchmarking, cross-validation, and selection evidence'
               : currentView === 'features'
               ? 'Frozen model feature importance and authentic training sensor trajectories'
+              : currentView === 'datasets'
+              ? 'NASA C-MAPSS raw observations, engine indexes, and dataset profiling'
               : isPredictions
               ? 'Official test engine RUL endpoints and error decomposition'
               : 'NASA C-MAPSS turbofan degradation benchmark'}

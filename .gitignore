@@ -78,6 +78,7 @@ frontend/dist/
 frontend/public/data/phase4/
 frontend/public/data/phase5/
 frontend/public/data/stage4/
+frontend/public/data/datasets/
 
 # Agent artifacts
 .agents/

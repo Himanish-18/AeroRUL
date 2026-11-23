@@ -64,7 +64,7 @@ const NAV_ITEMS: NavItem[] = [
     id: 'datasets',
     label: 'Dataset Explorer',
     icon: <Database size={18} />,
-    status: 'planned',
+    status: 'active',
   },
   {
     id: 'reports',

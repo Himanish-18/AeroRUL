@@ -1,19 +1,22 @@
 /**
  * AeroRUL — Research Artifact Synchronization Script
  *
- * Copies verified Phase 4 and Phase 5 benchmark outputs from reports/ into
+ * Copies verified Phase 4, Phase 5, and Stage 4 benchmark outputs from reports/ into
  * frontend/public/data/ for runtime consumption by the dashboard and evaluation workbench.
+ * Also synchronizes and gzip-compresses the raw NASA C-MAPSS source datasets into
+ * frontend/public/data/datasets/ for lazy on-demand client-side streaming and decompression.
  *
  * Strict requirements:
  * 1. Resolved relative to this script file (never CWD).
  * 2. Strict allowlist only — no binaries or extraneous files.
- * 3. Atomic copy with existence and size verification.
+ * 3. Atomic copy/compression with existence and size verification.
  * 4. Fails with non-zero exit code if any artifact is missing or empty.
  */
 
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import zlib from 'node:zlib';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -67,7 +70,44 @@ const SYNC_TARGETS = [
       'sensor_trajectories_manifest.json',
     ],
   },
+  {
+    phase: 'dataset_explorer_metadata',
+    sourceDir: path.join(PROJECT_ROOT, 'reports', 'dashboard_dataset_explorer'),
+    destDir: path.resolve(__dirname, '..', 'public', 'data', 'datasets'),
+    allowlist: [
+      'dataset_manifest.json',
+      'engine_index_FD001_train.csv',
+      'engine_index_FD001_test.csv',
+      'engine_index_FD002_train.csv',
+      'engine_index_FD002_test.csv',
+      'engine_index_FD003_train.csv',
+      'engine_index_FD003_test.csv',
+      'engine_index_FD004_train.csv',
+      'engine_index_FD004_test.csv',
+    ],
+  },
 ];
+
+const RAW_DATASETS_CONFIG = {
+  sourceDir: path.join(PROJECT_ROOT, 'CMAPSSData'),
+  destDir: path.resolve(__dirname, '..', 'public', 'data', 'datasets'),
+  filesToCompress: [
+    'train_FD001.txt',
+    'train_FD002.txt',
+    'train_FD003.txt',
+    'train_FD004.txt',
+    'test_FD001.txt',
+    'test_FD002.txt',
+    'test_FD003.txt',
+    'test_FD004.txt',
+  ],
+  rulFiles: [
+    'RUL_FD001.txt',
+    'RUL_FD002.txt',
+    'RUL_FD003.txt',
+    'RUL_FD004.txt',
+  ],
+};
 
 console.log('[sync-artifacts] Starting research artifact synchronization...');
 
@@ -120,4 +160,71 @@ for (const target of SYNC_TARGETS) {
   }
 }
 
-console.log(`[sync-artifacts] Successfully synchronized ${totalSynced}/${totalExpected} artifacts across all targets.`);
+// Synchronize and compress raw C-MAPSS data
+console.log('[sync-artifacts] Processing raw C-MAPSS source data compression...');
+if (!fs.existsSync(RAW_DATASETS_CONFIG.sourceDir)) {
+  console.error(`[sync-artifacts] ERROR: Raw CMAPSSData directory missing: ${RAW_DATASETS_CONFIG.sourceDir}`);
+  process.exit(1);
+}
+
+if (!fs.existsSync(RAW_DATASETS_CONFIG.destDir)) {
+  fs.mkdirSync(RAW_DATASETS_CONFIG.destDir, { recursive: true });
+}
+
+for (const filename of RAW_DATASETS_CONFIG.filesToCompress) {
+  totalExpected++;
+  const sourcePath = path.join(RAW_DATASETS_CONFIG.sourceDir, filename);
+  const gzDestPath = path.join(RAW_DATASETS_CONFIG.destDir, `${filename}.gz`);
+
+  if (!fs.existsSync(sourcePath)) {
+    console.error(`[sync-artifacts] ERROR: Raw source file missing: ${sourcePath}`);
+    process.exit(1);
+  }
+
+  const rawBuffer = fs.readFileSync(sourcePath);
+  if (rawBuffer.length === 0) {
+    console.error(`[sync-artifacts] ERROR: Raw source file is empty: ${sourcePath}`);
+    process.exit(1);
+  }
+
+  // Compress with max compression level 9
+  const compressed = zlib.gzipSync(rawBuffer, { level: 9 });
+  
+  // Verify byte-for-byte roundtrip integrity
+  const roundtrip = zlib.gunzipSync(compressed);
+  if (!roundtrip.equals(rawBuffer)) {
+    console.error(`[sync-artifacts] ERROR: Gzip roundtrip verification failed for ${filename}`);
+    process.exit(1);
+  }
+
+  fs.writeFileSync(gzDestPath, compressed);
+  const gzStat = fs.statSync(gzDestPath);
+  console.log(
+    `  Compressed: ${filename} (${(rawBuffer.length / 1024 / 1024).toFixed(2)} MB -> ${(gzStat.size / 1024).toFixed(1)} KB gz)`
+  );
+  totalSynced++;
+}
+
+// Copy official RUL files
+for (const filename of RAW_DATASETS_CONFIG.rulFiles) {
+  totalExpected++;
+  const sourcePath = path.join(RAW_DATASETS_CONFIG.sourceDir, filename);
+  const destPath = path.join(RAW_DATASETS_CONFIG.destDir, filename);
+
+  if (!fs.existsSync(sourcePath)) {
+    console.error(`[sync-artifacts] ERROR: RUL file missing: ${sourcePath}`);
+    process.exit(1);
+  }
+
+  const stat = fs.statSync(sourcePath);
+  if (stat.size === 0) {
+    console.error(`[sync-artifacts] ERROR: RUL file is empty: ${sourcePath}`);
+    process.exit(1);
+  }
+
+  fs.copyFileSync(sourcePath, destPath);
+  console.log(`  Synced: ${filename} (${stat.size} bytes)`);
+  totalSynced++;
+}
+
+console.log(`[sync-artifacts] Successfully synchronized and compressed ${totalSynced}/${totalExpected} artifacts.`);

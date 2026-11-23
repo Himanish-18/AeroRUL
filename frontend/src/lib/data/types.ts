@@ -11,9 +11,9 @@ export type DatasetId = 'FD001' | 'FD002' | 'FD003' | 'FD004';
 
 export const VALID_DATASETS: readonly DatasetId[] = ['FD001', 'FD002', 'FD003', 'FD004'];
 
-export type AppView = 'overview' | 'predictions' | 'models' | 'features';
+export type AppView = 'overview' | 'predictions' | 'models' | 'features' | 'datasets';
 
-export const VALID_VIEWS: readonly AppView[] = ['overview', 'predictions', 'models', 'features'];
+export const VALID_VIEWS: readonly AppView[] = ['overview', 'predictions', 'models', 'features', 'datasets'];
 
 export interface TestMetricRecord {
   dataset: DatasetId;

@@ -349,8 +349,64 @@ async function runCapture() {
 
     await page.screenshot({ path: path.join(outputDir, 'sensor-degradation-multi-engine.png'), fullPage: false });
 
+    // ─────────────────────────────────────────────────────────────
+    // DATASET EXPLORER WORKSPACE CAPTURES
+    // ─────────────────────────────────────────────────────────────
+    console.log('[capture-screens] Capturing Dataset Explorer (dataset-explorer-desktop-1440)...');
+    await page.setViewport({ width: 1440, height: 900 });
+    await page.goto('http://127.0.0.1:4173/?view=datasets&dataset=FD001', { waitUntil: 'networkidle0' });
+    await page.waitForSelector('#tab-dataset-profile', { timeout: 5000 });
+    await new Promise((r) => setTimeout(r, 500));
+    await page.screenshot({ path: path.join(outputDir, 'dataset-explorer-desktop-1440.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Dataset Explorer (dataset-explorer-desktop-1280)...');
+    await page.setViewport({ width: 1280, height: 800 });
+    await new Promise((r) => setTimeout(r, 300));
+    await page.screenshot({ path: path.join(outputDir, 'dataset-explorer-desktop-1280.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Dataset Explorer (dataset-explorer-tablet-768)...');
+    await page.setViewport({ width: 768, height: 1024 });
+    await new Promise((r) => setTimeout(r, 300));
+    await page.screenshot({ path: path.join(outputDir, 'dataset-explorer-tablet-768.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Dataset Explorer (dataset-explorer-mobile-390)...');
+    await page.setViewport({ width: 390, height: 844 });
+    await new Promise((r) => setTimeout(r, 300));
+    await page.screenshot({ path: path.join(outputDir, 'dataset-explorer-mobile-390.png'), fullPage: false });
+
+    // Desktop detail captures
+    await page.setViewport({ width: 1440, height: 900 });
+
+    console.log('[capture-screens] Capturing Engine Detail Inspector (dataset-explorer-engine-detail)...');
+    await page.goto('http://127.0.0.1:4173/?view=datasets&dataset=FD001', { waitUntil: 'networkidle0' });
+    await page.waitForSelector('#tab-engine-index', { timeout: 5000 });
+    await page.click('#tab-engine-index');
+    await new Promise((r) => setTimeout(r, 500));
+    await page.waitForSelector('#btn-inspect-in-raw', { timeout: 5000 });
+    await page.screenshot({ path: path.join(outputDir, 'dataset-explorer-engine-detail.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Raw Observation Browser (dataset-explorer-raw-observations)...');
+    await page.waitForSelector('#tab-raw-observations', { timeout: 8000 });
+    await page.click('#tab-raw-observations');
+    await page.waitForSelector('.table', { timeout: 15000 });
+    await new Promise((r) => setTimeout(r, 600));
+    await page.screenshot({ path: path.join(outputDir, 'dataset-explorer-raw-observations.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Sensor & Settings Distribution (dataset-explorer-sensor-distribution)...');
+    await page.waitForSelector('#tab-sensor-explorer', { timeout: 8000 });
+    await page.click('#tab-sensor-explorer');
+    await page.waitForSelector('.recharts-responsive-container', { timeout: 15000 });
+    await new Promise((r) => setTimeout(r, 600));
+    await page.screenshot({ path: path.join(outputDir, 'dataset-explorer-sensor-distribution.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Schema & Data Quality Audit (dataset-explorer-data-quality)...');
+    await page.waitForSelector('#tab-data-quality', { timeout: 5000 });
+    await page.click('#tab-data-quality');
+    await new Promise((r) => setTimeout(r, 400));
+    await page.screenshot({ path: path.join(outputDir, 'dataset-explorer-data-quality.png'), fullPage: false });
+
     await browser.close();
-    console.log('[capture-screens] All Stage 2, 3, & 4 verification screenshots captured successfully!');
+    console.log('[capture-screens] All verification screenshots captured successfully!');
   } finally {
     server.kill();
     console.log('[capture-screens] Server stopped.');
