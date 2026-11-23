@@ -103,11 +103,14 @@ async function decompressGzip(res: Response): Promise<string> {
 /**
  * Lazily load, decompress, parse, and cache raw C-MAPSS observations.
  * Fetches only the requested (dataset, split) file.
+ * Verifies that the parsed record count matches the dataset manifest's expected row count
+ * before caching the split. Partial or corrupted datasets are never cached.
  */
 export async function loadRawObservations(
   dataset: DatasetId,
   split: DatasetSplit,
-  basePath = '/data/datasets'
+  basePath = '/data/datasets',
+  expectedRowCount?: number
 ): Promise<RawObservationRecord[]> {
   const cacheKey = `${dataset}_${split}`;
   if (rawObservationsCache.has(cacheKey)) {
@@ -124,6 +127,23 @@ export async function loadRawObservations(
 
   const text = await decompressGzip(res);
   const records = parseRawObservationText(text);
+
+  // Manifest row-count verification before caching
+  let expected = expectedRowCount;
+  if (expected == null) {
+    try {
+      const manifest = await loadDatasetManifest(basePath);
+      expected = manifest.datasets[dataset]?.[split]?.row_count;
+    } catch {
+      // If manifest is unavailable, skip manifest row-count verification
+    }
+  }
+
+  if (typeof expected === 'number' && records.length !== expected) {
+    throw new Error(
+      `Dataset integrity violation: parsed ${records.length} records for ${dataset} (${split}), but manifest expects ${expected} rows. Partial dataset not cached.`
+    );
+  }
 
   rawObservationsCache.set(cacheKey, records);
   return records;

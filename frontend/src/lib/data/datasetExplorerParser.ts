@@ -65,72 +65,140 @@ export function parseEngineIndex(csvText: string): EngineIndexRecord[] {
   });
 }
 
+const STRICT_FLOAT_REGEX = /^[+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?$/;
+const STRICT_POSITIVE_INT_REGEX = /^[1-9]\d*$/;
+
 /**
- * Parse raw whitespace-separated C-MAPSS text file (26 columns without header).
+ * Strict parser for positive integers (e.g. unit_id, cycle).
+ * Rejects negative numbers, zero, floats, and non-numeric suffixes (e.g. "1invalid").
+ */
+export function parseStrictPositiveInt(token: string, fieldName: string, lineNum: number): number {
+  if (!STRICT_POSITIVE_INT_REGEX.test(token)) {
+    throw new Error(
+      `Parse error on line ${lineNum}: ${fieldName} must be a positive integer, got "${token}"`
+    );
+  }
+  const val = Number(token);
+  if (!Number.isSafeInteger(val) || val <= 0) {
+    throw new Error(
+      `Parse error on line ${lineNum}: ${fieldName} must be a positive integer, got "${token}"`
+    );
+  }
+  return val;
+}
+
+/**
+ * Strict parser for finite floating point numbers.
+ * Rejects NaN, Infinity, -Infinity, empty strings, and non-numeric suffixes (e.g. "12.5invalid").
+ */
+export function parseStrictFiniteFloat(token: string, fieldName: string, lineNum: number): number {
+  if (token === '' || !STRICT_FLOAT_REGEX.test(token)) {
+    throw new Error(
+      `Parse error on line ${lineNum}: ${fieldName} must be a valid finite number, got "${token}"`
+    );
+  }
+  const val = Number(token);
+  if (!Number.isFinite(val)) {
+    throw new Error(
+      `Parse error on line ${lineNum}: ${fieldName} must be a finite number, got "${token}"`
+    );
+  }
+  return val;
+}
+
+/**
+ * Parse raw whitespace-separated C-MAPSS text file (strictly 26 columns without header).
+ * Fails with descriptive line number and reason on any malformed or corrupted observation.
  */
 export function parseRawObservationText(rawText: string): RawObservationRecord[] {
   if (!rawText || !rawText.trim()) return [];
 
-  const lines = rawText.trim().split(/\r?\n/);
-  const records: RawObservationRecord[] = new Array(lines.length);
-  let validCount = 0;
+  const lines = rawText.split(/\r?\n/);
+  const records: RawObservationRecord[] = [];
 
   for (let i = 0; i < lines.length; i++) {
-    const line = lines[i].trim();
-    if (!line) continue;
+    const rawLine = lines[i];
+    const lineNum = i + 1; // 1-indexed line number in source text
+    const line = rawLine.trim();
+    if (!line) continue; // Skip empty lines, preserving line count accuracy
 
     const parts = line.split(/\s+/);
-    if (parts.length < 26) {
-      console.warn(`[datasetExplorerParser] Skipping line ${i + 1}: expected 26 columns, got ${parts.length}`);
-      continue;
+    if (parts.length !== 26) {
+      throw new Error(
+        `Parse error on line ${lineNum}: expected exactly 26 columns, got ${parts.length}`
+      );
     }
 
+    const unit_id = parseStrictPositiveInt(parts[0], 'unit_id', lineNum);
+    const cycle = parseStrictPositiveInt(parts[1], 'cycle', lineNum);
+    const op_setting_1 = parseStrictFiniteFloat(parts[2], 'op_setting_1', lineNum);
+    const op_setting_2 = parseStrictFiniteFloat(parts[3], 'op_setting_2', lineNum);
+    const op_setting_3 = parseStrictFiniteFloat(parts[4], 'op_setting_3', lineNum);
+
     const rec: RawObservationRecord = {
-      unit_id: parseInt(parts[0], 10),
-      cycle: parseInt(parts[1], 10),
-      op_setting_1: parseFloat(parts[2]),
-      op_setting_2: parseFloat(parts[3]),
-      op_setting_3: parseFloat(parts[4]),
-      sensor_1: parseFloat(parts[5]),
-      sensor_2: parseFloat(parts[6]),
-      sensor_3: parseFloat(parts[7]),
-      sensor_4: parseFloat(parts[8]),
-      sensor_5: parseFloat(parts[9]),
-      sensor_6: parseFloat(parts[10]),
-      sensor_7: parseFloat(parts[11]),
-      sensor_8: parseFloat(parts[12]),
-      sensor_9: parseFloat(parts[13]),
-      sensor_10: parseFloat(parts[14]),
-      sensor_11: parseFloat(parts[15]),
-      sensor_12: parseFloat(parts[16]),
-      sensor_13: parseFloat(parts[17]),
-      sensor_14: parseFloat(parts[18]),
-      sensor_15: parseFloat(parts[19]),
-      sensor_16: parseFloat(parts[20]),
-      sensor_17: parseFloat(parts[21]),
-      sensor_18: parseFloat(parts[22]),
-      sensor_19: parseFloat(parts[23]),
-      sensor_20: parseFloat(parts[24]),
-      sensor_21: parseFloat(parts[25]),
+      unit_id,
+      cycle,
+      op_setting_1,
+      op_setting_2,
+      op_setting_3,
+      sensor_1: parseStrictFiniteFloat(parts[5], 'sensor_1', lineNum),
+      sensor_2: parseStrictFiniteFloat(parts[6], 'sensor_2', lineNum),
+      sensor_3: parseStrictFiniteFloat(parts[7], 'sensor_3', lineNum),
+      sensor_4: parseStrictFiniteFloat(parts[8], 'sensor_4', lineNum),
+      sensor_5: parseStrictFiniteFloat(parts[9], 'sensor_5', lineNum),
+      sensor_6: parseStrictFiniteFloat(parts[10], 'sensor_6', lineNum),
+      sensor_7: parseStrictFiniteFloat(parts[11], 'sensor_7', lineNum),
+      sensor_8: parseStrictFiniteFloat(parts[12], 'sensor_8', lineNum),
+      sensor_9: parseStrictFiniteFloat(parts[13], 'sensor_9', lineNum),
+      sensor_10: parseStrictFiniteFloat(parts[14], 'sensor_10', lineNum),
+      sensor_11: parseStrictFiniteFloat(parts[15], 'sensor_11', lineNum),
+      sensor_12: parseStrictFiniteFloat(parts[16], 'sensor_12', lineNum),
+      sensor_13: parseStrictFiniteFloat(parts[17], 'sensor_13', lineNum),
+      sensor_14: parseStrictFiniteFloat(parts[18], 'sensor_14', lineNum),
+      sensor_15: parseStrictFiniteFloat(parts[19], 'sensor_15', lineNum),
+      sensor_16: parseStrictFiniteFloat(parts[20], 'sensor_16', lineNum),
+      sensor_17: parseStrictFiniteFloat(parts[21], 'sensor_17', lineNum),
+      sensor_18: parseStrictFiniteFloat(parts[22], 'sensor_18', lineNum),
+      sensor_19: parseStrictFiniteFloat(parts[23], 'sensor_19', lineNum),
+      sensor_20: parseStrictFiniteFloat(parts[24], 'sensor_20', lineNum),
+      sensor_21: parseStrictFiniteFloat(parts[25], 'sensor_21', lineNum),
     };
 
-    records[validCount++] = rec;
+    records.push(rec);
   }
 
-  return records.slice(0, validCount);
+  return records;
 }
 
 /**
- * Parse an official RUL text file (one ground-truth integer per line).
+ * Parse an official RUL text file (strictly one non-negative ground-truth integer per line).
  */
 export function parseRulVectorText(text: string): number[] {
   if (!text || !text.trim()) return [];
-  return text
-    .trim()
-    .split(/\r?\n/)
-    .map((l) => l.trim())
-    .filter(Boolean)
-    .map((l) => parseInt(l, 10));
+  const lines = text.split(/\r?\n/);
+  const vector: number[] = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    const rawLine = lines[i];
+    const lineNum = i + 1;
+    const line = rawLine.trim();
+    if (!line) continue;
+
+    if (!/^(?:0|[1-9]\d*)$/.test(line)) {
+      throw new Error(
+        `Parse error on line ${lineNum}: RUL value must be a non-negative integer, got "${line}"`
+      );
+    }
+    const val = Number(line);
+    if (!Number.isSafeInteger(val) || val < 0) {
+      throw new Error(
+        `Parse error on line ${lineNum}: RUL value must be a non-negative integer, got "${line}"`
+      );
+    }
+    vector.push(val);
+  }
+
+  return vector;
 }
 
 /**

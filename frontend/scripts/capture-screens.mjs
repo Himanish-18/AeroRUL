@@ -399,6 +399,20 @@ async function runCapture() {
     await new Promise((r) => setTimeout(r, 600));
     await page.screenshot({ path: path.join(outputDir, 'dataset-explorer-sensor-distribution.png'), fullPage: false });
 
+    console.log('[capture-screens] Capturing Test Endpoint RUL Distribution (dataset-explorer-test-rul-distribution)...');
+    const btnTestSplit = await page.$('#btn-split-test');
+    if (btnTestSplit) {
+      await btnTestSplit.click();
+      await new Promise((r) => setTimeout(r, 400));
+    }
+    const subtabRul = await page.$('#subtab-rul');
+    if (subtabRul) {
+      await subtabRul.click();
+      await new Promise((r) => setTimeout(r, 600));
+      await page.waitForSelector('.recharts-responsive-container', { timeout: 10000 });
+      await page.screenshot({ path: path.join(outputDir, 'dataset-explorer-test-rul-distribution.png'), fullPage: false });
+    }
+
     console.log('[capture-screens] Capturing Schema & Data Quality Audit (dataset-explorer-data-quality)...');
     await page.waitForSelector('#tab-data-quality', { timeout: 5000 });
     await page.click('#tab-data-quality');

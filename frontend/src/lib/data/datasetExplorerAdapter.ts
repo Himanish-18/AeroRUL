@@ -195,6 +195,67 @@ export function derivePhysicalTrainingRulSeries(
 }
 
 /**
+ * Extract and validate official test endpoint RUL labels from test engine index records or an RUL vector.
+ * Enforces:
+ * - Exactly one endpoint RUL per test engine.
+ * - 1-indexed engine mapping.
+ * - Finite positive integers.
+ * - Does not compute or propagate per-cycle test RUL.
+ */
+export function extractTestEndpointRuls(
+  testEnginesOrVector: EngineIndexRecord[] | number[]
+): { unitId: number; endpointRul: number }[] {
+  if (!testEnginesOrVector || testEnginesOrVector.length === 0) return [];
+
+  // If passed an array of numbers (from RUL_FD00x.txt)
+  if (typeof testEnginesOrVector[0] === 'number') {
+    return (testEnginesOrVector as number[]).map((val, idx) => {
+      if (!Number.isFinite(val) || val < 0) {
+        throw new Error(`Invalid test RUL value at index ${idx}: expected positive finite number, got ${val}`);
+      }
+      return {
+        unitId: idx + 1,
+        endpointRul: Math.round(val),
+      };
+    });
+  }
+
+  // If passed EngineIndexRecord[]
+  const testRecords = (testEnginesOrVector as EngineIndexRecord[])
+    .filter((e) => e.split === 'test')
+    .sort((a, b) => a.unit_id - b.unit_id);
+
+  return testRecords.map((rec, idx) => {
+    const expectedUnitId = idx + 1;
+    if (rec.unit_id !== expectedUnitId) {
+      console.warn(`[datasetExplorerAdapter] Non-contiguous test engine unit_id: expected ${expectedUnitId}, got ${rec.unit_id}`);
+    }
+    const rul = rec.official_endpoint_rul;
+    if (rul == null || !Number.isFinite(rul) || rul < 0) {
+      throw new Error(`Test engine unit #${rec.unit_id} missing valid official_endpoint_rul`);
+    }
+    return {
+      unitId: rec.unit_id,
+      endpointRul: Math.round(rul),
+    };
+  });
+}
+
+/**
+ * Compute official test endpoint RUL histogram distribution bins.
+ * Uses strictly one endpoint label per test engine.
+ */
+export function computeTestEndpointRulDistribution(
+  testEnginesOrVector: EngineIndexRecord[] | number[],
+  nBins = 16
+): DistributionBin[] {
+  const endpointPairs = extractTestEndpointRuls(testEnginesOrVector);
+  if (endpointPairs.length === 0) return [];
+  const values = endpointPairs.map((p) => p.endpointRul);
+  return computeNumericDistribution(values, nBins);
+}
+
+/**
  * Compute equal-width distribution histogram bins for numeric arrays.
  */
 export function computeNumericDistribution(values: number[], nBins = 15): DistributionBin[] {

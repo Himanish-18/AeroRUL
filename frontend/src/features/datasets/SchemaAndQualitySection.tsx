@@ -7,7 +7,7 @@ import {
 } from '../../lib/data/datasetExplorerTypes';
 import { RAW_COLUMN_NAMES } from '../../lib/data/datasetExplorerParser';
 import { DatasetId } from '../../lib/data/types';
-import { CheckCircle2, Search, ShieldCheck } from 'lucide-react';
+import { CheckCircle2, AlertTriangle, Search, ShieldCheck } from 'lucide-react';
 
 interface SchemaAndQualitySectionProps {
   dataset: DatasetId;
@@ -25,6 +25,30 @@ export const SchemaAndQualitySection: React.FC<SchemaAndQualitySectionProps> = (
   opSettingSpecs,
 }) => {
   const [searchFilter, setSearchFilter] = useState('');
+
+  // Helper to render dynamic status chips (green PASS vs red FAIL)
+  const renderQualityBadge = (passed: boolean, testIdPrefix: string) => {
+    if (passed) {
+      return (
+        <span
+          className="chip chip-ok"
+          data-testid={`${testIdPrefix}-pass`}
+          style={{ fontSize: 'var(--text-xs)' }}
+        >
+          <CheckCircle2 size={12} style={{ marginRight: '4px' }} /> PASS
+        </span>
+      );
+    }
+    return (
+      <span
+        className="chip chip-bad"
+        data-testid={`${testIdPrefix}-fail`}
+        style={{ fontSize: 'var(--text-xs)' }}
+      >
+        <AlertTriangle size={12} style={{ marginRight: '4px' }} /> FAIL
+      </span>
+    );
+  };
 
   // Column categorization
   const filteredColumns = RAW_COLUMN_NAMES.filter((col) => {
@@ -46,7 +70,14 @@ export const SchemaAndQualitySection: React.FC<SchemaAndQualitySectionProps> = (
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 'var(--space-xs)' }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-xs)' }}>
-              <ShieldCheck size={18} style={{ color: 'var(--color-ok)' }} />
+              <ShieldCheck
+                size={18}
+                style={{
+                  color: qualityStats.integrity_status === 'PASS' && qualityStats.structural_status === 'PASS'
+                    ? 'var(--color-ok)'
+                    : 'var(--color-bad)',
+                }}
+              />
               <h3 style={{ fontSize: 'var(--text-md)', color: 'var(--color-ink)', margin: 0 }}>
                 Data Integrity & Quality Audit ({dataset} {split})
               </h3>
@@ -57,10 +88,18 @@ export const SchemaAndQualitySection: React.FC<SchemaAndQualitySectionProps> = (
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-xs)' }}>
-            <span className="chip chip-ok" style={{ fontWeight: 600 }}>
+            <span
+              className={`chip ${qualityStats.structural_status === 'PASS' ? 'chip-ok' : 'chip-bad'}`}
+              data-testid="badge-structural-status"
+              style={{ fontWeight: 600 }}
+            >
               Structural: {qualityStats.structural_status}
             </span>
-            <span className="chip chip-ok" style={{ fontWeight: 600 }}>
+            <span
+              className={`chip ${qualityStats.integrity_status === 'PASS' ? 'chip-ok' : 'chip-bad'}`}
+              data-testid="badge-integrity-status"
+              style={{ fontWeight: 600 }}
+            >
               Integrity: {qualityStats.integrity_status}
             </span>
           </div>
@@ -74,6 +113,7 @@ export const SchemaAndQualitySection: React.FC<SchemaAndQualitySectionProps> = (
             gap: 'var(--space-sm)',
           }}
         >
+          {/* Check 1: Canonical Schema Width */}
           <div
             style={{
               padding: 'var(--space-sm)',
@@ -91,11 +131,10 @@ export const SchemaAndQualitySection: React.FC<SchemaAndQualitySectionProps> = (
               </div>
               <div style={{ fontSize: '0.7rem', color: 'var(--color-muted)' }}>Expected: 26 columns</div>
             </div>
-            <span className="chip chip-ok" style={{ fontSize: 'var(--text-xs)' }}>
-              <CheckCircle2 size={12} style={{ marginRight: '4px' }} /> PASS
-            </span>
+            {renderQualityBadge(qualityStats.column_count_ok && qualityStats.column_names_ok, 'check-schema-width')}
           </div>
 
+          {/* Check 2: Missing & NaN Values */}
           <div
             style={{
               padding: 'var(--space-sm)',
@@ -115,11 +154,10 @@ export const SchemaAndQualitySection: React.FC<SchemaAndQualitySectionProps> = (
                 Total missing: <span className="measured">{qualityStats.total_missing_values}</span>
               </div>
             </div>
-            <span className="chip chip-ok" style={{ fontSize: 'var(--text-xs)' }}>
-              <CheckCircle2 size={12} style={{ marginRight: '4px' }} /> PASS
-            </span>
+            {renderQualityBadge(qualityStats.total_missing_values === 0, 'check-missing-values')}
           </div>
 
+          {/* Check 3: Non-Finite Values */}
           <div
             style={{
               padding: 'var(--space-sm)',
@@ -139,11 +177,10 @@ export const SchemaAndQualitySection: React.FC<SchemaAndQualitySectionProps> = (
                 Total non-finite: <span className="measured">{qualityStats.total_non_finite_values}</span>
               </div>
             </div>
-            <span className="chip chip-ok" style={{ fontSize: 'var(--text-xs)' }}>
-              <CheckCircle2 size={12} style={{ marginRight: '4px' }} /> PASS
-            </span>
+            {renderQualityBadge(qualityStats.total_non_finite_values === 0, 'check-non-finite')}
           </div>
 
+          {/* Check 4: Duplicate Full Rows */}
           <div
             style={{
               padding: 'var(--space-sm)',
@@ -163,11 +200,10 @@ export const SchemaAndQualitySection: React.FC<SchemaAndQualitySectionProps> = (
                 Identical rows: <span className="measured">{qualityStats.duplicate_rows}</span>
               </div>
             </div>
-            <span className="chip chip-ok" style={{ fontSize: 'var(--text-xs)' }}>
-              <CheckCircle2 size={12} style={{ marginRight: '4px' }} /> PASS
-            </span>
+            {renderQualityBadge(qualityStats.duplicate_rows === 0, 'check-duplicate-rows')}
           </div>
 
+          {/* Check 5: Duplicate Unit-Cycle Pairs */}
           <div
             style={{
               padding: 'var(--space-sm)',
@@ -187,11 +223,10 @@ export const SchemaAndQualitySection: React.FC<SchemaAndQualitySectionProps> = (
                 Collision count: <span className="measured">{qualityStats.duplicate_unit_cycle}</span>
               </div>
             </div>
-            <span className="chip chip-ok" style={{ fontSize: 'var(--text-xs)' }}>
-              <CheckCircle2 size={12} style={{ marginRight: '4px' }} /> PASS
-            </span>
+            {renderQualityBadge(qualityStats.duplicate_unit_cycle === 0, 'check-duplicate-unit-cycle')}
           </div>
 
+          {/* Check 6: Cycle Monotonicity */}
           <div
             style={{
               padding: 'var(--space-sm)',
@@ -211,11 +246,10 @@ export const SchemaAndQualitySection: React.FC<SchemaAndQualitySectionProps> = (
                 Cycles strictly ascending: <span className="measured">{qualityStats.cycles_ordered ? 'Yes' : 'No'}</span>
               </div>
             </div>
-            <span className="chip chip-ok" style={{ fontSize: 'var(--text-xs)' }}>
-              <CheckCircle2 size={12} style={{ marginRight: '4px' }} /> PASS
-            </span>
+            {renderQualityBadge(qualityStats.cycles_ordered, 'check-cycles-ordered')}
           </div>
 
+          {/* Check 7: Engine Initial Cycle */}
           <div
             style={{
               padding: 'var(--space-sm)',
@@ -235,11 +269,10 @@ export const SchemaAndQualitySection: React.FC<SchemaAndQualitySectionProps> = (
                 All engines start at cycle 1: <span className="measured">{qualityStats.cycles_start_at_1 ? 'Yes' : 'No'}</span>
               </div>
             </div>
-            <span className="chip chip-ok" style={{ fontSize: 'var(--text-xs)' }}>
-              <CheckCircle2 size={12} style={{ marginRight: '4px' }} /> PASS
-            </span>
+            {renderQualityBadge(qualityStats.cycles_start_at_1, 'check-cycles-start-at-1')}
           </div>
 
+          {/* Check 8: Unit ID Contiguity */}
           <div
             style={{
               padding: 'var(--space-sm)',
@@ -259,9 +292,7 @@ export const SchemaAndQualitySection: React.FC<SchemaAndQualitySectionProps> = (
                 Contiguous positive integers: <span className="measured">{qualityStats.valid_unit_ids ? 'Yes' : 'No'}</span>
               </div>
             </div>
-            <span className="chip chip-ok" style={{ fontSize: 'var(--text-xs)' }}>
-              <CheckCircle2 size={12} style={{ marginRight: '4px' }} /> PASS
-            </span>
+            {renderQualityBadge(qualityStats.valid_unit_ids, 'check-valid-unit-ids')}
           </div>
         </div>
 

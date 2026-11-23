@@ -2,7 +2,7 @@
  * AeroRUL — Dataset Explorer Parser & Adapter Test Suite
  */
 
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, beforeEach, vi } from 'vitest';
 import {
   parseEngineIndex,
   parseRawObservationText,
@@ -14,7 +14,13 @@ import {
   filterObservations,
   derivePhysicalTrainingRulSeries,
   computeNumericDistribution,
+  extractTestEndpointRuls,
+  computeTestEndpointRulDistribution,
 } from '../src/lib/data/datasetExplorerAdapter';
+import {
+  loadRawObservations,
+  clearDatasetExplorerCache,
+} from '../src/lib/data/datasetExplorerLoader';
 import {
   EngineIndexRecord,
 } from '../src/lib/data/datasetExplorerTypes';
@@ -31,8 +37,8 @@ function generateMockRawRow(unitId: number, cycle: number, s1 = 518.67, s2 = 642
   return `${unitId} ${cycle} ${op1} ${op2} ${op3} ${sensors.join(' ')}`;
 }
 
-describe('Dataset Explorer — Parser Tests', () => {
-  it('parses 26-column whitespace delimited raw records into numbers', () => {
+describe('Dataset Explorer — Strict Parser Tests', () => {
+  it('parses valid 26-column whitespace-separated raw records into numbers', () => {
     const rawText = [
       generateMockRawRow(1, 1),
       generateMockRawRow(1, 2),
@@ -49,17 +55,99 @@ describe('Dataset Explorer — Parser Tests', () => {
     expect(records[2].unit_id).toBe(2);
   });
 
-  it('skips malformed rows with fewer than 26 columns gracefully', () => {
+  it('rejects lines with fewer than 26 columns and includes line number', () => {
     const textWithMalformed = [
       generateMockRawRow(1, 1),
-      '1 2 0.001 0.002', // only 4 columns
+      '1 2 0.001 0.002', // only 4 columns on line 2
       generateMockRawRow(1, 3),
     ].join('\n');
 
-    const records = parseRawObservationText(textWithMalformed);
-    expect(records).toHaveLength(2);
-    expect(records[0].cycle).toBe(1);
-    expect(records[1].cycle).toBe(3);
+    expect(() => parseRawObservationText(textWithMalformed)).toThrowError(
+      /Parse error on line 2: expected exactly 26 columns, got 4/
+    );
+  });
+
+  it('rejects lines with more than 26 columns without truncating', () => {
+    const textWithExtraCol = [
+      generateMockRawRow(1, 1),
+      `${generateMockRawRow(1, 2)} 999.99`, // 27 columns on line 2
+    ].join('\n');
+
+    expect(() => parseRawObservationText(textWithExtraCol)).toThrowError(
+      /Parse error on line 2: expected exactly 26 columns, got 27/
+    );
+  });
+
+  it('rejects invalid non-positive or corrupted unit ID', () => {
+    const badUnitId1 = generateMockRawRow(1, 1).replace(/^1 /, '0 ');
+    expect(() => parseRawObservationText(badUnitId1)).toThrowError(
+      /Parse error on line 1: unit_id must be a positive integer/
+    );
+
+    const badUnitId2 = generateMockRawRow(1, 1).replace(/^1 /, '-5 ');
+    expect(() => parseRawObservationText(badUnitId2)).toThrowError(
+      /Parse error on line 1: unit_id must be a positive integer/
+    );
+
+    const badUnitId3 = generateMockRawRow(1, 1).replace(/^1 /, '1.5 ');
+    expect(() => parseRawObservationText(badUnitId3)).toThrowError(
+      /Parse error on line 1: unit_id must be a positive integer/
+    );
+
+    const badUnitId4 = generateMockRawRow(1, 1).replace(/^1 /, '1invalid ');
+    expect(() => parseRawObservationText(badUnitId4)).toThrowError(
+      /Parse error on line 1: unit_id must be a positive integer/
+    );
+  });
+
+  it('rejects invalid or corrupted cycle value', () => {
+    const badCycle = generateMockRawRow(1, 1).replace(/^1 1 /, '1 0 ');
+    expect(() => parseRawObservationText(badCycle)).toThrowError(
+      /Parse error on line 1: cycle must be a positive integer/
+    );
+
+    const badCycle2 = generateMockRawRow(1, 1).replace(/^1 1 /, '1 cycleX ');
+    expect(() => parseRawObservationText(badCycle2)).toThrowError(
+      /Parse error on line 1: cycle must be a positive integer/
+    );
+  });
+
+  it('rejects numeric-prefix corruption in floating-point values', () => {
+    const corruptedFloat = generateMockRawRow(1, 1).replace('518.67', '518.67invalid');
+    expect(() => parseRawObservationText(corruptedFloat)).toThrowError(
+      /Parse error on line 1: sensor_1 must be a valid finite number/
+    );
+  });
+
+  it('rejects NaN, Infinity, and -Infinity values', () => {
+    const nanRow = generateMockRawRow(1, 1).replace('518.67', 'NaN');
+    expect(() => parseRawObservationText(nanRow)).toThrowError(
+      /Parse error on line 1: sensor_1 must be a valid finite number/
+    );
+
+    const infRow = generateMockRawRow(1, 1).replace('518.67', 'Infinity');
+    expect(() => parseRawObservationText(infRow)).toThrowError(
+      /Parse error on line 1: sensor_1 must be a valid finite number/
+    );
+
+    const negInfRow = generateMockRawRow(1, 1).replace('518.67', '-Infinity');
+    expect(() => parseRawObservationText(negInfRow)).toThrowError(
+      /Parse error on line 1: sensor_1 must be a valid finite number/
+    );
+  });
+
+  it('skips empty lines while accurately preserving subsequent line numbers', () => {
+    const textWithEmptyLines = [
+      '',
+      generateMockRawRow(1, 1), // line 2
+      '',
+      '',
+      'bad line with 3 cols',   // line 5 (5 words)
+    ].join('\n');
+
+    expect(() => parseRawObservationText(textWithEmptyLines)).toThrowError(
+      /Parse error on line 5: expected exactly 26 columns, got 5/
+    );
   });
 
   it('handles empty or blank text gracefully', () => {
@@ -67,10 +155,14 @@ describe('Dataset Explorer — Parser Tests', () => {
     expect(parseRawObservationText('   \n\n  ')).toEqual([]);
   });
 
-  it('parses RUL vector text correctly into 1-indexed integers', () => {
+  it('parses RUL vector text strictly and rejects non-integer strings', () => {
     const rulText = '112\n98\n69\n82\n';
     const vec = parseRulVectorText(rulText);
     expect(vec).toEqual([112, 98, 69, 82]);
+
+    expect(() => parseRulVectorText('112\n98invalid\n69')).toThrowError(
+      /Parse error on line 2: RUL value must be a non-negative integer/
+    );
   });
 
   it('parses engine index CSV text correctly preserving missing/null semantics', () => {
@@ -115,6 +207,109 @@ describe('Dataset Explorer — Parser Tests', () => {
     expect(quality.valid_cycle_values).toBe(true);
     expect(quality.structural_status).toBe('PASS');
     expect(quality.integrity_status).toBe('PASS');
+  });
+});
+
+describe('Dataset Explorer — Task 1: Test Endpoint RUL Histogram & Label Alignment Tests', () => {
+  it('extracts exactly 100 endpoint labels for FD001', () => {
+    const ruls = Array.from({ length: 100 }, (_, i) => 10 + (i % 80));
+    const extracted = extractTestEndpointRuls(ruls);
+    expect(extracted).toHaveLength(100);
+    expect(extracted[0].unitId).toBe(1);
+    expect(extracted[99].unitId).toBe(100);
+  });
+
+  it('extracts exactly 259 endpoint labels for FD002', () => {
+    const ruls = Array.from({ length: 259 }, (_, i) => 15 + (i % 100));
+    const extracted = extractTestEndpointRuls(ruls);
+    expect(extracted).toHaveLength(259);
+    expect(extracted[0].unitId).toBe(1);
+    expect(extracted[258].unitId).toBe(259);
+  });
+
+  it('extracts exactly 100 endpoint labels for FD003', () => {
+    const ruls = Array.from({ length: 100 }, (_, i) => 20 + (i % 70));
+    const extracted = extractTestEndpointRuls(ruls);
+    expect(extracted).toHaveLength(100);
+    expect(extracted[0].unitId).toBe(1);
+    expect(extracted[99].unitId).toBe(100);
+  });
+
+  it('extracts exactly 248 endpoint labels for FD004', () => {
+    const ruls = Array.from({ length: 248 }, (_, i) => 12 + (i % 90));
+    const extracted = extractTestEndpointRuls(ruls);
+    expect(extracted).toHaveLength(248);
+    expect(extracted[0].unitId).toBe(1);
+    expect(extracted[247].unitId).toBe(248);
+  });
+
+  it('computes test endpoint RUL distribution where histogram total count equals test engine count', () => {
+    const testRecords: EngineIndexRecord[] = Array.from({ length: 100 }, (_, i) => ({
+      dataset: 'FD001',
+      split: 'test',
+      unit_id: i + 1,
+      observation_count: 50 + (i % 30),
+      first_cycle: 1,
+      last_observed_cycle: 50 + (i % 30),
+      observed_cycle_count: 50 + (i % 30),
+      endpoint_status: 'censored',
+      physical_failure_cycle: null,
+      official_endpoint_rul: 20 + (i % 100),
+    }));
+
+    const bins = computeTestEndpointRulDistribution(testRecords, 16);
+    expect(bins.length).toBeGreaterThan(0);
+    const totalCount = bins.reduce((acc, b) => acc + b.count, 0);
+    expect(totalCount).toBe(100);
+  });
+
+  it('ensures no test per-cycle RUL records are generated', () => {
+    const testRecords: EngineIndexRecord[] = [
+      {
+        dataset: 'FD001',
+        split: 'test',
+        unit_id: 1,
+        observation_count: 31,
+        first_cycle: 1,
+        last_observed_cycle: 31,
+        observed_cycle_count: 31,
+        endpoint_status: 'censored',
+        physical_failure_cycle: null,
+        official_endpoint_rul: 112,
+      },
+    ];
+
+    const extracted = extractTestEndpointRuls(testRecords);
+    expect(extracted).toHaveLength(1); // exactly 1 endpoint record, not 31 per-cycle records
+    expect(extracted[0]).toEqual({ unitId: 1, endpointRul: 112 });
+  });
+});
+
+describe('Dataset Explorer — Loader Manifest Verification Tests', () => {
+  beforeEach(() => {
+    clearDatasetExplorerCache();
+  });
+
+  it('throws and does not cache when parsed record count mismatches expected row count', async () => {
+    // Generate 3 rows while expecting 5
+    const rawContent = [
+      generateMockRawRow(1, 1),
+      generateMockRawRow(1, 2),
+      generateMockRawRow(1, 3),
+    ].join('\n');
+
+    global.fetch = vi.fn().mockImplementation((url: string) => {
+      if (url.includes('train_FD001.txt.gz')) {
+        return Promise.resolve(new Response(rawContent, { status: 200 }));
+      }
+      return Promise.resolve(new Response('Not found', { status: 404 }));
+    });
+
+    await expect(
+      loadRawObservations('FD001', 'train', '/data/datasets', 5)
+    ).rejects.toThrowError(
+      /Dataset integrity violation: parsed 3 records for FD001 \(train\), but manifest expects 5 rows/
+    );
   });
 });
 

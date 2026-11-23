@@ -440,4 +440,139 @@ describe('Dataset Explorer — UI Component Tests', () => {
     expect(screen.getAllByText('PASS').length).toBeGreaterThan(5);
     expect(screen.getByText('C-MAPSS Canonical 26-Column Variable Dictionary')).toBeDefined();
   });
+
+  it('renders SchemaAndQualitySection with failing checks displaying red FAIL badges', () => {
+    const failingQuality: QualityStats = {
+      column_count_ok: false,
+      column_names_ok: false,
+      total_missing_values: 5,
+      total_non_finite_values: 2,
+      duplicate_rows: 3,
+      duplicate_unit_cycle: 1,
+      cycles_ordered: false,
+      cycles_start_at_1: false,
+      valid_unit_ids: false,
+      valid_cycle_values: false,
+      structural_status: 'FAIL',
+      integrity_status: 'FAIL',
+    };
+
+    render(
+      <SchemaAndQualitySection
+        dataset="FD001"
+        split="train"
+        qualityStats={failingQuality}
+        sensorSpecs={mockManifest.sensor_specifications}
+        opSettingSpecs={mockManifest.operating_setting_specifications}
+      />
+    );
+
+    expect(screen.getByTestId('badge-structural-status').textContent).toContain('Structural: FAIL');
+    expect(screen.getByTestId('badge-structural-status').className).toContain('chip-bad');
+    expect(screen.getByTestId('badge-integrity-status').textContent).toContain('Integrity: FAIL');
+    expect(screen.getByTestId('badge-integrity-status').className).toContain('chip-bad');
+
+    expect(screen.getByTestId('check-schema-width-fail')).toBeDefined();
+    expect(screen.getByTestId('check-missing-values-fail')).toBeDefined();
+    expect(screen.getByTestId('check-non-finite-fail')).toBeDefined();
+    expect(screen.getByTestId('check-duplicate-rows-fail')).toBeDefined();
+    expect(screen.getByTestId('check-duplicate-unit-cycle-fail')).toBeDefined();
+    expect(screen.getByTestId('check-cycles-ordered-fail')).toBeDefined();
+    expect(screen.getByTestId('check-cycles-start-at-1-fail')).toBeDefined();
+    expect(screen.getByTestId('check-valid-unit-ids-fail')).toBeDefined();
+  });
+
+  it('supports keyboard-accessible engine selection and column sorting in SplitAndEngineExplorer', () => {
+    const handleSelectEngine = vi.fn();
+
+    render(
+      <SplitAndEngineExplorer
+        dataset="FD001"
+        split="train"
+        onSelectSplit={vi.fn()}
+        engineIndex={mockEngines}
+        selectedUnitId={1}
+        onSelectEngine={handleSelectEngine}
+        onInspectEngineInRaw={vi.fn()}
+      />
+    );
+
+    // Verify row does NOT have role="button" (table semantics preserved)
+    const tableRows = screen.getAllByRole('row');
+    for (const r of tableRows) {
+      expect(r.getAttribute('role')).toBeNull();
+    }
+
+    // Verify keyboard-accessible engine selection button inside the cell
+    const selectUnit2Btn = screen.getByRole('button', { name: 'Select Engine Unit #2' });
+    expect(selectUnit2Btn).toBeDefined();
+    fireEvent.click(selectUnit2Btn);
+    expect(handleSelectEngine).toHaveBeenCalledWith(2);
+
+    // Check table headers have aria-sort and can be sorted by button click
+    const unitIdHeaderBtn = screen.getByRole('button', { name: /Sort by Unit ID/i });
+    expect(unitIdHeaderBtn).toBeDefined();
+    const thUnitId = unitIdHeaderBtn.closest('th');
+    expect(thUnitId?.getAttribute('aria-sort')).toBe('ascending');
+
+    // Click sort header to toggle descending
+    fireEvent.click(unitIdHeaderBtn);
+    expect(thUnitId?.getAttribute('aria-sort')).toBe('descending');
+  });
+
+  it('supports keyboard-accessible header sorting and aria-sort in RawObservationBrowser', () => {
+    render(
+      <RawObservationBrowser
+        dataset="FD001"
+        split="train"
+        onSelectSplit={vi.fn()}
+        availableUnits={[1, 2]}
+        selectedUnitId={1}
+        onSelectUnit={vi.fn()}
+        rawObservations={mockObservations}
+        isLoading={false}
+        sensorSpecs={mockManifest.sensor_specifications}
+      />
+    );
+
+    const cycleSortBtn = screen.getByRole('button', { name: /Sort by cycle/i });
+    const thCycle = cycleSortBtn.closest('th');
+    expect(thCycle?.getAttribute('aria-sort')).toBe('ascending');
+
+    fireEvent.click(cycleSortBtn);
+    expect(thCycle?.getAttribute('aria-sort')).toBe('descending');
+  });
+
+  it('displays visible error alert and retry button when engine index fetch fails in DatasetExplorerPage', async () => {
+    const { DatasetExplorerPage } = await import('../src/features/datasets/DatasetExplorerPage');
+    const loader = await import('../src/lib/data/datasetExplorerLoader');
+
+    vi.spyOn(loader, 'loadDatasetManifest').mockResolvedValue(mockManifest);
+    const indexSpy = vi.spyOn(loader, 'loadEngineIndex').mockRejectedValueOnce(
+      new Error('Simulated network timeout on index CSV')
+    );
+
+    render(<DatasetExplorerPage selectedDataset="FD001" />);
+
+    // Switch to Engines tab
+    const enginesTab = await screen.findByRole('tab', { name: /Engines/i });
+    fireEvent.click(enginesTab);
+
+    // Verify error alert is rendered
+    const alert = await screen.findByRole('alert');
+    expect(alert).toBeDefined();
+    expect(screen.getByText('Engine Index Load Error')).toBeDefined();
+    expect(screen.getByText(/Simulated network timeout on index CSV/)).toBeDefined();
+
+    // Verify retry button exists
+    const retryBtn = screen.getByRole('button', { name: /Retry engine index/i });
+    expect(retryBtn).toBeDefined();
+
+    // Now mock resolves successfully for the retry
+    indexSpy.mockResolvedValueOnce(mockEngines);
+    fireEvent.click(retryBtn);
+
+    // Verify engine table successfully displays
+    expect(await screen.findByText('Training Fleet Engines (2 matching)')).toBeDefined();
+  });
 });

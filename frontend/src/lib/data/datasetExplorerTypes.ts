@@ -186,7 +186,7 @@ export interface RawObservationRecord {
 
 export interface EngineFilterOptions {
   searchQuery: string;
-  sortBy: 'unit_id' | 'observation_count' | 'last_observed_cycle' | 'official_endpoint_rul';
+  sortBy: keyof EngineIndexRecord;
   sortAsc: boolean;
   page: number;
   pageSize: number;

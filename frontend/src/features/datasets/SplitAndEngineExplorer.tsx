@@ -174,13 +174,185 @@ export const SplitAndEngineExplorer: React.FC<SplitAndEngineExplorerProps> = ({
             <table className="table" style={{ width: '100%', fontSize: 'var(--text-xs)', borderCollapse: 'collapse' }}>
               <thead>
                 <tr style={{ borderBottom: 'var(--rule-hair) solid var(--color-rule-2)', textAlign: 'left' }}>
-                  <th style={{ padding: '6px 8px', color: 'var(--color-muted)' }}>Unit ID</th>
-                  <th style={{ padding: '6px 8px', color: 'var(--color-muted)', textAlign: 'right' }}>Observations</th>
-                  <th style={{ padding: '6px 8px', color: 'var(--color-muted)', textAlign: 'right' }}>First Cycle</th>
-                  <th style={{ padding: '6px 8px', color: 'var(--color-muted)', textAlign: 'right' }}>Terminal Cycle</th>
-                  <th style={{ padding: '6px 8px', color: 'var(--color-muted)' }}>Status</th>
-                  <th style={{ padding: '6px 8px', color: 'var(--color-muted)', textAlign: 'right' }}>
-                    {split === 'train' ? 'Failure Cycle' : 'Official Endpoint RUL'}
+                  <th
+                    style={{ padding: '6px 8px', color: 'var(--color-muted)' }}
+                    aria-sort={sortBy === 'unit_id' ? (sortAsc ? 'ascending' : 'descending') : 'none'}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (sortBy === 'unit_id') setSortAsc(!sortAsc);
+                        else { setSortBy('unit_id'); setSortAsc(true); }
+                        setPage(1);
+                      }}
+                      className="table-sort-header"
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        padding: 0,
+                        font: 'inherit',
+                        fontSize: 'inherit',
+                        color: sortBy === 'unit_id' ? 'var(--color-accent)' : 'var(--color-muted)',
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                      }}
+                      aria-label={`Sort by Unit ID, ${sortBy === 'unit_id' ? (sortAsc ? 'ascending' : 'descending') : 'none'}`}
+                    >
+                      Unit ID {sortBy === 'unit_id' && (sortAsc ? '▲' : '▼')}
+                    </button>
+                  </th>
+
+                  <th
+                    style={{ padding: '6px 8px', color: 'var(--color-muted)', textAlign: 'right' }}
+                    aria-sort={sortBy === 'observation_count' ? (sortAsc ? 'ascending' : 'descending') : 'none'}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (sortBy === 'observation_count') setSortAsc(!sortAsc);
+                        else { setSortBy('observation_count'); setSortAsc(true); }
+                        setPage(1);
+                      }}
+                      className="table-sort-header"
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        padding: 0,
+                        font: 'inherit',
+                        fontSize: 'inherit',
+                        color: sortBy === 'observation_count' ? 'var(--color-accent)' : 'var(--color-muted)',
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                      }}
+                      aria-label={`Sort by Observations, ${sortBy === 'observation_count' ? (sortAsc ? 'ascending' : 'descending') : 'none'}`}
+                    >
+                      Observations {sortBy === 'observation_count' && (sortAsc ? '▲' : '▼')}
+                    </button>
+                  </th>
+
+                  <th
+                    style={{ padding: '6px 8px', color: 'var(--color-muted)', textAlign: 'right' }}
+                    aria-sort={sortBy === 'first_cycle' ? (sortAsc ? 'ascending' : 'descending') : 'none'}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (sortBy === 'first_cycle') setSortAsc(!sortAsc);
+                        else { setSortBy('first_cycle'); setSortAsc(true); }
+                        setPage(1);
+                      }}
+                      className="table-sort-header"
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        padding: 0,
+                        font: 'inherit',
+                        fontSize: 'inherit',
+                        color: sortBy === 'first_cycle' ? 'var(--color-accent)' : 'var(--color-muted)',
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                      }}
+                      aria-label={`Sort by First Cycle, ${sortBy === 'first_cycle' ? (sortAsc ? 'ascending' : 'descending') : 'none'}`}
+                    >
+                      First Cycle {sortBy === 'first_cycle' && (sortAsc ? '▲' : '▼')}
+                    </button>
+                  </th>
+
+                  <th
+                    style={{ padding: '6px 8px', color: 'var(--color-muted)', textAlign: 'right' }}
+                    aria-sort={sortBy === 'last_observed_cycle' ? (sortAsc ? 'ascending' : 'descending') : 'none'}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (sortBy === 'last_observed_cycle') setSortAsc(!sortAsc);
+                        else { setSortBy('last_observed_cycle'); setSortAsc(true); }
+                        setPage(1);
+                      }}
+                      className="table-sort-header"
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        padding: 0,
+                        font: 'inherit',
+                        fontSize: 'inherit',
+                        color: sortBy === 'last_observed_cycle' ? 'var(--color-accent)' : 'var(--color-muted)',
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                      }}
+                      aria-label={`Sort by Terminal Cycle, ${sortBy === 'last_observed_cycle' ? (sortAsc ? 'ascending' : 'descending') : 'none'}`}
+                    >
+                      Terminal Cycle {sortBy === 'last_observed_cycle' && (sortAsc ? '▲' : '▼')}
+                    </button>
+                  </th>
+
+                  <th
+                    style={{ padding: '6px 8px', color: 'var(--color-muted)' }}
+                    aria-sort={sortBy === 'endpoint_status' ? (sortAsc ? 'ascending' : 'descending') : 'none'}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (sortBy === 'endpoint_status') setSortAsc(!sortAsc);
+                        else { setSortBy('endpoint_status'); setSortAsc(true); }
+                        setPage(1);
+                      }}
+                      className="table-sort-header"
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        padding: 0,
+                        font: 'inherit',
+                        fontSize: 'inherit',
+                        color: sortBy === 'endpoint_status' ? 'var(--color-accent)' : 'var(--color-muted)',
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                      }}
+                      aria-label={`Sort by Status, ${sortBy === 'endpoint_status' ? (sortAsc ? 'ascending' : 'descending') : 'none'}`}
+                    >
+                      Status {sortBy === 'endpoint_status' && (sortAsc ? '▲' : '▼')}
+                    </button>
+                  </th>
+
+                  <th
+                    style={{ padding: '6px 8px', color: 'var(--color-muted)', textAlign: 'right' }}
+                    aria-sort={(sortBy === 'physical_failure_cycle' || sortBy === 'official_endpoint_rul') ? (sortAsc ? 'ascending' : 'descending') : 'none'}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const targetKey = split === 'train' ? 'physical_failure_cycle' : 'official_endpoint_rul';
+                        if (sortBy === targetKey) setSortAsc(!sortAsc);
+                        else { setSortBy(targetKey); setSortAsc(true); }
+                        setPage(1);
+                      }}
+                      className="table-sort-header"
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        padding: 0,
+                        font: 'inherit',
+                        fontSize: 'inherit',
+                        color: (sortBy === 'physical_failure_cycle' || sortBy === 'official_endpoint_rul') ? 'var(--color-accent)' : 'var(--color-muted)',
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                      }}
+                      aria-label={`Sort by ${split === 'train' ? 'Failure Cycle' : 'Official Endpoint RUL'}`}
+                    >
+                      {split === 'train' ? 'Failure Cycle' : 'Official Endpoint RUL'} {(sortBy === 'physical_failure_cycle' || sortBy === 'official_endpoint_rul') && (sortAsc ? '▲' : '▼')}
+                    </button>
                   </th>
                 </tr>
               </thead>
@@ -204,22 +376,30 @@ export const SplitAndEngineExplorer: React.FC<SplitAndEngineExplorerProps> = ({
                           borderBottom: 'var(--rule-hair) solid var(--color-rule)',
                           fontWeight: isSelected ? 600 : 400,
                         }}
-                        role="button"
-                        tabIndex={0}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' || e.key === ' ') {
-                            onSelectEngine(eng.unit_id);
-                          }
-                        }}
-                        aria-label={`Select Engine Unit #${eng.unit_id}`}
                       >
                         <td style={{ padding: '6px 8px' }}>
-                          <span
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onSelectEngine(eng.unit_id);
+                            }}
+                            className="btn-select-engine"
+                            aria-pressed={isSelected}
+                            aria-label={`Select Engine Unit #${eng.unit_id}`}
                             style={{
+                              background: 'none',
+                              border: 'none',
+                              padding: '2px 4px',
+                              font: 'inherit',
+                              fontSize: 'inherit',
                               color: isSelected ? 'var(--color-accent)' : 'var(--color-ink)',
                               display: 'inline-flex',
                               alignItems: 'center',
                               gap: '6px',
+                              cursor: 'pointer',
+                              borderRadius: 'var(--radius-xs)',
+                              textAlign: 'left',
                             }}
                           >
                             {isSelected && (
@@ -233,7 +413,7 @@ export const SplitAndEngineExplorer: React.FC<SplitAndEngineExplorerProps> = ({
                               />
                             )}
                             Unit #{eng.unit_id}
-                          </span>
+                          </button>
                         </td>
                         <td className="measured" style={{ padding: '6px 8px', textAlign: 'right', color: 'var(--color-ink)' }}>
                           {eng.observation_count}

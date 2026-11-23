@@ -51,6 +51,7 @@ export const DatasetExplorerPage: React.FC<DatasetExplorerPageProps> = ({
   const [, setLoadingIndex] = useState<boolean>(false);
   const [loadingRaw, setLoadingRaw] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [indexError, setIndexError] = useState<string | null>(null);
 
   // Load manifest once
   useEffect(() => {
@@ -78,16 +79,20 @@ export const DatasetExplorerPage: React.FC<DatasetExplorerPageProps> = ({
     };
   }, []);
 
-  // Load engine index when dataset or split changes
-  useEffect(() => {
+  // Fetch engine index for the current dataset and split
+  const fetchEngineIndex = useCallback(() => {
     let isMounted = true;
     setLoadingIndex(true);
+    setIndexError(null);
+    // Crucial: Clear stale records so previous dataset/split records are not retained
+    setEngineIndex([]);
 
     loadEngineIndex(selectedDataset, split)
       .then((records) => {
         if (isMounted) {
           setEngineIndex(records);
           setLoadingIndex(false);
+          setIndexError(null);
           // If selectedUnitId is out of bounds for the new index, reset to first unit
           if (!records.some((r) => r.unit_id === selectedUnitId)) {
             setSelectedUnitId(records[0]?.unit_id || 1);
@@ -97,6 +102,8 @@ export const DatasetExplorerPage: React.FC<DatasetExplorerPageProps> = ({
       .catch((err) => {
         if (isMounted) {
           console.error('[DatasetExplorerPage] Failed to load engine index:', err);
+          setEngineIndex([]);
+          setIndexError(err.message || `Failed to load engine index for ${selectedDataset} (${split})`);
           setLoadingIndex(false);
         }
       });
@@ -105,6 +112,12 @@ export const DatasetExplorerPage: React.FC<DatasetExplorerPageProps> = ({
       isMounted = false;
     };
   }, [selectedDataset, split, selectedUnitId]);
+
+  // Load engine index when dataset or split changes
+  useEffect(() => {
+    const cleanup = fetchEngineIndex();
+    return cleanup;
+  }, [fetchEngineIndex]);
 
   // Lazily load raw observations when observations or sensors tab is active
   useEffect(() => {
@@ -291,15 +304,49 @@ export const DatasetExplorerPage: React.FC<DatasetExplorerPageProps> = ({
 
       {/* SECTION 2: SPLIT & ENGINE EXPLORER */}
       {activeTab === 'engines' && (
-        <SplitAndEngineExplorer
-          dataset={selectedDataset}
-          split={split}
-          onSelectSplit={setSplit}
-          engineIndex={engineIndex}
-          selectedUnitId={selectedUnitId}
-          onSelectEngine={setSelectedUnitId}
-          onInspectEngineInRaw={handleInspectEngineInRaw}
-        />
+        indexError ? (
+          <div
+            className="panel"
+            role="alert"
+            aria-live="polite"
+            style={{
+              borderLeft: '3px solid var(--color-bad)',
+              padding: 'var(--space-md)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 'var(--space-sm)',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)', color: 'var(--color-bad)' }}>
+              <AlertCircle size={20} />
+              <h4 style={{ margin: 0, fontSize: 'var(--text-md)' }}>Engine Index Load Error</h4>
+            </div>
+            <p style={{ fontSize: 'var(--text-sm)', color: 'var(--color-ink-2)', margin: 0 }}>
+              {indexError}
+            </p>
+            <div>
+              <button
+                type="button"
+                className="btn btn-secondary btn-sm"
+                onClick={fetchEngineIndex}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap' }}
+                id="btn-retry-engine-index"
+              >
+                <RefreshCw size={14} /> Retry engine index
+              </button>
+            </div>
+          </div>
+        ) : (
+          <SplitAndEngineExplorer
+            dataset={selectedDataset}
+            split={split}
+            onSelectSplit={setSplit}
+            engineIndex={engineIndex}
+            selectedUnitId={selectedUnitId}
+            onSelectEngine={setSelectedUnitId}
+            onInspectEngineInRaw={handleInspectEngineInRaw}
+          />
+        )
       )}
 
       {/* SECTION 3: RAW OBSERVATION BROWSER */}
@@ -328,6 +375,7 @@ export const DatasetExplorerPage: React.FC<DatasetExplorerPageProps> = ({
           opSettingSummaries={splitSummary.operating_settings}
           sensorSpecs={manifest.sensor_specifications}
           rulStats={splitSummary.rul_statistics}
+          engineIndex={engineIndex}
         />
       )}
 

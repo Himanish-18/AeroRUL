@@ -6,8 +6,13 @@ import {
   OpSettingStats,
   SensorSpecification,
   RulStats,
+  EngineIndexRecord,
 } from '../../lib/data/datasetExplorerTypes';
-import { computeNumericDistribution, DistributionBin } from '../../lib/data/datasetExplorerAdapter';
+import {
+  computeNumericDistribution,
+  computeTestEndpointRulDistribution,
+  DistributionBin,
+} from '../../lib/data/datasetExplorerAdapter';
 import { DatasetId } from '../../lib/data/types';
 import {
   ResponsiveContainer,
@@ -31,6 +36,8 @@ interface SensorAndSettingsExplorerProps {
   opSettingSummaries: Record<string, OpSettingStats>;
   sensorSpecs: Record<string, SensorSpecification>;
   rulStats: RulStats;
+  engineIndex?: EngineIndexRecord[];
+  testEndpointRuls?: number[];
 }
 
 export const SensorAndSettingsExplorer: React.FC<SensorAndSettingsExplorerProps> = ({
@@ -42,6 +49,8 @@ export const SensorAndSettingsExplorer: React.FC<SensorAndSettingsExplorerProps>
   opSettingSummaries,
   sensorSpecs,
   rulStats,
+  engineIndex = [],
+  testEndpointRuls,
 }) => {
   const [selectedSensor, setSelectedSensor] = useState<string>('sensor_4');
   const [activeSubTab, setActiveSubTab] = useState<'sensors' | 'settings' | 'rul'>('sensors');
@@ -74,8 +83,8 @@ export const SensorAndSettingsExplorer: React.FC<SensorAndSettingsExplorerProps>
 
   // Compute RUL distribution histogram
   const rulHistogramData = useMemo(() => {
-    if (rawObservations.length === 0) return [];
     if (split === 'train') {
+      if (rawObservations.length === 0) return [];
       // Calculate derived physical RUL across all training observations
       const unitMaxCycles = new Map<number, number>();
       for (const r of rawObservations) {
@@ -89,10 +98,18 @@ export const SensorAndSettingsExplorer: React.FC<SensorAndSettingsExplorerProps>
       }
       return computeNumericDistribution(derivedRuls, 16);
     } else {
-      // For test, endpoint RUL is from manifest
+      // For test split: use actual official test endpoint RUL values
+      // Exactly one endpoint RUL per test engine. Never propagate backwards across cycles.
+      const testRecords = engineIndex.filter((e) => e.split === 'test' && e.official_endpoint_rul != null);
+      if (testRecords.length > 0) {
+        return computeTestEndpointRulDistribution(testRecords, 16);
+      }
+      if (testEndpointRuls && testEndpointRuls.length > 0) {
+        return computeTestEndpointRulDistribution(testEndpointRuls, 16);
+      }
       return [];
     }
-  }, [rawObservations, split]);
+  }, [rawObservations, split, engineIndex, testEndpointRuls]);
 
   const isMultiRegime = dataset === 'FD002' || dataset === 'FD004';
 
@@ -155,6 +172,7 @@ export const SensorAndSettingsExplorer: React.FC<SensorAndSettingsExplorerProps>
               type="button"
               className={`segmented-button ${split === 'train' ? 'active' : ''}`}
               onClick={() => onSelectSplit('train')}
+              id="btn-split-train"
             >
               Training Split
             </button>
@@ -162,6 +180,7 @@ export const SensorAndSettingsExplorer: React.FC<SensorAndSettingsExplorerProps>
               type="button"
               className={`segmented-button ${split === 'test' ? 'active' : ''}`}
               onClick={() => onSelectSplit('test')}
+              id="btn-split-test"
             >
               Test Split
             </button>
@@ -579,12 +598,12 @@ export const SensorAndSettingsExplorer: React.FC<SensorAndSettingsExplorerProps>
               <span style={{ fontSize: 'var(--text-xs)', color: 'var(--color-muted)' }}>
                 {split === 'train'
                   ? 'Calculated per cycle as (failure_cycle - cycle). Reaches exactly 0 at failure.'
-                  : `Single endpoint label per engine for all ${rulStats.endpoint_count || 100} test engines.`}
+                  : `Single official endpoint label per engine for all ${rulStats.endpoint_count || 100} test engines. Official C-MAPSS test labels are specified only for the final censored observation cycle; RUL is not defined per-cycle during test operation.`}
               </span>
 
               <div style={{ width: '100%', height: '280px' }}>
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={split === 'train' ? rulHistogramData : []} margin={{ top: 12, right: 20, bottom: 24, left: 10 }}>
+                  <BarChart data={rulHistogramData} margin={{ top: 12, right: 20, bottom: 24, left: 10 }}>
                     <CartesianGrid strokeDasharray="0" stroke="var(--color-rule)" />
                     <XAxis
                       dataKey="binLabel"
@@ -602,7 +621,7 @@ export const SensorAndSettingsExplorer: React.FC<SensorAndSettingsExplorerProps>
                       tick={{ fill: 'var(--color-muted)', fontSize: 10, fontFamily: 'var(--font-outlier)' }}
                       stroke="var(--color-rule-2)"
                       label={{
-                        value: 'Observations',
+                        value: split === 'train' ? 'Observations' : 'Test Engines',
                         angle: -90,
                         position: 'insideLeft',
                         offset: 10,
@@ -626,12 +645,18 @@ export const SensorAndSettingsExplorer: React.FC<SensorAndSettingsExplorerProps>
                             }}
                           >
                             <div>RUL Range: <span className="measured">{data.binLabel} cycles</span></div>
-                            <div style={{ color: 'var(--color-accent)', fontWeight: 600 }}>Count: {data.count.toLocaleString()}</div>
+                            <div style={{ color: 'var(--color-accent)', fontWeight: 600 }}>
+                              Count: {data.count.toLocaleString()} {split === 'train' ? 'observations' : 'test engines'}
+                            </div>
                           </div>
                         );
                       }}
                     />
-                    <Bar dataKey="count" fill="var(--color-cool)" radius={[2, 2, 0, 0]} />
+                    <Bar
+                      dataKey="count"
+                      fill={split === 'train' ? 'var(--color-cool)' : 'var(--color-ok)'}
+                      radius={[2, 2, 0, 0]}
+                    />
                   </BarChart>
                 </ResponsiveContainer>
               </div>

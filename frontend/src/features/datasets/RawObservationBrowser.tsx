@@ -354,45 +354,166 @@ export const RawObservationBrowser: React.FC<RawObservationBrowserProps> = ({
               <thead>
                 <tr style={{ background: 'var(--color-paper-3)', borderBottom: 'var(--rule-hair) solid var(--color-rule-2)' }}>
                   <th
-                    onClick={() => handleHeaderSort('unit_id')}
-                    style={{ padding: '8px 10px', textAlign: 'left', cursor: 'pointer', color: 'var(--color-muted)' }}
+                    style={{ padding: '6px 8px', textAlign: 'left', color: 'var(--color-muted)' }}
+                    aria-sort={sortBy === 'unit_id' ? (sortAsc ? 'ascending' : 'descending') : 'none'}
                   >
-                    unit_id {sortBy === 'unit_id' && (sortAsc ? '▲' : '▼')}
+                    <button
+                      type="button"
+                      onClick={() => handleHeaderSort('unit_id')}
+                      className="table-sort-header"
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        padding: 0,
+                        font: 'inherit',
+                        fontSize: 'inherit',
+                        color: sortBy === 'unit_id' ? 'var(--color-accent)' : 'var(--color-muted)',
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                      }}
+                      aria-label={`Sort by unit ID, ${sortBy === 'unit_id' ? (sortAsc ? 'ascending' : 'descending') : 'none'}`}
+                    >
+                      unit_id {sortBy === 'unit_id' && (sortAsc ? '▲' : '▼')}
+                    </button>
                   </th>
+
                   <th
-                    onClick={() => handleHeaderSort('cycle')}
-                    style={{ padding: '8px 10px', textAlign: 'right', cursor: 'pointer', color: 'var(--color-accent)' }}
+                    style={{ padding: '6px 8px', textAlign: 'right', color: 'var(--color-accent)' }}
+                    aria-sort={sortBy === 'cycle' ? (sortAsc ? 'ascending' : 'descending') : 'none'}
                   >
-                    cycle {sortBy === 'cycle' && (sortAsc ? '▲' : '▼')}
+                    <button
+                      type="button"
+                      onClick={() => handleHeaderSort('cycle')}
+                      className="table-sort-header"
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        padding: 0,
+                        font: 'inherit',
+                        fontSize: 'inherit',
+                        color: sortBy === 'cycle' ? 'var(--color-accent)' : 'var(--color-muted)',
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                      }}
+                      aria-label={`Sort by cycle, ${sortBy === 'cycle' ? (sortAsc ? 'ascending' : 'descending') : 'none'}`}
+                    >
+                      cycle {sortBy === 'cycle' && (sortAsc ? '▲' : '▼')}
+                    </button>
                   </th>
+
                   <th
-                    onClick={() => handleHeaderSort('op_setting_1')}
-                    style={{ padding: '8px 10px', textAlign: 'right', cursor: 'pointer', color: 'var(--color-muted)' }}
+                    style={{ padding: '6px 8px', textAlign: 'right', color: 'var(--color-muted)' }}
+                    aria-sort={sortBy === 'op_setting_1' ? (sortAsc ? 'ascending' : 'descending') : 'none'}
                   >
-                    op_setting_1 {sortBy === 'op_setting_1' && (sortAsc ? '▲' : '▼')}
+                    <button
+                      type="button"
+                      onClick={() => handleHeaderSort('op_setting_1')}
+                      className="table-sort-header"
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        padding: 0,
+                        font: 'inherit',
+                        fontSize: 'inherit',
+                        color: sortBy === 'op_setting_1' ? 'var(--color-accent)' : 'var(--color-muted)',
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                      }}
+                      aria-label={`Sort by op_setting_1, ${sortBy === 'op_setting_1' ? (sortAsc ? 'ascending' : 'descending') : 'none'}`}
+                    >
+                      op_setting_1 {sortBy === 'op_setting_1' && (sortAsc ? '▲' : '▼')}
+                    </button>
                   </th>
+
                   <th
-                    onClick={() => handleHeaderSort('op_setting_2')}
-                    style={{ padding: '8px 10px', textAlign: 'right', cursor: 'pointer', color: 'var(--color-muted)' }}
+                    style={{ padding: '6px 8px', textAlign: 'right', color: 'var(--color-muted)' }}
+                    aria-sort={sortBy === 'op_setting_2' ? (sortAsc ? 'ascending' : 'descending') : 'none'}
                   >
-                    op_setting_2 {sortBy === 'op_setting_2' && (sortAsc ? '▲' : '▼')}
+                    <button
+                      type="button"
+                      onClick={() => handleHeaderSort('op_setting_2')}
+                      className="table-sort-header"
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        padding: 0,
+                        font: 'inherit',
+                        fontSize: 'inherit',
+                        color: sortBy === 'op_setting_2' ? 'var(--color-accent)' : 'var(--color-muted)',
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                      }}
+                      aria-label={`Sort by op_setting_2, ${sortBy === 'op_setting_2' ? (sortAsc ? 'ascending' : 'descending') : 'none'}`}
+                    >
+                      op_setting_2 {sortBy === 'op_setting_2' && (sortAsc ? '▲' : '▼')}
+                    </button>
                   </th>
+
                   <th
-                    onClick={() => handleHeaderSort('op_setting_3')}
-                    style={{ padding: '8px 10px', textAlign: 'right', cursor: 'pointer', color: 'var(--color-muted)' }}
+                    style={{ padding: '6px 8px', textAlign: 'right', color: 'var(--color-muted)' }}
+                    aria-sort={sortBy === 'op_setting_3' ? (sortAsc ? 'ascending' : 'descending') : 'none'}
                   >
-                    op_setting_3 {sortBy === 'op_setting_3' && (sortAsc ? '▲' : '▼')}
+                    <button
+                      type="button"
+                      onClick={() => handleHeaderSort('op_setting_3')}
+                      className="table-sort-header"
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        padding: 0,
+                        font: 'inherit',
+                        fontSize: 'inherit',
+                        color: sortBy === 'op_setting_3' ? 'var(--color-accent)' : 'var(--color-muted)',
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                      }}
+                      aria-label={`Sort by op_setting_3, ${sortBy === 'op_setting_3' ? (sortAsc ? 'ascending' : 'descending') : 'none'}`}
+                    >
+                      op_setting_3 {sortBy === 'op_setting_3' && (sortAsc ? '▲' : '▼')}
+                    </button>
                   </th>
+
                   {selectedSensors.map((sKey) => {
                     const spec = sensorSpecs[sKey];
+                    const isSorted = sortBy === sKey;
+                    const ariaSort = isSorted ? (sortAsc ? 'ascending' : 'descending') : 'none';
                     return (
                       <th
                         key={sKey}
-                        onClick={() => handleHeaderSort(sKey)}
-                        style={{ padding: '8px 10px', textAlign: 'right', cursor: 'pointer', color: 'var(--color-muted)' }}
+                        style={{ padding: '6px 8px', textAlign: 'right', color: 'var(--color-muted)' }}
                         title={spec ? `${spec.name} (${spec.unit})` : sKey}
+                        aria-sort={ariaSort}
                       >
-                        {sKey} {sortBy === sKey && (sortAsc ? '▲' : '▼')}
+                        <button
+                          type="button"
+                          onClick={() => handleHeaderSort(sKey)}
+                          className="table-sort-header"
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            padding: 0,
+                            font: 'inherit',
+                            fontSize: 'inherit',
+                            color: isSorted ? 'var(--color-accent)' : 'var(--color-muted)',
+                            cursor: 'pointer',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                          }}
+                          aria-label={`Sort by ${sKey}, ${ariaSort}`}
+                        >
+                          {sKey} {isSorted && (sortAsc ? '▲' : '▼')}
+                        </button>
                       </th>
                     );
                   })}
