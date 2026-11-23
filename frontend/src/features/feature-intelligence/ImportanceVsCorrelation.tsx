@@ -24,10 +24,10 @@ interface ImportanceVsCorrelationProps {
 }
 
 const QUADRANT_COLORS: Record<QuadrantType, string> = {
-  high_importance_high_corr: '#f59e0b', // Amber (Primary)
-  high_importance_low_corr: '#a855f7',  // Purple (Nonlinear / Synergistic)
-  low_importance_high_corr: '#38bdf8',  // Cyan (Redundant / Collinear)
-  low_importance_low_corr: '#64748b',   // Slate (Subordinate)
+  high_importance_high_corr: '#f59e0b', // Amber (High Gain / High Corr)
+  high_importance_low_corr: '#a855f7',  // Purple (High Gain / Low Corr)
+  low_importance_high_corr: '#38bdf8',  // Cyan (Low Gain / High Corr)
+  low_importance_low_corr: '#64748b',   // Slate (Low Gain / Low Corr)
 };
 
 export const ImportanceVsCorrelation: React.FC<ImportanceVsCorrelationProps> = ({
@@ -37,22 +37,27 @@ export const ImportanceVsCorrelation: React.FC<ImportanceVsCorrelationProps> = (
   const [corrMetric, setCorrMetric] = useState<'pearson' | 'spearman'>('pearson');
   const [selectedQuadrant, setSelectedQuadrant] = useState<QuadrantType | 'all'>('all');
 
-  const comparisonItems = getCorrelationComparisonList(features);
+  // Metric-specific comparison: never fallback to alternate metric or 0
+  const comparisonItems = getCorrelationComparisonList(features, corrMetric);
 
   const filteredItems = selectedQuadrant === 'all'
     ? comparisonItems
     : comparisonItems.filter((item) => item.quadrant === selectedQuadrant);
 
-  const scatterData = filteredItems.map((item) => ({
-    name: item.feature_name,
-    sensor: item.sensor,
-    stat: item.statistic,
-    gainPct: item.gain_importance_pct,
-    corr: corrMetric === 'pearson' ? (item.abs_pearson ?? 0) : (item.abs_spearman ?? 0),
-    rawCorr: corrMetric === 'pearson' ? item.correlation_pearson : item.correlation_spearman,
-    quadrant: item.quadrant,
-    quadrantLabel: item.quadrantLabel,
-  }));
+  const scatterData = filteredItems.map((item) => {
+    const rawVal = corrMetric === 'pearson' ? item.correlation_pearson : item.correlation_spearman;
+    const absVal = corrMetric === 'pearson' ? item.abs_pearson : item.abs_spearman;
+    return {
+      name: item.feature_name,
+      sensor: item.sensor,
+      stat: item.statistic,
+      gainPct: item.gain_importance_pct,
+      corr: absVal!, // Strictly defined for metric
+      rawCorr: rawVal,
+      quadrant: item.quadrant,
+      quadrantLabel: item.quadrantLabel,
+    };
+  });
 
   const metricName = corrMetric === 'pearson' ? 'Absolute Pearson |r|' : 'Absolute Spearman |ρ|';
 
@@ -80,16 +85,26 @@ export const ImportanceVsCorrelation: React.FC<ImportanceVsCorrelationProps> = (
             <button
               type="button"
               className={`btn btn-sm ${corrMetric === 'pearson' ? 'btn-primary' : 'btn-ghost'}`}
-              onClick={() => setCorrMetric('pearson')}
+              onClick={() => {
+                setCorrMetric('pearson');
+                setSelectedQuadrant('all');
+              }}
               style={{ fontSize: 'var(--text-xs)', padding: '3px 8px' }}
+              aria-label="Select Pearson correlation metric"
+              data-testid="btn-metric-pearson"
             >
               Pearson |r|
             </button>
             <button
               type="button"
               className={`btn btn-sm ${corrMetric === 'spearman' ? 'btn-primary' : 'btn-ghost'}`}
-              onClick={() => setCorrMetric('spearman')}
+              onClick={() => {
+                setCorrMetric('spearman');
+                setSelectedQuadrant('all');
+              }}
               style={{ fontSize: 'var(--text-xs)', padding: '3px 8px' }}
+              aria-label="Select Spearman correlation metric"
+              data-testid="btn-metric-spearman"
             >
               Spearman |ρ|
             </button>
@@ -108,12 +123,13 @@ export const ImportanceVsCorrelation: React.FC<ImportanceVsCorrelationProps> = (
               padding: '4px 8px',
             }}
             aria-label="Filter features by quadrant"
+            data-testid="select-quadrant-filter"
           >
             <option value="all">All Quadrants ({comparisonItems.length})</option>
-            <option value="high_importance_high_corr">Primary Signals (High Gain & High Corr)</option>
-            <option value="high_importance_low_corr">Nonlinear / Synergistic (High Gain & Low Corr)</option>
-            <option value="low_importance_high_corr">Redundant / Collinear (Low Gain & High Corr)</option>
-            <option value="low_importance_low_corr">Subordinate (Low Gain & Low Corr)</option>
+            <option value="high_importance_high_corr">High Gain / High Correlation</option>
+            <option value="high_importance_low_corr">High Gain / Low Correlation</option>
+            <option value="low_importance_high_corr">Low Gain / High Correlation</option>
+            <option value="low_importance_low_corr">Low Gain / Low Correlation</option>
           </select>
         </div>
       </div>
@@ -122,19 +138,19 @@ export const ImportanceVsCorrelation: React.FC<ImportanceVsCorrelationProps> = (
       <div style={{ display: 'flex', gap: 'var(--space-sm)', flexWrap: 'wrap', marginBottom: 'var(--space-md)', fontSize: 'var(--text-xs)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <span style={{ width: 8, height: 8, borderRadius: '50%', background: QUADRANT_COLORS.high_importance_high_corr }} />
-          <span style={{ color: 'var(--color-muted)' }}>Primary Signal</span>
+          <span style={{ color: 'var(--color-muted)' }}>High Gain / High Correlation</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <span style={{ width: 8, height: 8, borderRadius: '50%', background: QUADRANT_COLORS.high_importance_low_corr }} />
-          <span style={{ color: 'var(--color-muted)' }}>Nonlinear / Synergistic</span>
+          <span style={{ color: 'var(--color-muted)' }}>High Gain / Low Correlation</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <span style={{ width: 8, height: 8, borderRadius: '50%', background: QUADRANT_COLORS.low_importance_high_corr }} />
-          <span style={{ color: 'var(--color-muted)' }}>Redundant / Shared</span>
+          <span style={{ color: 'var(--color-muted)' }}>Low Gain / High Correlation</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <span style={{ width: 8, height: 8, borderRadius: '50%', background: QUADRANT_COLORS.low_importance_low_corr }} />
-          <span style={{ color: 'var(--color-muted)' }}>Subordinate</span>
+          <span style={{ color: 'var(--color-muted)' }}>Low Gain / Low Correlation</span>
         </div>
       </div>
 
@@ -181,6 +197,10 @@ export const ImportanceVsCorrelation: React.FC<ImportanceVsCorrelationProps> = (
               content={({ active, payload }) => {
                 if (!active || !payload || !payload.length) return null;
                 const d = payload[0].payload;
+                const rawFormatted = (typeof d.rawCorr === 'number')
+                  ? (d.rawCorr > 0 ? `+${d.rawCorr.toFixed(4)}` : d.rawCorr.toFixed(4))
+                  : '—';
+                const corrFormatted = (typeof d.corr === 'number') ? d.corr.toFixed(4) : '—';
                 return (
                   <div
                     style={{
@@ -197,10 +217,10 @@ export const ImportanceVsCorrelation: React.FC<ImportanceVsCorrelationProps> = (
                       {d.name}
                     </div>
                     <div style={{ color: 'var(--color-accent)', marginTop: 2 }}>
-                      Gain Share: {d.gainPct.toFixed(2)}%
+                      Gain Share: {typeof d.gainPct === 'number' ? d.gainPct.toFixed(2) : d.gainPct}%
                     </div>
                     <div style={{ color: '#38bdf8' }}>
-                      {metricName}: {d.corr.toFixed(4)} (raw: {d.rawCorr > 0 ? `+${d.rawCorr.toFixed(4)}` : d.rawCorr.toFixed(4)})
+                      {metricName}: {corrFormatted} (raw: {rawFormatted})
                     </div>
                     <div style={{ fontSize: '0.65rem', color: QUADRANT_COLORS[d.quadrant as QuadrantType], marginTop: 4 }}>
                       {d.quadrantLabel}
@@ -242,11 +262,12 @@ export const ImportanceVsCorrelation: React.FC<ImportanceVsCorrelationProps> = (
       >
         <Info size={16} style={{ color: 'var(--color-accent)', flexShrink: 0, marginTop: 1 }} />
         <div>
-          <strong style={{ color: 'var(--color-ink)' }}>Why Model Gain Differs from Correlation:</strong>
+          <strong style={{ color: 'var(--color-ink)' }}>Understanding Model Gain vs. Target Correlation:</strong>
           <span style={{ marginLeft: 4 }}>
-            Univariate correlation measures linear (Pearson) or monotonic (Spearman) relationships with the target in isolation.
-            LightGBM builds an ensemble of gradient-boosted trees that model nonlinear thresholds and interaction terms.
-            Collinear features (such as multiple rolling windows of Sensor 11) share or dilute gain importance, while features with moderate individual correlation can achieve high gain by resolving critical decision boundaries.
+            Univariate correlation measures linear (Pearson) or monotonic (Spearman) association with the target in isolation.
+            LightGBM builds an ensemble of gradient-boosted trees that evaluate features jointly.
+            Features in the High Gain / Low Correlation quadrant may indicate nonlinear decision thresholds or interaction effects, though these are possible explanations rather than established causal mechanisms.
+            Conversely, features in the Low Gain / High Correlation quadrant may reflect shared or redundant signal with higher-gain features, diluting split utility. Correlation does not imply physical causality.
           </span>
         </div>
       </div>

@@ -124,6 +124,8 @@ export const SensorDegradationSection: React.FC<SensorDegradationSectionProps> =
               type="button"
               className="btn btn-sm btn-ghost"
               onClick={resetToDefault}
+              id="btn-reset-default"
+              data-testid="btn-reset-default"
               style={{ fontSize: 'var(--text-xs)', display: 'flex', alignItems: 'center', gap: 4 }}
               title="Reset to single default engine"
             >
@@ -134,6 +136,8 @@ export const SensorDegradationSection: React.FC<SensorDegradationSectionProps> =
               type="button"
               className="btn btn-sm btn-ghost"
               onClick={compareAllEngines}
+              id="btn-compare-fleet"
+              data-testid="btn-compare-fleet"
               style={{ fontSize: 'var(--text-xs)', display: 'flex', alignItems: 'center', gap: 4 }}
               title="Overlay multiple engines (Units 1 to 5)"
             >

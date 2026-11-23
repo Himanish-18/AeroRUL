@@ -39,7 +39,7 @@ export const DegradationInterpretationPanel: React.FC<DegradationInterpretationP
           <div>
             <strong style={{ color: 'var(--color-ink)' }}>Authentic Telemetry (No Fabricated Health Index):</strong>
             <p style={{ margin: '2px 0 0 0', lineHeight: 1.4 }}>
-              The curves above represent authentic, un-interpolated NASA C-MAPSS training measurements. No artificial health index, smoothing spline, or synthetic proxy was synthesized. Variations represent genuine physical sensor readings under aerodynamic degradation.
+              The curves above represent authentic, raw NASA C-MAPSS training measurements downsampled at deterministic stride 2 (preserving initial cycle 1 and terminal cycle). Rendered with straight-line linear connections. No artificial health index, smoothing spline, or synthetic extrapolation was applied.
             </p>
           </div>
         </div>

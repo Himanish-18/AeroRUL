@@ -118,15 +118,19 @@ export interface CorrelationComparisonItem extends FeatureImportanceRecord {
 }
 
 export function getCorrelationComparisonList(
-  records: FeatureImportanceRecord[]
+  records: FeatureImportanceRecord[],
+  metric: 'pearson' | 'spearman' = 'pearson'
 ): CorrelationComparisonItem[] {
-  // Only evaluate features with at least one correlation value
-  const candidates = records.filter(
-    (r) => r.abs_pearson !== null || r.abs_spearman !== null
-  );
+  // Only evaluate features with a valid correlation for the chosen metric (never fallback or map to zero)
+  const candidates = records.filter((r) => {
+    if (metric === 'pearson') {
+      return r.abs_pearson !== null && !isNaN(r.abs_pearson);
+    }
+    return r.abs_spearman !== null && !isNaN(r.abs_spearman);
+  });
 
   return candidates.map((r) => {
-    const corr = r.abs_pearson ?? r.abs_spearman ?? 0;
+    const corr = metric === 'pearson' ? r.abs_pearson! : r.abs_spearman!;
     const isHighGain = r.gain_importance_pct >= 2.0;
     const isHighCorr = corr >= 0.5;
 
@@ -135,16 +139,16 @@ export function getCorrelationComparisonList(
 
     if (isHighGain && isHighCorr) {
       quadrant = 'high_importance_high_corr';
-      quadrantLabel = 'Primary Signal (High Gain & High Correlation)';
+      quadrantLabel = 'High Gain / High Correlation';
     } else if (isHighGain && !isHighCorr) {
       quadrant = 'high_importance_low_corr';
-      quadrantLabel = 'Nonlinear / Synergistic (High Gain & Moderate Correlation)';
+      quadrantLabel = 'High Gain / Low Correlation';
     } else if (!isHighGain && isHighCorr) {
       quadrant = 'low_importance_high_corr';
-      quadrantLabel = 'Redundant / Shared Signal (High Correlation & Low Gain)';
+      quadrantLabel = 'Low Gain / High Correlation';
     } else {
       quadrant = 'low_importance_low_corr';
-      quadrantLabel = 'Subordinate Feature (Low Gain & Low Correlation)';
+      quadrantLabel = 'Low Gain / Low Correlation';
     }
 
     return {

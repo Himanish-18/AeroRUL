@@ -1,4 +1,6 @@
 import { describe, it, expect } from 'vitest';
+import fs from 'node:fs';
+import path from 'node:path';
 import {
   parseFeatureImportanceCsv,
   parseSensorImportanceCsv,
@@ -229,11 +231,13 @@ FD001,1,0,sensor_11,47.5412`;
     });
 
     it('correctly maps correlation quadrants and excludes un-evaluated features', () => {
-      const comp = getCorrelationComparisonList(sampleFeatures);
+      const comp = getCorrelationComparisonList(sampleFeatures, 'pearson');
       // sensor_15_std_20 has no correlation, so candidate count is 2
       expect(comp).toHaveLength(2);
       expect(comp[0].quadrant).toBe('high_importance_high_corr');
+      expect(comp[0].quadrantLabel).toBe('High Gain / High Correlation');
       expect(comp[1].quadrant).toBe('high_importance_high_corr');
+      expect(comp[1].quadrantLabel).toBe('High Gain / High Correlation');
     });
 
     it('pivots sensor trajectories for Recharts multi-line chart', () => {
@@ -254,7 +258,7 @@ FD001,1,0,sensor_11,47.5412`;
       expect(pivoted[1]['unit_2']).toBe(47.9);
     });
 
-    it('computes engine sensor statistics accurately', () => {
+    it('computes engine sensor statistics accurately with net change semantics', () => {
       const trajs: SensorTrajectoryRecord[] = [
         { dataset: 'FD001', unit_id: 1, cycle: 1, sensor: 'sensor_11', sensor_value: 40.0 },
         { dataset: 'FD001', unit_id: 1, cycle: 2, sensor: 'sensor_11', sensor_value: 50.0 },
@@ -267,18 +271,223 @@ FD001,1,0,sensor_11,47.5412`;
       expect(stats?.min).toBe(40.0);
       expect(stats?.max).toBe(60.0);
       expect(stats?.mean).toBe(50.0);
+      expect(stats?.startCycle).toBe(1);
+      expect(stats?.endCycle).toBe(3);
       expect(stats?.startValue).toBe(40.0);
       expect(stats?.endValue).toBe(60.0);
-      expect(stats?.netChange).toBe(20.0);
+      expect(stats?.netChange).toBe(20.0); // 60.0 - 40.0
     });
 
     it('resolves sensor physical metadata and fallback gracefully', () => {
+      const spec4 = getSensorSpec('sensor_4');
+      expect(spec4.name).toBe('Total temp at LPT outlet');
+      expect(spec4.unit).toBe('°R');
+
+      const spec21 = getSensorSpec('sensor_21');
+      expect(spec21.name).toBe('LPT coolant bleed');
+      expect(spec21.unit).toBe('lbm/s');
+
       const spec11 = getSensorSpec('sensor_11');
       expect(spec11.name).toContain('Static pressure');
       expect(spec11.unit).toBe('psia');
 
       const fallbackSpec = getSensorSpec('sensor_99');
       expect(fallbackSpec.name).toBe('sensor_99');
+    });
+  });
+
+  describe('6. Correlation Metric Comparison & Missing Value Regression Audit', () => {
+    const mockAuditFeatures: FeatureImportanceRecord[] = [
+      {
+        dataset: 'FD001',
+        feature_name: 'feat_both',
+        sensor: 'sensor_11',
+        statistic: 'mean',
+        window_or_lag: '10',
+        description: 'both correlations present',
+        gain_importance: 1000,
+        split_importance: 50,
+        gain_importance_pct: 5.0,
+        split_importance_pct: 5.0,
+        gain_rank: 1,
+        split_rank: 1,
+        correlation_pearson: 0.65,
+        correlation_spearman: 0.70,
+        abs_pearson: 0.65,
+        abs_spearman: 0.70,
+      },
+      {
+        dataset: 'FD001',
+        feature_name: 'feat_pearson_only',
+        sensor: 'sensor_4',
+        statistic: 'mean',
+        window_or_lag: '10',
+        description: 'pearson only',
+        gain_importance: 500,
+        split_importance: 20,
+        gain_importance_pct: 2.5,
+        split_importance_pct: 2.0,
+        gain_rank: 2,
+        split_rank: 2,
+        correlation_pearson: -0.55,
+        correlation_spearman: null,
+        abs_pearson: 0.55,
+        abs_spearman: null,
+      },
+      {
+        dataset: 'FD001',
+        feature_name: 'feat_spearman_only',
+        sensor: 'sensor_8',
+        statistic: 'max',
+        window_or_lag: '20',
+        description: 'spearman only',
+        gain_importance: 300,
+        split_importance: 10,
+        gain_importance_pct: 1.5,
+        split_importance_pct: 1.0,
+        gain_rank: 3,
+        split_rank: 3,
+        correlation_pearson: null,
+        correlation_spearman: -0.60,
+        abs_pearson: null,
+        abs_spearman: 0.60,
+      },
+      {
+        dataset: 'FD001',
+        feature_name: 'feat_neither',
+        sensor: 'sensor_15',
+        statistic: 'std',
+        window_or_lag: '30',
+        description: 'neither correlation available',
+        gain_importance: 100,
+        split_importance: 5,
+        gain_importance_pct: 0.5,
+        split_importance_pct: 0.5,
+        gain_rank: 4,
+        split_rank: 4,
+        correlation_pearson: null,
+        correlation_spearman: null,
+        abs_pearson: null,
+        abs_spearman: null,
+      },
+    ];
+
+    it('Pearson view includes only records with valid Pearson and excludes missing Pearson without fallback', () => {
+      const pearsonItems = getCorrelationComparisonList(mockAuditFeatures, 'pearson');
+      const names = pearsonItems.map((r) => r.feature_name);
+
+      expect(names).toContain('feat_both');
+      expect(names).toContain('feat_pearson_only');
+      expect(names).not.toContain('feat_spearman_only');
+      expect(names).not.toContain('feat_neither');
+      expect(pearsonItems).toHaveLength(2);
+
+      // Verify that values are strictly Pearson
+      const itemPearsonOnly = pearsonItems.find((r) => r.feature_name === 'feat_pearson_only');
+      expect(itemPearsonOnly?.abs_pearson).toBe(0.55);
+      expect(itemPearsonOnly?.abs_spearman).toBeNull();
+    });
+
+    it('Spearman view includes only records with valid Spearman and excludes missing Spearman without fallback', () => {
+      const spearmanItems = getCorrelationComparisonList(mockAuditFeatures, 'spearman');
+      const names = spearmanItems.map((r) => r.feature_name);
+
+      expect(names).toContain('feat_both');
+      expect(names).toContain('feat_spearman_only');
+      expect(names).not.toContain('feat_pearson_only');
+      expect(names).not.toContain('feat_neither');
+      expect(spearmanItems).toHaveLength(2);
+
+      // Verify that values are strictly Spearman
+      const itemSpearmanOnly = spearmanItems.find((r) => r.feature_name === 'feat_spearman_only');
+      expect(itemSpearmanOnly?.abs_spearman).toBe(0.60);
+      expect(itemSpearmanOnly?.abs_pearson).toBeNull();
+    });
+
+    it('missing correlations never map to 0 on the scatter axis', () => {
+      const pearsonItems = getCorrelationComparisonList(mockAuditFeatures, 'pearson');
+      for (const item of pearsonItems) {
+        expect(item.abs_pearson).not.toBeNull();
+        expect(item.abs_pearson).toBeGreaterThan(0);
+      }
+
+      const spearmanItems = getCorrelationComparisonList(mockAuditFeatures, 'spearman');
+      for (const item of spearmanItems) {
+        expect(item.abs_spearman).not.toBeNull();
+        expect(item.abs_spearman).toBeGreaterThan(0);
+      }
+    });
+
+    it('verifies FD001 exact correlation availability counts from real artifact', () => {
+      const artifactPath = path.resolve(__dirname, '../../reports/dashboard_stage4/feature_importance_FD001.csv');
+      if (fs.existsSync(artifactPath)) {
+        const rawCsv = fs.readFileSync(artifactPath, 'utf-8');
+        const fd001Features = parseFeatureImportanceCsv(rawCsv, 'FD001');
+
+        expect(fd001Features).toHaveLength(670);
+
+        let bothCount = 0;
+        let pearsonOnlyCount = 0;
+        let spearmanOnlyCount = 0;
+        let neitherCount = 0;
+
+        for (const f of fd001Features) {
+          const hasP = f.abs_pearson !== null;
+          const hasS = f.abs_spearman !== null;
+          if (hasP && hasS) bothCount++;
+          else if (hasP && !hasS) pearsonOnlyCount++;
+          else if (!hasP && hasS) spearmanOnlyCount++;
+          else neitherCount++;
+        }
+
+        // Exact regression test expectations mandated by audit
+        expect(bothCount).toBe(39);
+        expect(pearsonOnlyCount).toBe(11);
+        expect(spearmanOnlyCount).toBe(11);
+        expect(neitherCount).toBe(609);
+        expect(bothCount + pearsonOnlyCount + spearmanOnlyCount + neitherCount).toBe(670);
+
+        // Visible feature counts per metric
+        const evaluatedPearson = getCorrelationComparisonList(fd001Features, 'pearson');
+        expect(evaluatedPearson).toHaveLength(50); // 39 + 11
+
+        const evaluatedSpearman = getCorrelationComparisonList(fd001Features, 'spearman');
+        expect(evaluatedSpearman).toHaveLength(50); // 39 + 11
+      }
+    });
+  });
+
+  describe('7. Raw Sensor Trajectories Presentation & Sampling Fidelity', () => {
+    it('verifies initial cycle 1 and terminal cycle retention with deterministic stride 2', () => {
+      const trajPath = path.resolve(__dirname, '../../reports/dashboard_stage4/sensor_trajectories_FD001.csv');
+      const manifestPath = path.resolve(__dirname, '../../reports/dashboard_stage4/sensor_trajectories_manifest.json');
+
+      if (fs.existsSync(trajPath) && fs.existsSync(manifestPath)) {
+        const rawCsv = fs.readFileSync(trajPath, 'utf-8');
+        const trajs = parseSensorTrajectoriesCsv(rawCsv, 'FD001');
+        const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
+
+        const selectedUnits: number[] = manifest.subsets.FD001.selected_units;
+        expect(selectedUnits).toHaveLength(10);
+
+        for (const u of selectedUnits) {
+          const unitTrajs = trajs.filter((r) => r.unit_id === u && r.sensor === 'sensor_11');
+          expect(unitTrajs.length).toBeGreaterThan(0);
+
+          // Cycle 1 must be present
+          const cycles = unitTrajs.map((r) => r.cycle);
+          expect(cycles[0]).toBe(1);
+
+          // Terminal failure cycle must match manifest lifetime
+          const expectedLifetime = manifest.subsets.FD001.unit_metadata[String(u)].lifetime_cycles;
+          expect(cycles[cycles.length - 1]).toBe(expectedLifetime);
+
+          // All intermediate cycles follow stride 2 progression
+          for (let i = 1; i < cycles.length - 1; i++) {
+            expect(cycles[i] % 2).toBe(1); // odd cycles 1, 3, 5...
+          }
+        }
+      }
     });
   });
 });

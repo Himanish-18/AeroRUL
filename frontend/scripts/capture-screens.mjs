@@ -337,15 +337,16 @@ async function runCapture() {
     await page.screenshot({ path: path.join(outputDir, 'sensor-degradation-trajectory.png'), fullPage: false });
 
     console.log('[capture-screens] Capturing Multi-Engine Comparison (sensor-degradation-multi-engine)...');
-    // Click button to compare Fleet 1-5
-    const compareFleetBtn = Array.from(await page.$$('button')).find(async (btn) => {
-      const txt = await page.evaluate(el => el.textContent, btn);
-      return txt && txt.includes('Compare Fleet');
-    });
-    if (compareFleetBtn) {
-      await compareFleetBtn.click();
-      await new Promise((r) => setTimeout(r, 500));
-    }
+    await page.waitForSelector('#btn-compare-fleet', { timeout: 5000 });
+    await page.click('#btn-compare-fleet');
+    await new Promise((r) => setTimeout(r, 600));
+
+    // Confirm chart contains multiple separate engine series
+    await page.waitForFunction(() => {
+      const paths = document.querySelectorAll('.recharts-line path.recharts-line-curve');
+      return paths.length >= 3;
+    }, { timeout: 5000 });
+
     await page.screenshot({ path: path.join(outputDir, 'sensor-degradation-multi-engine.png'), fullPage: false });
 
     await browser.close();

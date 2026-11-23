@@ -62,12 +62,18 @@ export const TopBar: React.FC<TopBarProps> = ({
                 border: 'var(--rule-hair) solid var(--color-rule)',
               }}
             >
-              {currentView === 'models' ? 'Candidate Benchmarks' : 'Official Test'}
+              {currentView === 'models'
+                ? 'Candidate Benchmarks'
+                : currentView === 'features'
+                ? 'Training-Derived'
+                : 'Official Test'}
             </span>
           </div>
           <span className="header-subtitle" style={{ fontSize: '0.75rem', color: 'var(--color-muted)', lineHeight: 1.2 }}>
             {currentView === 'models'
               ? 'Candidate model benchmarking, cross-validation, and selection evidence'
+              : currentView === 'features'
+              ? 'Frozen model feature importance and authentic training sensor trajectories'
               : isPredictions
               ? 'Official test engine RUL endpoints and error decomposition'
               : 'NASA C-MAPSS turbofan degradation benchmark'}

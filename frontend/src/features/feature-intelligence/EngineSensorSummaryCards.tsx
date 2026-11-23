@@ -4,7 +4,7 @@ import {
   getEngineSensorStatistics,
   getSensorSpec,
 } from '../../lib/data/featureIntelligenceAdapter';
-import { Clock, TrendingUp, Activity, BarChart, ArrowRight } from 'lucide-react';
+import { Clock, TrendingUp, Activity, BarChart } from 'lucide-react';
 
 interface EngineSensorSummaryCardsProps {
   trajectories: SensorTrajectoryRecord[];
@@ -127,7 +127,7 @@ export const EngineSensorSummaryCards: React.FC<EngineSensorSummaryCardsProps> =
         </div>
       </div>
 
-      {/* Card 4: Net Drift */}
+      {/* Card 4: Net Sensor Change */}
       <div
         className="card"
         style={{
@@ -138,7 +138,7 @@ export const EngineSensorSummaryCards: React.FC<EngineSensorSummaryCardsProps> =
       >
         <div style={{ fontSize: 'var(--text-xs)', color: 'var(--color-muted)', display: 'flex', alignItems: 'center', gap: 4 }}>
           <TrendingUp size={13} style={{ color: isRising ? 'var(--color-accent)' : 'var(--color-cool)' }} />
-          Net Degradation Drift
+          Net Sensor Change
         </div>
         <div
           style={{
@@ -149,11 +149,11 @@ export const EngineSensorSummaryCards: React.FC<EngineSensorSummaryCardsProps> =
             marginTop: 2,
           }}
         >
-          {isRising ? `+${stats.netChange.toFixed(3)}` : stats.netChange.toFixed(3)}{' '}
-          <span style={{ fontSize: 'var(--text-xs)', fontWeight: 400 }}>{sensorSpec.unit}</span>
+          {stats.netChange > 0 ? `+${stats.netChange.toFixed(2)}` : stats.netChange.toFixed(2)}{' '}
+          <span style={{ fontSize: 'var(--text-xs)', fontWeight: 400, color: 'var(--color-muted)' }}>{sensorSpec.unit}</span>
         </div>
-        <div style={{ fontSize: '0.65rem', color: 'var(--color-muted)', display: 'flex', alignItems: 'center', gap: 3 }}>
-          {stats.startValue.toFixed(1)} <ArrowRight size={10} /> {stats.endValue.toFixed(1)}
+        <div style={{ fontSize: '0.65rem', color: 'var(--color-muted)' }}>
+          Sample end (cycle {stats.endCycle}) minus start (cycle {stats.startCycle})
         </div>
       </div>
     </div>

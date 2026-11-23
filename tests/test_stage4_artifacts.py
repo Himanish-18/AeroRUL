@@ -12,6 +12,7 @@ Verifies that:
 
 import json
 from pathlib import Path
+import joblib
 import pytest
 import pandas as pd
 import numpy as np
@@ -136,3 +137,67 @@ def test_sensor_trajectories_integrity():
         # Check default unit in manifest
         ds_meta = meta["subsets"][ds]
         assert ds_meta["default_unit_id"] in ds_meta["selected_units"]
+
+
+def test_artifact_to_model_feature_order_alignment():
+    """
+    Verify positional mapping between frozen LightGBM Booster importance arrays,
+    feature_names.json, and the generated feature_importance_{ds}.csv.
+    Confirms:
+    1. Frozen model loads in read-only mode without modification.
+    2. Vector lengths match feature_names.json exactly.
+    3. For every original feature index, the CSV row contains the exact native
+       gain and split values associated with that feature name within rounding tolerance.
+    4. Model binaries are untouched (mtime preserved).
+    """
+    models_dir = PROJECT_ROOT / "models" / "final"
+
+    for ds in DATASETS:
+        model_path = models_dir / ds / "model.joblib"
+        feat_names_path = models_dir / ds / "feature_names.json"
+
+        assert model_path.exists(), f"Frozen model missing: {model_path}"
+        assert feat_names_path.exists(), f"Feature names missing: {feat_names_path}"
+
+        mtime_before = model_path.stat().st_mtime
+
+        with open(feat_names_path, "r", encoding="utf-8") as f:
+            feature_names = json.load(f)
+
+        model = joblib.load(model_path)
+        booster = model.booster_
+
+        raw_gain = booster.feature_importance(importance_type="gain")
+        raw_split = booster.feature_importance(importance_type="split")
+
+        # 4. Verify vector lengths match feature-name list
+        assert len(raw_gain) == len(feature_names), f"Gain length mismatch in {ds}"
+        assert len(raw_split) == len(feature_names), f"Split length mismatch in {ds}"
+
+        # 5. Load generated CSV
+        csv_path = STAGE4_DIR / f"feature_importance_{ds}.csv"
+        df_csv = pd.read_csv(csv_path).set_index("feature_name")
+
+        assert len(df_csv) == len(feature_names), f"CSV length mismatch in {ds}"
+
+        # 6. For every original feature index, verify matching gain and split values
+        for idx, fname in enumerate(feature_names):
+            assert fname in df_csv.index, f"Feature {fname} missing from {csv_path.name}"
+            csv_row = df_csv.loc[fname]
+
+            expected_gain = round(float(raw_gain[idx]), 4)
+            assert np.isclose(csv_row["gain_importance"], expected_gain, atol=1e-3), (
+                f"Gain mismatch for {fname} (index {idx}) in {ds}: "
+                f"CSV={csv_row['gain_importance']}, expected={expected_gain}"
+            )
+
+            expected_split = int(raw_split[idx])
+            assert int(csv_row["split_importance"]) == expected_split, (
+                f"Split mismatch for {fname} (index {idx}) in {ds}: "
+                f"CSV={csv_row['split_importance']}, expected={expected_split}"
+            )
+
+        # 7. Confirm no model files were modified
+        mtime_after = model_path.stat().st_mtime
+        assert mtime_before == mtime_after, f"Model file was modified: {model_path}"
+

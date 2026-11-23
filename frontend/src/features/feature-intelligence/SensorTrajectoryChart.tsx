@@ -183,7 +183,7 @@ export const SensorTrajectoryChart: React.FC<SensorTrajectoryChartProps> = ({
           {selectedUnits.map((unitId, idx) => (
             <Line
               key={unitId}
-              type="monotone"
+              type="linear"
               dataKey={`unit_${unitId}`}
               stroke={getEngineColor(idx)}
               strokeWidth={1.7}
