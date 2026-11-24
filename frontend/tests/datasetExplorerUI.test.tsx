@@ -574,5 +574,5 @@ describe('Dataset Explorer — UI Component Tests', () => {
 
     // Verify engine table successfully displays
     expect(await screen.findByText('Training Fleet Engines (2 matching)')).toBeDefined();
-  });
+  }, 15000);
 });

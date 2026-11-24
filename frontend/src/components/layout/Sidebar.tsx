@@ -4,9 +4,7 @@ import {
   Gauge,
   Activity,
   Binary,
-  GitCompare,
   Database,
-  FileText,
   ChevronLeft,
   ChevronRight,
   Plane,
@@ -55,22 +53,10 @@ const NAV_ITEMS: NavItem[] = [
     status: 'active',
   },
   {
-    id: 'experiments',
-    label: 'Experiment Comparison',
-    icon: <GitCompare size={18} />,
-    status: 'planned',
-  },
-  {
     id: 'datasets',
     label: 'Dataset Explorer',
     icon: <Database size={18} />,
     status: 'active',
-  },
-  {
-    id: 'reports',
-    label: 'Research Reports',
-    icon: <FileText size={18} />,
-    status: 'planned',
   },
 ];
 
@@ -104,64 +90,106 @@ export const Sidebar: React.FC<SidebarProps> = ({
             display: 'flex',
             alignItems: 'center',
             justifyContent: collapsed ? 'center' : 'space-between',
-            padding: collapsed ? '0' : '0 var(--space-md)',
+            padding: collapsed ? '0 var(--space-xs)' : '0 var(--space-md)',
             borderBottom: 'var(--rule-hair) solid var(--color-rule)',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-xs)' }}>
-            <div
-              style={{
-                width: '28px',
-                height: '28px',
-                borderRadius: 'var(--radius-sm)',
-                background: 'var(--color-accent-soft)',
-                border: 'var(--rule-hair) solid var(--color-accent)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'var(--color-accent)',
-                flexShrink: 0,
-              }}
-            >
-              <Plane size={16} />
-            </div>
-            {!collapsed && (
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <span
-                  style={{
-                    fontFamily: 'var(--font-display)',
-                    fontWeight: 500,
-                    fontSize: 'var(--text-md)',
-                    color: 'var(--color-ink)',
-                    lineHeight: 1.1,
-                    letterSpacing: 'var(--tracking-display)',
-                  }}
-                >
-                  AeroRUL
-                </span>
-                <span
-                  style={{
-                    fontSize: 'var(--text-xs)',
-                    color: 'var(--color-muted)',
-                    lineHeight: 1,
-                  }}
-                >
-                  turbofan RUL lab
-                </span>
-              </div>
-            )}
-          </div>
-
-          {!collapsed && (
+          {collapsed ? (
             <button
               type="button"
               className="btn btn-icon btn-sm"
               onClick={onToggleCollapse}
-              aria-label="Collapse sidebar"
-              style={{ border: 'none', background: 'transparent' }}
+              aria-label="Expand sidebar"
+              title="Expand sidebar"
+              id="btn-expand-sidebar"
+              style={{
+                border: 'none',
+                background: 'transparent',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '4px',
+                width: '100%',
+                height: '36px',
+                cursor: 'pointer',
+                color: 'var(--color-ink)',
+                borderRadius: 'var(--radius-sm)',
+              }}
             >
-              <ChevronLeft size={16} color="var(--color-muted)" />
+              <div
+                style={{
+                  width: '28px',
+                  height: '28px',
+                  borderRadius: 'var(--radius-sm)',
+                  background: 'var(--color-accent-soft)',
+                  border: 'var(--rule-hair) solid var(--color-accent)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'var(--color-accent)',
+                  flexShrink: 0,
+                }}
+              >
+                <Plane size={16} />
+              </div>
+              <ChevronRight size={16} color="var(--color-muted)" />
             </button>
+          ) : (
+            <>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-xs)' }}>
+                <div
+                  style={{
+                    width: '28px',
+                    height: '28px',
+                    borderRadius: 'var(--radius-sm)',
+                    background: 'var(--color-accent-soft)',
+                    border: 'var(--rule-hair) solid var(--color-accent)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'var(--color-accent)',
+                    flexShrink: 0,
+                  }}
+                >
+                  <Plane size={16} />
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <span
+                    style={{
+                      fontFamily: 'var(--font-display)',
+                      fontWeight: 500,
+                      fontSize: 'var(--text-md)',
+                      color: 'var(--color-ink)',
+                      lineHeight: 1.1,
+                      letterSpacing: 'var(--tracking-display)',
+                    }}
+                  >
+                    AeroRUL
+                  </span>
+                  <span
+                    style={{
+                      fontSize: 'var(--text-xs)',
+                      color: 'var(--color-muted)',
+                      lineHeight: 1,
+                    }}
+                  >
+                    turbofan RUL lab
+                  </span>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                className="btn btn-icon btn-sm"
+                onClick={onToggleCollapse}
+                aria-label="Collapse sidebar"
+                title="Collapse sidebar"
+                id="btn-collapse-sidebar"
+                style={{ border: 'none', background: 'transparent', cursor: 'pointer' }}
+              >
+                <ChevronLeft size={16} color="var(--color-muted)" />
+              </button>
+            </>
           )}
         </div>
 

@@ -260,12 +260,13 @@ describe('AeroRUL Stage 2 UI Interaction & Component Regression Tests', () => {
   describe('Stage 3 — Model Evaluation Navigation & Interaction Tests', () => {
     it('1. sidebar renders Model Evaluation as active link and handles navigation', () => {
       const onNavigate = vi.fn();
+      const onToggleCollapse = vi.fn();
       render(
         <Sidebar
           currentView="overview"
           onNavigate={onNavigate}
           collapsed={false}
-          onToggleCollapse={vi.fn()}
+          onToggleCollapse={onToggleCollapse}
           mobileOpen={false}
           onCloseMobile={vi.fn()}
         />
@@ -276,6 +277,35 @@ describe('AeroRUL Stage 2 UI Interaction & Component Regression Tests', () => {
 
       fireEvent.click(modelsLink);
       expect(onNavigate).toHaveBeenCalledWith('models');
+
+      // Verify Experiment Comparison and Research Reports are removed
+      expect(screen.queryByText(/Experiment Comparison/i)).toBeNull();
+      expect(screen.queryByText(/Research Reports/i)).toBeNull();
+
+      // Verify collapse button is present and functional
+      const collapseBtn = screen.getByLabelText('Collapse sidebar');
+      fireEvent.click(collapseBtn);
+      expect(onToggleCollapse).toHaveBeenCalledTimes(1);
+    });
+
+    it('1b. sidebar provides expand option in header and footer when collapsed', () => {
+      const onToggleCollapse = vi.fn();
+      render(
+        <Sidebar
+          currentView="overview"
+          onNavigate={vi.fn()}
+          collapsed={true}
+          onToggleCollapse={onToggleCollapse}
+          mobileOpen={false}
+          onCloseMobile={vi.fn()}
+        />
+      );
+
+      const expandBtns = screen.getAllByLabelText('Expand sidebar');
+      expect(expandBtns.length).toBeGreaterThanOrEqual(1);
+
+      fireEvent.click(expandBtns[0]);
+      expect(onToggleCollapse).toHaveBeenCalledTimes(1);
     });
 
     it('2. resolves view=models parameter from URL and preserves dataset across navigation', () => {
