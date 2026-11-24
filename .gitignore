@@ -14,8 +14,8 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
-lib64/
+/lib/
+/lib64/
 parts/
 sdist/
 var/
@@ -71,3 +71,16 @@ Thumbs.db
 # Project Data (Avoid pushing large generated datasets to GitHub)
 data/processed/
 *.parquet
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/public/data/phase4/
+frontend/public/data/phase5/
+frontend/public/data/stage4/
+frontend/public/data/datasets/
+
+# Agent artifacts
+.agents/
+skills-lock.json
+

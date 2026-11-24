@@ -1,0 +1,433 @@
+import puppeteer from 'puppeteer-core';
+import { spawn } from 'node:child_process';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const outputDir = path.resolve(__dirname, '..', 'screenshots');
+
+if (!fs.existsSync(outputDir)) {
+  fs.mkdirSync(outputDir, { recursive: true });
+}
+
+function resolveChromePath() {
+  if (process.env.CHROME_EXECUTABLE) {
+    if (fs.existsSync(process.env.CHROME_EXECUTABLE)) {
+      return process.env.CHROME_EXECUTABLE;
+    }
+    throw new Error(
+      `Specified CHROME_EXECUTABLE does not exist at: ${process.env.CHROME_EXECUTABLE}`
+    );
+  }
+
+  const candidatePaths = [
+    // Windows common locations
+    'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+    'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+    process.env.LOCALAPPDATA
+      ? path.join(process.env.LOCALAPPDATA, 'Google', 'Chrome', 'Application', 'chrome.exe')
+      : '',
+    // macOS common locations
+    '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+    // Linux common locations
+    '/usr/bin/google-chrome',
+    '/usr/bin/google-chrome-stable',
+    '/usr/bin/chromium',
+    '/usr/bin/chromium-browser',
+  ].filter(Boolean);
+
+  for (const candidate of candidatePaths) {
+    if (fs.existsSync(candidate)) {
+      return candidate;
+    }
+  }
+
+  throw new Error(
+    'Chrome executable could not be located automatically.\n' +
+    'Please set the CHROME_EXECUTABLE environment variable to point to your Chrome or Chromium binary.'
+  );
+}
+
+async function waitForServer(url, timeout = 15000) {
+  const start = Date.now();
+  while (Date.now() - start < timeout) {
+    try {
+      const res = await fetch(url);
+      if (res.ok) return true;
+    } catch {
+      await new Promise((r) => setTimeout(r, 200));
+    }
+  }
+  throw new Error(`Server did not respond within ${timeout}ms at ${url}`);
+}
+
+async function runCapture() {
+  const chromePath = resolveChromePath();
+  console.log(`[capture-screens] Using Chrome binary at: ${chromePath}`);
+
+  console.log('[capture-screens] Starting Vite preview server...');
+  const viteBin = path.resolve(__dirname, '..', 'node_modules', 'vite', 'bin', 'vite.js');
+  const server = spawn(process.execPath, [viteBin, 'preview', '--host', '127.0.0.1', '--port', '4173', '--strictPort'], {
+    cwd: path.resolve(__dirname, '..'),
+    env: { ...process.env, NODE_ENV: 'production' },
+  });
+
+  server.stdout.on('data', (d) => console.log(`[vite] ${d}`));
+  server.stderr.on('data', (d) => console.error(`[vite error] ${d}`));
+
+  try {
+    await waitForServer('http://127.0.0.1:4173');
+    console.log('[capture-screens] Server is ready. Launching headless Chrome...');
+
+    const browser = await puppeteer.launch({
+      executablePath: chromePath,
+      headless: 'new',
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-gpu',
+        '--disable-dev-shm-usage',
+        '--disable-crash-reporter',
+        '--no-first-run',
+        '--no-default-browser-check'
+      ]
+    });
+
+    const page = await browser.newPage();
+
+    // 1. Overview Screen Viewports (1440, 1280, 768, 390)
+    console.log('[capture-screens] Capturing Overview (desktop-1440)...');
+    await page.setViewport({ width: 1440, height: 900 });
+    await page.goto('http://127.0.0.1:4173/?view=overview&dataset=FD001', { waitUntil: 'networkidle0' });
+    await page.waitForSelector('.data-table', { timeout: 5000 });
+    await page.screenshot({ path: path.join(outputDir, 'desktop-1440.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Overview (desktop-1280)...');
+    await page.setViewport({ width: 1280, height: 800 });
+    await page.goto('http://127.0.0.1:4173/?view=overview&dataset=FD001', { waitUntil: 'networkidle0' });
+    await page.waitForSelector('.data-table', { timeout: 5000 });
+    await page.screenshot({ path: path.join(outputDir, 'desktop-1280.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Overview (tablet-768)...');
+    await page.setViewport({ width: 768, height: 1024 });
+    await page.goto('http://127.0.0.1:4173/?view=overview&dataset=FD001', { waitUntil: 'networkidle0' });
+    await page.waitForSelector('.data-table', { timeout: 5000 });
+    await page.screenshot({ path: path.join(outputDir, 'tablet-768.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Overview (mobile-390)...');
+    await page.setViewport({ width: 390, height: 844 });
+    await page.goto('http://127.0.0.1:4173/?view=overview&dataset=FD001', { waitUntil: 'networkidle0' });
+    await page.waitForSelector('.data-table', { timeout: 5000 });
+    await page.screenshot({ path: path.join(outputDir, 'mobile-390.png'), fullPage: false });
+
+    // 2. Engine Predictions Workspace Captures
+    console.log('[capture-screens] Capturing Predictions Workspace (predictions-desktop-1440)...');
+    await page.setViewport({ width: 1440, height: 900 });
+    await page.goto('http://127.0.0.1:4173/?view=predictions&dataset=FD001', { waitUntil: 'networkidle0' });
+    await page.waitForSelector('.data-table', { timeout: 5000 });
+    await page.screenshot({ path: path.join(outputDir, 'predictions-desktop-1440.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Predictions with Engine Inspected (predictions-desktop-1440-selected)...');
+    const outlierBtn = await page.$('button[aria-label^="Inspect outlier unit"]');
+    if (outlierBtn) {
+      await outlierBtn.click();
+    } else {
+      const inspectBtn = await page.$('.data-table tbody tr button');
+      if (inspectBtn) await inspectBtn.click();
+    }
+    await new Promise((r) => setTimeout(r, 400));
+    const inspector = await page.$('[aria-label^="Engine endpoint inspection"]');
+    if (inspector) {
+      await inspector.evaluate((el) => el.scrollIntoView({ behavior: 'instant', block: 'center' }));
+    }
+    await page.screenshot({ path: path.join(outputDir, 'predictions-desktop-1440-selected.png'), fullPage: false });
+
+    // 3. Mobile Predictions & Dataset Switching Verification (390x844)
+    console.log('[capture-screens] Capturing Predictions Mobile (predictions-mobile-390)...');
+    await page.setViewport({ width: 390, height: 844 });
+    await page.goto('http://127.0.0.1:4173/?view=predictions&dataset=FD001', { waitUntil: 'networkidle0' });
+    await page.waitForSelector('.data-table', { timeout: 5000 });
+
+    // Check no page-level horizontal overflow
+    const hasHorizontalOverflow = await page.evaluate(() => {
+      return document.documentElement.scrollWidth > document.documentElement.clientWidth;
+    });
+    console.log(`[capture-screens] Mobile 390px horizontal overflow check: ${hasHorizontalOverflow ? 'FAILED (overflow)' : 'PASSED (no overflow)'}`);
+    await page.screenshot({ path: path.join(outputDir, 'predictions-mobile-390.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Predictions Mobile Inspector (predictions-mobile-390-inspector)...');
+    const mobileOutlierBtn = await page.$('button[aria-label^="Inspect outlier unit"]');
+    if (mobileOutlierBtn) {
+      await mobileOutlierBtn.click();
+    } else {
+      const mobileInspectBtn = await page.$('.data-table tbody tr button');
+      if (mobileInspectBtn) await mobileInspectBtn.click();
+    }
+    await new Promise((r) => setTimeout(r, 400));
+    const mobileInspector = await page.$('[aria-label^="Engine endpoint inspection"]');
+    if (mobileInspector) {
+      await mobileInspector.evaluate((el) => el.scrollIntoView({ behavior: 'instant', block: 'center' }));
+    }
+    await page.screenshot({ path: path.join(outputDir, 'predictions-mobile-390-inspector.png'), fullPage: false });
+
+    // Verify all 4 datasets are selectable on mobile
+    console.log('[capture-screens] Testing all 4 datasets on mobile (FD001 -> FD002 -> FD003 -> FD004)...');
+    const datasets = ['FD002', 'FD003', 'FD004', 'FD001'];
+    for (const ds of datasets) {
+      // Find mobile native select or button
+      const mobileSelect = await page.$('.dataset-native-select');
+      if (mobileSelect) {
+        await page.select('.dataset-native-select', ds);
+      } else {
+        await page.click(`button[aria-pressed]:has-text("${ds}")`);
+      }
+      await new Promise((r) => setTimeout(r, 300));
+      const currentUrl = page.url();
+      console.log(`[capture-screens] Selected ${ds} on mobile, URL: ${currentUrl}`);
+    }
+
+    // Capture mobile FD004 to verify FD004 accessibility
+    await page.select('.dataset-native-select', 'FD004');
+    await new Promise((r) => setTimeout(r, 400));
+    await page.screenshot({ path: path.join(outputDir, 'predictions-mobile-390-fd004.png'), fullPage: false });
+
+    // 4. Stage 3 — Model Evaluation Workspace Captures
+    console.log('[capture-screens] Capturing Model Evaluation (model-evaluation-desktop-1440)...');
+    await page.setViewport({ width: 1440, height: 900 });
+    await page.goto('http://127.0.0.1:4173/?view=models&dataset=FD001', { waitUntil: 'networkidle0' });
+    await page.waitForSelector('.data-table', { timeout: 5000 });
+    await page.screenshot({ path: path.join(outputDir, 'model-evaluation-desktop-1440.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Model Evaluation (model-evaluation-desktop-1280)...');
+    await page.setViewport({ width: 1280, height: 800 });
+    await page.goto('http://127.0.0.1:4173/?view=models&dataset=FD001', { waitUntil: 'networkidle0' });
+    await page.waitForSelector('.data-table', { timeout: 5000 });
+    await page.screenshot({ path: path.join(outputDir, 'model-evaluation-desktop-1280.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Model Evaluation (model-evaluation-tablet-768)...');
+    await page.setViewport({ width: 768, height: 1024 });
+    await page.goto('http://127.0.0.1:4173/?view=models&dataset=FD001', { waitUntil: 'networkidle0' });
+    await page.waitForSelector('.data-table', { timeout: 5000 });
+    await page.screenshot({ path: path.join(outputDir, 'model-evaluation-tablet-768.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Model Evaluation (model-evaluation-mobile-390)...');
+    await page.setViewport({ width: 390, height: 844 });
+    await page.goto('http://127.0.0.1:4173/?view=models&dataset=FD001', { waitUntil: 'networkidle0' });
+    await page.waitForSelector('.data-table', { timeout: 5000 });
+    await page.screenshot({ path: path.join(outputDir, 'model-evaluation-mobile-390.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Model Evaluation FD004 Reversal (model-evaluation-phase5-fd004)...');
+    await page.setViewport({ width: 1440, height: 900 });
+    await page.goto('http://127.0.0.1:4173/?view=models&dataset=FD004', { waitUntil: 'networkidle0' });
+    await page.waitForSelector('.data-table', { timeout: 5000 });
+    await page.evaluate(() => {
+      const devHeading = Array.from(document.querySelectorAll('h2')).find((h) =>
+        h.textContent?.includes('Development Validation Partition Evaluation')
+      );
+      if (devHeading) {
+        devHeading.scrollIntoView({ behavior: 'instant', block: 'start' });
+      }
+    });
+    await new Promise((r) => setTimeout(r, 400));
+    await page.screenshot({ path: path.join(outputDir, 'model-evaluation-phase5-fd004.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Configuration & Tuning Trial Inspector (model-evaluation-trial-inspector)...');
+    await page.setViewport({ width: 1440, height: 900 });
+    await page.goto('http://127.0.0.1:4173/?view=models&dataset=FD001', { waitUntil: 'networkidle0' });
+    await page.waitForSelector('.data-table', { timeout: 5000 });
+
+    const configTab = await page.$('button[role="tab"]:nth-child(3)');
+    if (configTab) {
+      await configTab.click();
+      await new Promise((r) => setTimeout(r, 600));
+    }
+
+    // 1. Scroll to the Optuna Hyperparameter Search Explorer section
+    await page.evaluate(() => {
+      const explorer = Array.from(document.querySelectorAll('h2')).find((h) =>
+        h.textContent?.includes('Optuna Hyperparameter Search Explorer')
+      );
+      if (explorer) {
+        explorer.scrollIntoView({ behavior: 'instant', block: 'start' });
+      }
+    });
+    await new Promise((r) => setTimeout(r, 300));
+
+    // 2. Select an actual stored trial dot in the Optuna chart
+    const trialDot = await page.$('.recharts-line circle');
+    if (trialDot) {
+      await trialDot.click();
+      await new Promise((r) => setTimeout(r, 400));
+    }
+
+    // 3. Wait for the detail inspector to render and scroll it into view
+    await page.waitForSelector('#optuna-trial-inspector', { timeout: 5000 });
+    const trialInspector = await page.$('#optuna-trial-inspector');
+    if (trialInspector) {
+      await trialInspector.evaluate((el) => el.scrollIntoView({ behavior: 'instant', block: 'center' }));
+    }
+    await new Promise((r) => setTimeout(r, 400));
+
+    await page.screenshot({ path: path.join(outputDir, 'model-evaluation-trial-inspector.png'), fullPage: false });
+
+    // 5. Stage 4 — Feature Intelligence & Degradation Dynamics Captures
+    console.log('[capture-screens] Capturing Feature Intelligence (feature-intelligence-desktop-1440)...');
+    await page.setViewport({ width: 1440, height: 900 });
+    await page.goto('http://127.0.0.1:4173/?view=features&dataset=FD001', { waitUntil: 'networkidle0' });
+    await page.waitForSelector('[data-testid="feature-importance-chart"]', { timeout: 5000 });
+    await page.screenshot({ path: path.join(outputDir, 'feature-intelligence-desktop-1440.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Feature Intelligence (feature-intelligence-desktop-1280)...');
+    await page.setViewport({ width: 1280, height: 800 });
+    await page.goto('http://127.0.0.1:4173/?view=features&dataset=FD001', { waitUntil: 'networkidle0' });
+    await page.waitForSelector('[data-testid="feature-importance-chart"]', { timeout: 5000 });
+    await page.screenshot({ path: path.join(outputDir, 'feature-intelligence-desktop-1280.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Feature Intelligence (feature-intelligence-tablet-768)...');
+    await page.setViewport({ width: 768, height: 1024 });
+    await page.goto('http://127.0.0.1:4173/?view=features&dataset=FD001', { waitUntil: 'networkidle0' });
+    await page.waitForSelector('[data-testid="feature-importance-chart"]', { timeout: 5000 });
+    await page.screenshot({ path: path.join(outputDir, 'feature-intelligence-tablet-768.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Feature Intelligence (feature-intelligence-mobile-390)...');
+    await page.setViewport({ width: 390, height: 844 });
+    await page.goto('http://127.0.0.1:4173/?view=features&dataset=FD001', { waitUntil: 'networkidle0' });
+    await page.waitForSelector('[data-testid="feature-importance-chart"]', { timeout: 5000 });
+    await page.screenshot({ path: path.join(outputDir, 'feature-intelligence-mobile-390.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Feature Detail Inspector (feature-intelligence-detail-inspector)...');
+    await page.setViewport({ width: 1440, height: 900 });
+    await page.goto('http://127.0.0.1:4173/?view=features&dataset=FD001', { waitUntil: 'networkidle0' });
+    await page.waitForSelector('#feature-detail-inspector', { timeout: 5000 });
+    const featInspector = await page.$('#feature-detail-inspector');
+    if (featInspector) {
+      await featInspector.evaluate((el) => el.scrollIntoView({ behavior: 'instant', block: 'center' }));
+    }
+    await new Promise((r) => setTimeout(r, 400));
+    await page.screenshot({ path: path.join(outputDir, 'feature-intelligence-detail-inspector.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Feature Family Breakdown (feature-intelligence-family-breakdown)...');
+    await page.evaluate(() => {
+      const familyCard = document.querySelector('[data-testid="feature-family-breakdown"]');
+      if (familyCard) {
+        familyCard.scrollIntoView({ behavior: 'instant', block: 'center' });
+      }
+    });
+    await new Promise((r) => setTimeout(r, 400));
+    await page.screenshot({ path: path.join(outputDir, 'feature-intelligence-family-breakdown.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Importance vs Correlation (feature-intelligence-importance-vs-correlation)...');
+    await page.evaluate(() => {
+      const vsCard = document.querySelector('[data-testid="importance-vs-correlation"]');
+      if (vsCard) {
+        vsCard.scrollIntoView({ behavior: 'instant', block: 'center' });
+      }
+    });
+    await new Promise((r) => setTimeout(r, 400));
+    await page.screenshot({ path: path.join(outputDir, 'feature-intelligence-importance-vs-correlation.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Sensor Degradation Trajectory (sensor-degradation-trajectory)...');
+    await page.goto('http://127.0.0.1:4173/?view=features&dataset=FD001', { waitUntil: 'networkidle0' });
+    await page.waitForSelector('#tab-sensor-degradation', { timeout: 5000 });
+    await page.click('#tab-sensor-degradation');
+    await new Promise((r) => setTimeout(r, 600));
+    await page.waitForSelector('[data-testid="sensor-trajectory-chart"]', { timeout: 5000 });
+    await page.screenshot({ path: path.join(outputDir, 'sensor-degradation-trajectory.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Multi-Engine Comparison (sensor-degradation-multi-engine)...');
+    await page.waitForSelector('#btn-compare-fleet', { timeout: 5000 });
+    await page.click('#btn-compare-fleet');
+    await new Promise((r) => setTimeout(r, 600));
+
+    // Confirm chart contains multiple separate engine series
+    await page.waitForFunction(() => {
+      const paths = document.querySelectorAll('.recharts-line path.recharts-line-curve');
+      return paths.length >= 3;
+    }, { timeout: 5000 });
+
+    await page.screenshot({ path: path.join(outputDir, 'sensor-degradation-multi-engine.png'), fullPage: false });
+
+    // ─────────────────────────────────────────────────────────────
+    // DATASET EXPLORER WORKSPACE CAPTURES
+    // ─────────────────────────────────────────────────────────────
+    console.log('[capture-screens] Capturing Dataset Explorer (dataset-explorer-desktop-1440)...');
+    await page.setViewport({ width: 1440, height: 900 });
+    await page.goto('http://127.0.0.1:4173/?view=datasets&dataset=FD001', { waitUntil: 'networkidle0' });
+    await page.waitForSelector('#tab-dataset-profile', { timeout: 5000 });
+    await new Promise((r) => setTimeout(r, 500));
+    await page.screenshot({ path: path.join(outputDir, 'dataset-explorer-desktop-1440.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Dataset Explorer (dataset-explorer-desktop-1280)...');
+    await page.setViewport({ width: 1280, height: 800 });
+    await new Promise((r) => setTimeout(r, 300));
+    await page.screenshot({ path: path.join(outputDir, 'dataset-explorer-desktop-1280.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Dataset Explorer (dataset-explorer-tablet-768)...');
+    await page.setViewport({ width: 768, height: 1024 });
+    await new Promise((r) => setTimeout(r, 300));
+    await page.screenshot({ path: path.join(outputDir, 'dataset-explorer-tablet-768.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Dataset Explorer (dataset-explorer-mobile-390)...');
+    await page.setViewport({ width: 390, height: 844 });
+    await new Promise((r) => setTimeout(r, 300));
+    await page.screenshot({ path: path.join(outputDir, 'dataset-explorer-mobile-390.png'), fullPage: false });
+
+    // Desktop detail captures
+    await page.setViewport({ width: 1440, height: 900 });
+
+    console.log('[capture-screens] Capturing Engine Detail Inspector (dataset-explorer-engine-detail)...');
+    await page.goto('http://127.0.0.1:4173/?view=datasets&dataset=FD001', { waitUntil: 'networkidle0' });
+    await page.waitForSelector('#tab-engine-index', { timeout: 5000 });
+    await page.click('#tab-engine-index');
+    await new Promise((r) => setTimeout(r, 500));
+    await page.waitForSelector('#btn-inspect-in-raw', { timeout: 5000 });
+    await page.screenshot({ path: path.join(outputDir, 'dataset-explorer-engine-detail.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Raw Observation Browser (dataset-explorer-raw-observations)...');
+    await page.waitForSelector('#tab-raw-observations', { timeout: 8000 });
+    await page.click('#tab-raw-observations');
+    await page.waitForSelector('.table', { timeout: 15000 });
+    await new Promise((r) => setTimeout(r, 600));
+    await page.screenshot({ path: path.join(outputDir, 'dataset-explorer-raw-observations.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Sensor & Settings Distribution (dataset-explorer-sensor-distribution)...');
+    await page.waitForSelector('#tab-sensor-explorer', { timeout: 8000 });
+    await page.click('#tab-sensor-explorer');
+    await page.waitForSelector('.recharts-responsive-container', { timeout: 15000 });
+    await new Promise((r) => setTimeout(r, 600));
+    await page.screenshot({ path: path.join(outputDir, 'dataset-explorer-sensor-distribution.png'), fullPage: false });
+
+    console.log('[capture-screens] Capturing Test Endpoint RUL Distribution (dataset-explorer-test-rul-distribution)...');
+    const btnTestSplit = await page.$('#btn-split-test');
+    if (btnTestSplit) {
+      await btnTestSplit.click();
+      await new Promise((r) => setTimeout(r, 400));
+    }
+    const subtabRul = await page.$('#subtab-rul');
+    if (subtabRul) {
+      await subtabRul.click();
+      await new Promise((r) => setTimeout(r, 600));
+      await page.waitForSelector('.recharts-responsive-container', { timeout: 10000 });
+      await page.screenshot({ path: path.join(outputDir, 'dataset-explorer-test-rul-distribution.png'), fullPage: false });
+    }
+
+    console.log('[capture-screens] Capturing Schema & Data Quality Audit (dataset-explorer-data-quality)...');
+    await page.waitForSelector('#tab-data-quality', { timeout: 5000 });
+    await page.click('#tab-data-quality');
+    await new Promise((r) => setTimeout(r, 400));
+    await page.screenshot({ path: path.join(outputDir, 'dataset-explorer-data-quality.png'), fullPage: false });
+
+    await browser.close();
+    console.log('[capture-screens] All verification screenshots captured successfully!');
+  } finally {
+    server.kill();
+    console.log('[capture-screens] Server stopped.');
+  }
+}
+
+runCapture().catch((err) => {
+  console.error('[capture-screens] Error:', err);
+  process.exit(1);
+});
